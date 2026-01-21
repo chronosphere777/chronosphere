@@ -575,7 +575,7 @@ export function MapView({ onShopClick, onResetMap, isShopInfoOpen = false }: Map
     try {
       // Сначала пробуем загрузить статический файл (мгновенно)
       const citySlug = cityToSlug(targetCity.name);
-      const staticUrl = `/chronosphere/roads/${citySlug}.geojson`;
+      const staticUrl = `/roads/${citySlug}.geojson`;
       
       
       let response = await fetch(staticUrl);
