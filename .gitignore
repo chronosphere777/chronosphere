@@ -1,0 +1,53 @@
+# Игнорируем бэкенд
+backend/
+бэкэнд/
+
+# Игнорируем Python скрипты
+*.py
+__pycache__/
+
+# Игнорируем node_modules
+node_modules/
+
+# Игнорируем большие файлы дорог
+**/roads/moscow.geojson
+**/roads/saint-petersburg.geojson
+**/roads/*.tmp
+**/roads/*.backup
+
+# Игнорируем лишние файлы
+README_ROADS.md
+фронтэнд/
+
+# Build артефакты
+frontend/dist/
+dist/
+build/
+
+# База данных
+*.db
+*.sqlite
+*.sqlite3
+shops.db
+
+# Временные и отладочные файлы
+*.tmp
+*.backup
+*.log
+.DS_Store
+Thumbs.db
+
+# Отчеты и документация
+ПРОВЕРКА_ОТЧЕТ.md
+GITHUB_CLEANUP_PLAN.md
+*_ОТЧЕТ.md
+
+# IDE файлы
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Локальные конфигурации
+.env.local
+.env.*.local
