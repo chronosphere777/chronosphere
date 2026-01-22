@@ -3,6 +3,22 @@ import { api } from '../api/client';
 import type { Shop } from '../types';
 import { useActivity, getCount } from '../hooks/useActivity';
 
+// API base URL
+const API_BASE = 'https://chronosphere7777.pythonanywhere.com';
+
+// Функция для проксирования Google Drive изображений
+const getProxiedImageUrl = (url: string | null): string | null => {
+  if (!url) return null;
+  
+  // Если это Google Drive URL - проксируем через наш сервер
+  if (url.includes('drive.google.com')) {
+    return `${API_BASE}/api/proxy-image?url=${encodeURIComponent(url)}`;
+  }
+  
+  // Если это GitHub raw URL - оставляем как есть
+  return url;
+};
+
 interface ShopInfoProps {
   shop: Shop;
   onClose: () => void;
@@ -122,7 +138,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
           <div key={index} className="product-card">
             {product.photo_url && (
               <img 
-                src={product.photo_url} 
+                src={getProxiedImageUrl(product.photo_url) || ''} 
                 alt="" 
                 className="product-image" 
                 onClick={(e) => {
@@ -380,7 +396,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
             ×
           </button>
           <img 
-            src={fullscreenImage} 
+            src={getProxiedImageUrl(fullscreenImage) || ''} 
             alt="Fullscreen"
             style={{
               maxWidth: '95%',

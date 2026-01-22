@@ -191,7 +191,8 @@ export const api = {
         city: city,
         category: shop.category,
         photo_url: shop.photo_url,
-        spreadsheet_url: shop.spreadsheet_url
+        spreadsheet_url: shop.spreadsheet_url,
+        description: shop.description
       }));
     } catch (error) {
       return [];
