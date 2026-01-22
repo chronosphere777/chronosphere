@@ -3,6 +3,7 @@ import { App } from './App';
 import './style.css';
 import { initTelegramApp } from './utils/telegram';
 
+// v1.0.1 - Fixed description and image proxy
 // Очистка кеша и service workers (для Telegram WebApp)
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(registrations => {
