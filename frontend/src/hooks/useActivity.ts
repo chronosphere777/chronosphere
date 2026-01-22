@@ -3,12 +3,13 @@
 import { useEffect, useState, useCallback } from 'preact/hooks';
 import { trackActivity, getActivityStats, ActivityStats } from '../api/activity';
 
-// Генерация уникального ID пользователя (сохраняется в localStorage)
+// Генерация уникального ID сессии (сохраняется в sessionStorage)
+// Очищается при закрытии вкладки - не требует согласия на cookies
 function getUserId(): string {
-  let userId = localStorage.getItem('user_id');
+  let userId = sessionStorage.getItem('user_id');
   if (!userId) {
-    userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    localStorage.setItem('user_id', userId);
+    userId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    sessionStorage.setItem('user_id', userId);
   }
   return userId;
 }
