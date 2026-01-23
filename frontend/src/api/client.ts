@@ -207,5 +207,17 @@ export const api = {
   getCategories: async (city: string) => {
     const response = await fetch(`${API_BASE}/api/categories/${city}`);
     return response.json();
+  },
+
+  searchProducts: async (query: string) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/search-products?q=${encodeURIComponent(query)}`, {
+        signal: AbortSignal.timeout(15000)
+      });
+      if (!response.ok) throw new Error('Search failed');
+      return response.json();
+    } catch (error) {
+      return { results: [], total: 0 };
+    }
   }
 };
