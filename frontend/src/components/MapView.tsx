@@ -767,7 +767,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     // 1. Летим к городу
     const cityCoords = CITY_COORDS[shop.city];
     if (cityCoords) {
-      map.current.flyTo({
+      map.current.easeTo({
         center: [cityCoords.lng, cityCoords.lat],
         zoom: 7,
         duration: 1000,
@@ -794,7 +794,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     }
     
     // 3. Летим к конкретному магазину
-    map.current.flyTo({
+    map.current.easeTo({
       center: [shop.lng, shop.lat],
       zoom: 15,
       duration: 1000,
@@ -1568,10 +1568,11 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
           
           // Центрируем камеру на кластере и показываем список магазинов
           if (map.current) {
-            map.current.flyTo({
+            map.current.easeTo({
               center: [lng, lat],
               zoom: 15,
-              duration: 1000
+              duration: 1000,
+              essential: true
             });
           }
           
