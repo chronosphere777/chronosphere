@@ -689,6 +689,28 @@ items {
   }
 }
 
+/* 3D Cube Animation for Category Markers */
+@keyframes rotateCube {
+  from {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(360deg) rotateY(360deg);
+  }
+}
+
+.cube-3d {
+  transform-style: preserve-3d;
+}
+
+.cube-3d:hover {
+  animation-play-state: paused !important;
+}
+
+.cube-face {
+  backface-visibility: hidden;
+}
+
 .activation-ritual__title {
   font-size: 24px;
   color: #f0f8ff;
