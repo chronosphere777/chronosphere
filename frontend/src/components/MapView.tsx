@@ -6,7 +6,6 @@ import type { Shop } from '../types';
 import { neonRoadsStyle } from '../styles/neon-roads-style';
 import { requestLocation, hapticFeedback } from '../utils/telegram';
 import { CITIES_WITHOUT_SHOPS_VISUAL, CITY_COORDS } from '../api/client';
-import { CategoryModal } from './CategoryModal';
 import { CityModal } from './CityModal';
 import { useActivity, getCount } from '../hooks/useActivity';
 import { getUserCounterHTML } from './UserCounter';
@@ -23,23 +22,16 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
   const pixelOverlayRef = useRef<HTMLCanvasElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const markers = useRef<maplibregl.Marker[]>([]);
-  const userMarker = useRef<maplibregl.Marker | null>(null);
-  const userLocationRef = useRef<[number, number] | null>(null);
-  const shopPulseAnimationId = useRef<number | null>(null);
   const { shops, selectedCity, cities } = useMapStore();
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [clusterShops, setClusterShops] = useState<Shop[] | null>(null);
   const [showCityLabels, setShowCityLabels] = useState<boolean>(false);
   const [showCitySelector, setShowCitySelector] = useState<boolean>(false);
   const cityLabelsRef = useRef<maplibregl.Marker[]>([]);
   const whiteCityLabelsRef = useRef<maplibregl.Marker[]>([]); // Для белых городов
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
-  const [isSelectingLocation, setIsSelectingLocation] = useState(false);
   const [popupShop, setPopupShop] = useState<Shop | null>(null);
   const [popupPosition, setPopupPosition] = useState<{ x: number; y: number } | null>(null);
   const [currentZoom, setCurrentZoom] = useState<number>(5);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const selectedCategoryRef = useRef<string | null>(null);
   const [showEmptyCityModal, setShowEmptyCityModal] = useState<boolean>(false);
 
   // Отслеживание активности на карте (передаем текущий город)
@@ -47,15 +39,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     city: selectedCity?.name,
     enabled: true
   });
-
-  // Синхронизируем ref с state
-  useEffect(() => {
-    userLocationRef.current = userLocation;
-  }, [userLocation]);
-
-  useEffect(() => {
-    selectedCategoryRef.current = selectedCategory;
-  }, [selectedCategory]);
 
   // Передаем функцию resetRoute родительскому компоненту
   useEffect(() => {
@@ -793,171 +776,13 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
   };
 
   // Показать маршрут до магазина
-  const showRouteToShop = async (shop: Shop, fromLocation?: [number, number]) => {
-    const currentLocation = fromLocation || userLocation;
-    if (!map.current || !currentLocation) return;
-
-    // НЕ закрываем popup - он уже установлен в обработчике клика
-    // setPopupShop(null);
-    // setPopupPosition(null);
-
-    // Строим маршрут
-    const routeGeometry = await buildRoute(currentLocation, [shop.lng, shop.lat]);
-    
-    if (routeGeometry) {
-      // Сохраняем координаты маршрута для анимации эхо
-      const coordinates = routeGeometry.coordinates;
-
-      // Удаляем старый маршрут если есть
-      if (map.current.getSource('route')) {
-        map.current.removeLayer('route-glow');
-        map.current.removeLayer('route-base');
-        map.current.removeLayer('route-vein');
-        map.current.removeSource('route');
-      }
-
-      // Добавляем источник маршрута
-      map.current.addSource('route', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          properties: {},
-          geometry: routeGeometry
-        }
-      });
-
-      // Свечение маршрута (оранжевое) - начинаем с нулевой прозрачности
-      map.current.addLayer({
-        id: 'route-glow',
-        type: 'line',
-        source: 'route',
-        paint: {
-          'line-color': '#cc5500',
-          'line-width': 20,
-          'line-blur': 15,
-          'line-opacity': 0
-        }
-      });
-
-      // Основная линия маршрута (оранжевая) - начинаем с нулевой прозрачности
-      map.current.addLayer({
-        id: 'route-base',
-        type: 'line',
-        source: 'route',
-        paint: {
-          'line-color': '#cc6600',
-          'line-width': 10,
-          'line-opacity': 0
-        }
-      });
-
-      // Центральная вена маршрута (холодный белый) - начинаем невидимой
-      map.current.addLayer({
-        id: 'route-vein',
-        type: 'line',
-        source: 'route',
-        paint: {
-          'line-color': '#f0f8ff',
-          'line-width': 3,
-          'line-opacity': 0
-        }
-      });
-
-      // Летим к магазину
-      map.current.flyTo({
-        center: [shop.lng, shop.lat],
-        zoom: 15,
-        duration: 2500,
-        essential: true
-      });
-
-      // Обновляем маркер пользователя
-      if (!userMarker.current) {
-        const el = document.createElement('div');
-        el.className = 'user-marker';
-        el.innerHTML = `
-          <div style="position: relative; width: 30px; height: 30px;">
-            <div style="position: absolute; width: 30px; height: 30px; background: #f0f8ff; border-radius: 50%; opacity: 0.3; animation: pulse 2s infinite;"></div>
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 16px; height: 16px; background: #f0f8ff; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 15px #f0f8ff;"></div>
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 8px; height: 8px; background: white; border-radius: 50%;"></div>
-          </div>
-          <style>
-            @keyframes pulse {
-              0%, 100% { transform: scale(1); opacity: 0.3; }
-              50% { transform: scale(2); opacity: 0; }
-            }
-          </style>
-        `;
-        
-        userMarker.current = new maplibregl.Marker({ element: el })
-          .setLngLat(currentLocation)
-          .addTo(map.current);
-      } else {
-        // Обновляем позицию если маркер уже есть
-        userMarker.current.setLngLat(currentLocation);
-      }
-
-      // Камера переместится к магазину после завершения первой фазы эхо
-    }
-  };
-
-
-
-  // Сброс (показать все дороги обратно)
+  // Сброс
   const resetRoute = () => {
     if (!map.current) return;
-
-    // Останавливаем анимацию пульсации
-    if (shopPulseAnimationId.current !== null) {
-      cancelAnimationFrame(shopPulseAnimationId.current);
-      shopPulseAnimationId.current = null;
-    }
-
-
-
-    // Показываем дороги обратно
-    toggleRoadsVisibility(true);
-
-    // Восстанавливаем opacity для всех слоев дорог (возвращаем к базовой яркости 60%)
-    const roadLayers = [
-      'roads-motorway-glow-outer',
-      'roads-motorway-base',
-      'roads-motorway-inner',
-      'roads-motorway-vein',
-      'roads-major-glow',
-      'roads-major-base',
-      'roads-major-inner',
-      'roads-major-vein',
-      'roads-minor-glow',
-      'roads-minor-base',
-      'roads-minor-inner',
-      'roads-minor-vein'
-    ];
-
-    roadLayers.forEach(layerId => {
-      if (map.current?.getLayer(layerId)) {
-        map.current.setPaintProperty(layerId, 'line-opacity', 0.6);
-      }
-    });
-
-    // Восстанавливаем opacity всех маркеров
-    const allMarkers = document.querySelectorAll('.map-marker');
-    allMarkers.forEach((marker) => {
-      (marker as HTMLElement).style.opacity = '1';
-    });
-
-    // Удаляем маршрут
-    if (map.current.getSource('route')) {
-      map.current.removeLayer('route-glow');
-      map.current.removeLayer('route-base');
-      map.current.removeLayer('route-vein');
-      map.current.removeSource('route');
-    }
 
     setSelectedShop(null);
     setPopupShop(null);
     setPopupPosition(null);
-    setSelectedCategory(null); // Сбрасываем выбранную категорию
 
     // Показываем все магазины города на карте
     if (shops.length > 0) {
@@ -1042,30 +867,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       onFlyToShop(flyToShop);
     }
   }, [onFlyToShop, shops]);
-
-  // Переместить камеру к местоположению пользователя
-  const flyToUserLocation = () => {
-    if (!map.current || !userLocation) return;
-    
-    map.current.flyTo({
-      center: userLocation,
-      zoom: 15,
-      duration: 1500,
-      essential: true
-    });
-  };
-
-  // Получение геолокации пользователя
-  useEffect(() => {
-    requestLocation()
-      .then((location) => {
-        setUserLocation([location.longitude, location.latitude]);
-        hapticFeedback('success');
-      })
-      .catch(() => {
-        hapticFeedback('error');
-      });
-  }, []);
 
   // useEffect для создания карты при монтировании (БЕЗ зависимости от selectedCity)
   useEffect(() => {
@@ -1197,11 +998,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         clearTimeout(zoomDebounceTimer.current);
       }
       
-      // При zoom < 9.6 город считается покинутым → сброс категории
+      // При zoom < 9.6 город считается покинутым
       if (zoom < 9.6) {
-        if (selectedCategoryRef.current) {
-          setSelectedCategory(null);
-        }
         // Сбрасываем наклон камеры при выходе из города
         if (map.current.getPitch() !== 0) {
           map.current.easeTo({ pitch: 0, duration: 1000, essential: true });
@@ -1298,11 +1096,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         essential: true
       });
     }
-  }, [selectedCity]);
-
-  // Сброс выбранной категории при смене города
-  useEffect(() => {
-    setSelectedCategory(null);
   }, [selectedCity]);
 
   // Загрузка дорог при обновлении списка cities
@@ -1643,39 +1436,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
   useEffect(() => {
     if (!map.current) return;
 
-    const handleMapClick = (e: any) => {
-      if (isSelectingLocation) {
-        const { lng, lat } = e.lngLat;
-        setUserLocation([lng, lat]);
-        
-        // Удаляем старый маркер пользователя
-        if (userMarker.current) {
-          userMarker.current.remove();
-        }
-
-        // Создаем новый маркер
-        const el = document.createElement('div');
-        el.className = 'user-marker';
-        el.innerHTML = `
-          <div style="position: relative; width: 30px; height: 30px;">
-            <div style="position: absolute; width: 30px; height: 30px; background: #f0f8ff; border-radius: 50%; opacity: 0.3; animation: pulse 2s infinite;"></div>
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 16px; height: 16px; background: #f0f8ff; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 15px #f0f8ff;"></div>
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 8px; height: 8px; background: white; border-radius: 50%;"></div>
-          </div>
-          <style>
-            @keyframes pulse {
-              0%, 100% { transform: scale(1); opacity: 0.3; }
-              50% { transform: scale(2); opacity: 0; }
-            }
-          </style>
-        `;
-        
-        userMarker.current = new maplibregl.Marker({ element: el })
-          .setLngLat([lng, lat])
-          .addTo(map.current!);
-
-        setIsSelectingLocation(false);
-      } else if (popupShop) {
+    const handleMapClick = () => {
+      if (popupShop) {
         // Закрываем popup при клике на карту
         setPopupShop(null);
         setPopupPosition(null);
@@ -1684,13 +1446,10 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
 
     map.current.on('click', handleMapClick);
 
-    // Изменяем курсор при режиме выбора
-    map.current.getCanvas().style.cursor = isSelectingLocation ? 'crosshair' : '';
-
     return () => {
       map.current?.off('click', handleMapClick);
     };
-  }, [isSelectingLocation, selectedShop, popupShop]);
+  }, [popupShop]);
 
   // Фильтрация магазинов по городу - используем useMemo для оптимизации
   const cityShops = useMemo(() => {
@@ -1715,21 +1474,9 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       return [];
     }
     
-    // Если категория НЕ выбрана - показываем первый магазин каждой категории (для выбора)
-    if (!selectedCategory) {
-      const categoryMap = new Map<string, Shop>();
-      cityShops.forEach(shop => {
-        const category = shop.category || 'Без категории';
-        if (!categoryMap.has(category)) {
-          categoryMap.set(category, shop);
-        }
-      });
-      return Array.from(categoryMap.values());
-    }
-    
-    // Если выбрана конкретная категория - показываем все магазины этой категории
-    return cityShops.filter(shop => shop.category === selectedCategory);
-  }, [selectedCity, cityShops, selectedCategory, currentZoom]);
+    // Показываем все магазины города
+    return cityShops;
+  }, [selectedCity, cityShops, currentZoom]);
   
 
   useEffect(() => {
@@ -1792,14 +1539,11 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         const labelOpacity = 1;
         const labelDisplay = 'block';
         
-        // Определяем текст маркера: категория или название магазина
-        const isCategoryMode = !selectedCategory;
-        const markerText = isCategoryMode ? (shop.category || 'Без категории') : shop.name;
+        // Используем название магазина
+        const markerText = shop.name;
         
-        // Получаем счетчик пользователей
-        const shopUserCount = isCategoryMode 
-          ? getCount(stats, 'category', `${shop.city}|${shop.category || 'Без категории'}`)
-          : getCount(stats, 'shop', shop.id);
+        // Получаем счетчик пользователей для магазина
+        const shopUserCount = getCount(stats, 'shop', shop.id);
         
         el.innerHTML = `
           <div class="shop-label" style="
@@ -1836,16 +1580,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         const handleShopClick = async (e: Event) => {
           e.stopPropagation();
           
-          // Проверяем актуальное значение категории в момент клика
-          const currentCategoryMode = !selectedCategoryRef.current;
-          
-          // Если это режим категорий - выбираем категорию вместо открытия магазина
-          if (currentCategoryMode) {
-            const category = shop.category || 'Без категории';
-            setSelectedCategory(category);
-            return;
-          }
-          
           // Показываем popup с карточкой магазина БЕЗ зума и импульса
           const point = map.current!.project([shop.lng, shop.lat]);
           setPopupPosition({ x: point.x, y: point.y });
@@ -1881,10 +1615,10 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
           <div class="map-marker__pulse"></div>
         `;
         
-        el.addEventListener('click', async (e) => {
+        el.addEventListener('click', (e) => {
           e.stopPropagation();
           
-          // Центрируем камеру на кластере
+          // Центрируем камеру на кластере и показываем список магазинов
           if (map.current) {
             map.current.flyTo({
               center: [lng, lat],
@@ -1893,36 +1627,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
             });
           }
           
-          const currentLocation = userLocationRef.current;
-          if (!currentLocation) {
-            // Если нет местоположения - просто показываем список
-            setClusterShops(clusterShops);
-            return;
-          }
-          
-          // Находим ближайший магазин из кластера
-          let nearestShop = clusterShops[0];
-          let minDistance = Math.hypot(
-            nearestShop.lat - currentLocation[1],
-            nearestShop.lng - currentLocation[0]
-          );
-          
-          clusterShops.forEach(shop => {
-            const distance = Math.hypot(
-              shop.lat - currentLocation[1],
-              shop.lng - currentLocation[0]
-            );
-            if (distance < minDistance) {
-              minDistance = distance;
-              nearestShop = shop;
-            }
-          });
-          
-          // Строим маршрут к ближайшему
-          setSelectedShop(nearestShop);
-          await showRouteToShop(nearestShop, currentLocation);
-          
-          // И показываем список для выбора другого
           setClusterShops(clusterShops);
         });
 
@@ -2018,7 +1722,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       markers.current = [];
       map.current?.off('zoom', updateMarkersVisibility);
     };
-  }, [displayShops, onShopClick, currentZoom, selectedCategory, stats]);
+  }, [displayShops, onShopClick, currentZoom, stats]);
 
   // Отдельный useEffect для применения затемнения при выборе магазина
   useEffect(() => {
@@ -2089,96 +1793,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       
       {/* Фильтр категорий УДАЛЕН - показываются все магазины города */}
 
-      {/* Кнопка возврата к местоположению */}
-      {userLocation && !isSelectingLocation && (
-        <button 
-          className="fly-to-location-btn"
-          onClick={flyToUserLocation}
-          style={{
-            position: 'absolute',
-            top: '80px',
-            left: '20px',
-            padding: '12px 20px',
-            background: 'rgba(240, 248, 255, 0.9)',
-            border: 'none',
-            borderRadius: '8px',
-            color: '#000',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            zIndex: 1000,
-            boxShadow: '0 0 20px rgba(240, 248, 255, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}
-        >
-          🎯 Моё местоположение
-        </button>
-      )}
-
-      {/* Подсказка при выборе местоположения */}
-      {isSelectingLocation && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            padding: '12px 24px',
-            background: 'rgba(240, 248, 255, 0.95)',
-            border: 'none',
-            borderRadius: '8px',
-            color: '#000',
-            fontWeight: 'bold',
-            zIndex: 1000,
-            boxShadow: '0 0 20px rgba(240, 248, 255, 0.5)',
-            textAlign: 'center'
-          }}
-        >
-          👆 Нажмите на карту, чтобы указать ваше местоположение
-          <button
-            onClick={() => setIsSelectingLocation(false)}
-            style={{
-              marginLeft: '15px',
-              padding: '4px 12px',
-              background: '#000',
-              color: '#f0f8ff',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Отмена
-          </button>
-        </div>
-      )}
-      
-      {/* Кнопка сброса маршрута */}
-      {selectedShop && (
-        <button 
-          className="reset-route-btn"
-          onClick={resetRoute}
-          style={{
-            position: 'absolute',
-            top: '20px',
-            left: '20px',
-            padding: '12px 20px',
-            background: 'rgba(240, 248, 255, 0.9)',
-            border: 'none',
-            borderRadius: '8px',
-            color: '#000',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            zIndex: 1000,
-            boxShadow: '0 0 20px rgba(240, 248, 255, 0.5)'
-          }}
-        >
-          ← Показать все дороги
-        </button>
-      )}
-
       {/* Кнопка выбора города */}
-      {!selectedShop && !isSelectingLocation && !isShopInfoOpen && (
+      {!selectedShop && !isShopInfoOpen && (
         <button 
           className="city-selector-btn"
           onClick={() => setShowCitySelector(true)}
@@ -2204,22 +1820,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         >
           {selectedCity ? selectedCity.name : 'ВОЙТИ В ГОРОД'}
         </button>
-      )}
-      
-      {/* Радиальный акселератор категорий */}
-      {!selectedShop && !isSelectingLocation && !isShopInfoOpen && categoriesInCity.length > 1 && currentZoom >= 9.6 && (
-        <CategoryModal
-          categories={categoriesInCity}
-          selectedCategory={selectedCategory}
-          cityName={selectedCity?.name}
-          onSelectCategory={(category) => {
-            setSelectedCategory(category);
-          }}
-          onClose={() => {
-            // Закрытие означает возврат к выбору категорий
-            setSelectedCategory(null);
-          }}
-        />
       )}
       
       {/* Popup карточка магазина */}
@@ -2393,18 +1993,12 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
                   <div 
                     key={shop.id} 
                     className="cluster-shop-card"
-                    onClick={async () => {
+                    onClick={() => {
                       hapticFeedback('medium');
-                      const currentLocation = userLocationRef.current;
-                      if (!currentLocation) {
-                        hapticFeedback('error');
-                        alert('Сначала укажите ваше местоположение на карте');
-                        return;
-                      }
                       setClusterShops(null);
                       setSelectedShop(shop);
+                      onShopClick?.(shop);
                       hapticFeedback('success');
-                      await showRouteToShop(shop, currentLocation);
                     }}
                   >
                     {photoUrl && (
