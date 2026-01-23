@@ -6,6 +6,7 @@ import type { Shop } from '../types';
 import { neonRoadsStyle } from '../styles/neon-roads-style';
 import { hapticFeedback } from '../utils/telegram';
 import { CITIES_WITHOUT_SHOPS_VISUAL, CITY_COORDS } from '../api/client';
+import { CategoryModal } from './CategoryModal';
 import { CityModal } from './CityModal';
 import { useActivity, getCount } from '../hooks/useActivity';
 import { getUserCounterHTML } from './UserCounter';
@@ -32,6 +33,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
   const [popupShop, setPopupShop] = useState<Shop | null>(null);
   const [popupPosition, setPopupPosition] = useState<{ x: number; y: number } | null>(null);
   const [currentZoom, setCurrentZoom] = useState<number>(5);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const selectedCategoryRef = useRef<string | null>(null);
   const [showEmptyCityModal, setShowEmptyCityModal] = useState<boolean>(false);
 
   // Отслеживание активности на карте (передаем текущий город)
@@ -46,6 +49,16 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       onResetMap(resetRoute);
     }
   }, [onResetMap]);
+
+  // Синхронизируем ref с state
+  useEffect(() => {
+    selectedCategoryRef.current = selectedCategory;
+  }, [selectedCategory]);
+
+  // Сброс выбранной категории при смене города
+  useEffect(() => {
+    setSelectedCategory(null);
+  }, [selectedCity]);
 
 
   // Обновляем позицию popup при движении/масштабировании карты
@@ -955,8 +968,11 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         clearTimeout(zoomDebounceTimer.current);
       }
       
-      // При zoom < 9.6 город считается покинутым
+      // При zoom < 9.6 город считается покинутым → сброс категории
       if (zoom < 9.6) {
+        if (selectedCategoryRef.current) {
+          setSelectedCategory(null);
+        }
         // Сбрасываем наклон камеры при выходе из города
         if (map.current.getPitch() !== 0) {
           map.current.easeTo({ pitch: 0, duration: 1000, essential: true });
@@ -1420,9 +1436,30 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       return [];
     }
     
-    // Показываем все магазины города
-    return cityShops;
-  }, [selectedCity, cityShops, currentZoom]);
+    // Если категория НЕ выбрана - показываем первый магазин каждой категории (для выбора)
+    if (!selectedCategory) {
+      const categoryMap = new Map<string, Shop>();
+      cityShops.forEach(shop => {
+        const category = shop.category || 'Без категории';
+        if (!categoryMap.has(category)) {
+          categoryMap.set(category, shop);
+        }
+      });
+      return Array.from(categoryMap.values());
+    }
+    
+    // Если выбрана конкретная категория - показываем все магазины этой категории
+    return cityShops.filter(shop => shop.category === selectedCategory);
+  }, [selectedCity, cityShops, selectedCategory, currentZoom]);
+  
+  // Список категорий в текущем городе
+  const categoriesInCity = useMemo(() => {
+    const categories = new Set<string>();
+    cityShops.forEach(shop => {
+      categories.add(shop.category || 'Без категории');
+    });
+    return Array.from(categories);
+  }, [cityShops]);
   
 
   useEffect(() => {
@@ -1485,8 +1522,9 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         const labelOpacity = 1;
         const labelDisplay = 'block';
         
-        // Используем название магазина
-        const markerText = shop.name;
+        // Определяем текст маркера: категория или название магазина
+        const isCategoryMode = !selectedCategory;
+        const markerText = isCategoryMode ? (shop.category || 'Без категории') : shop.name;
         
         // Получаем счетчик пользователей для магазина
         const shopUserCount = getCount(stats, 'shop', shop.id);
@@ -1525,6 +1563,16 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         
         const handleShopClick = async (e: Event) => {
           e.stopPropagation();
+          
+          // Проверяем актуальное значение категории в момент клика
+          const currentCategoryMode = !selectedCategoryRef.current;
+          
+          // Если это режим категорий - выбираем категорию вместо открытия магазина
+          if (currentCategoryMode) {
+            const category = shop.category || 'Без категории';
+            setSelectedCategory(category);
+            return;
+          }
           
           // Показываем popup с карточкой магазина БЕЗ зума и импульса
           const point = map.current!.project([shop.lng, shop.lat]);
@@ -1957,6 +2005,22 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
             </div>
           </div>
         </div>
+      )}
+
+      {/* Радиальный акселератор категорий */}
+      {!selectedShop && !isShopInfoOpen && categoriesInCity.length > 1 && currentZoom >= 9.6 && (
+        <CategoryModal
+          categories={categoriesInCity}
+          selectedCategory={selectedCategory}
+          cityName={selectedCity?.name}
+          onSelectCategory={(category) => {
+            setSelectedCategory(category);
+          }}
+          onClose={() => {
+            // Закрытие означает возврат к выбору категорий
+            setSelectedCategory(null);
+          }}
+        />
       )}
 
       {/* Модал выбора города */}
