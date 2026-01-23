@@ -591,7 +591,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     try {
       // Сначала пробуем загрузить статический файл (мгновенно)
       const citySlug = cityToSlug(targetCity.name);
-      const staticUrl = `/roads/${citySlug}.geojson`;
+      // Используем import.meta.env.BASE_URL для корректного пути на GitHub Pages
+      const staticUrl = `${import.meta.env.BASE_URL}roads/${citySlug}.geojson`;
       
       
       let response = await fetch(staticUrl);
