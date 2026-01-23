@@ -1257,6 +1257,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       zoom: 3, // Минимальный зум чтобы показать всю страну
       minZoom: 3, // Минимальный zoom
       maxZoom: 18,
+      pitch: 0, // Начальный наклон камеры
+      maxPitch: 85, // Максимальный наклон
       attributionControl: false
     });
 
@@ -1375,6 +1377,10 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       if (zoom < 9.6) {
         if (selectedCategoryRef.current) {
           setSelectedCategory(null);
+        }
+        // Сбрасываем наклон камеры при выходе из города
+        if (map.current.getPitch() !== 0) {
+          map.current.easeTo({ pitch: 0, duration: 1000 });
         }
       }
       
