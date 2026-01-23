@@ -104,15 +104,17 @@ export function App() {
         isShopInfoOpen={selectedShop !== null}
       />
       {selectedShop && <ShopInfo shop={selectedShop} onClose={() => setSelectedShop(null)} />}
-      <SearchBar 
-        onShopSelect={handleShopClick}
-        shops={shops}
-        onFlyToShop={(shop) => {
-          if (mapFlyToShopRef.current) {
-            mapFlyToShopRef.current(shop);
-          }
-        }}
-      />
+      {!isLoading && shops.length > 0 && (
+        <SearchBar 
+          onShopSelect={handleShopClick}
+          shops={shops}
+          onFlyToShop={(shop) => {
+            if (mapFlyToShopRef.current) {
+              mapFlyToShopRef.current(shop);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
