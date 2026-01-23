@@ -767,6 +767,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     // 1. Летим к городу
     const cityCoords = CITY_COORDS[shop.city];
     if (cityCoords) {
+      map.current.stop(); // Останавливаем предыдущую анимацию
       map.current.easeTo({
         center: [cityCoords.lng, cityCoords.lat],
         zoom: 7,
@@ -774,7 +775,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         essential: true
       });
       
-      await new Promise(resolve => setTimeout(resolve, 1200));
+      await new Promise(resolve => setTimeout(resolve, 1500));
     }
     
     // 2. Зумим на категорию (магазины этой категории в городе)
@@ -783,6 +784,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       const bounds = new maplibregl.LngLatBounds();
       categoryShops.forEach(s => bounds.extend([s.lng, s.lat]));
       
+      map.current.stop(); // Останавливаем предыдущую анимацию
       map.current.fitBounds(bounds, {
         padding: 80,
         maxZoom: 12,
@@ -790,10 +792,11 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         essential: true
       });
       
-      await new Promise(resolve => setTimeout(resolve, 1200));
+      await new Promise(resolve => setTimeout(resolve, 1500));
     }
     
     // 3. Летим к конкретному магазину
+    map.current.stop(); // Останавливаем предыдущую анимацию
     map.current.easeTo({
       center: [shop.lng, shop.lat],
       zoom: 15,
@@ -802,7 +805,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     });
     
     // Подсвечиваем магазин
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    await new Promise(resolve => setTimeout(resolve, 1500));
     
     // Находим маркер магазина и подсвечиваем его
     const shopMarker = markers.current.find(m => {
@@ -1045,6 +1048,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       map.current.setMaxZoom(newMaxZoom);
       
       // Летим к городу с наклоном камеры 60 градусов
+      map.current.stop(); // Останавливаем предыдущую анимацию
       map.current.easeTo({
         center: [selectedCity.lng, selectedCity.lat],
         zoom: targetZoom,
@@ -1568,6 +1572,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
           
           // Центрируем камеру на кластере и показываем список магазинов
           if (map.current) {
+            map.current.stop(); // Останавливаем предыдущую анимацию
             map.current.easeTo({
               center: [lng, lat],
               zoom: 15,
@@ -1984,6 +1989,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               const targetZoom = 12;
               
               // CRITICAL: Используем easeTo вместо flyTo для поддержки pitch
+              map.current.stop(); // Останавливаем предыдущую анимацию
               map.current.easeTo({
                 center: [fullCity.lng, fullCity.lat],
                 zoom: targetZoom,
