@@ -37,7 +37,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
   const [isSelectingLocation, setIsSelectingLocation] = useState(false);
   const [popupShop, setPopupShop] = useState<Shop | null>(null);
   const [popupPosition, setPopupPosition] = useState<{ x: number; y: number } | null>(null);
-  const [echoWave, setEchoWave] = useState<{ x: number; y: number; radius: number; angle: number; opacity?: number } | null>(null);
   const [currentZoom, setCurrentZoom] = useState<number>(5);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const selectedCategoryRef = useRef<string | null>(null);
@@ -864,8 +863,13 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         }
       });
 
-      // Запускаем анимацию эхолокации и рисования маршрута
-      animateEchoAndRoute(coordinates, currentLocation, shop);
+      // Летим к магазину
+      map.current.flyTo({
+        center: [shop.lng, shop.lat],
+        zoom: 15,
+        duration: 2500,
+        essential: true
+      });
 
       // Обновляем маркер пользователя
       if (!userMarker.current) {
@@ -897,185 +901,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     }
   };
 
-  // Анимация эхо-волны расширяющейся полукругом от местоположения до магазина
-  const animateEchoAndRoute = (_coordinates: number[][], startLocation: [number, number], targetShop: Shop) => {
-    if (!map.current) return;
 
-    // Сразу начинаем перемещение камеры к магазину (2.5 секунды)
-    map.current.flyTo({
-      center: [targetShop.lng, targetShop.lat],
-      zoom: 15,
-      duration: 2500,
-      essential: true
-    });
-
-    // Вычисляем угол направления от пользователя к магазину
-    const calculateAngle = () => {
-      const startPoint = map.current!.project(startLocation);
-      const targetPoint = map.current!.project([targetShop.lng, targetShop.lat]);
-      return Math.atan2(targetPoint.y - startPoint.y, targetPoint.x - startPoint.x);
-    };
-
-    // Вычисляем расстояние до магазина в пикселях
-    const calculateMaxRadius = () => {
-      const startPoint = map.current!.project(startLocation);
-      const targetPoint = map.current!.project([targetShop.lng, targetShop.lat]);
-      return Math.hypot(targetPoint.x - startPoint.x, targetPoint.y - startPoint.y);
-    };
-
-    let angle = calculateAngle();
-    let maxRadius = calculateMaxRadius();
-
-    const duration = 1250; // 1.25 секунды (ускорено на 50%)
-    const startTime = performance.now();
-
-    const animate = (currentTime: number) => {
-      if (!map.current) return;
-
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-
-      // Обновляем позицию и параметры при каждом кадре (на случай движения карты)
-      const startPoint = map.current.project(startLocation);
-      angle = calculateAngle();
-      maxRadius = calculateMaxRadius();
-
-      // Вычисляем текущий радиус волны (расширяется до магазина)
-      const currentRadius = progress * maxRadius;
-      
-      // Обновляем позицию и размер волны с углом направления
-      setEchoWave({ 
-        x: startPoint.x, 
-        y: startPoint.y, 
-        radius: currentRadius,
-        angle: angle
-      });
-
-      // Постепенно затемняем обычные дороги на 90%
-      const roadLayers = [
-        'roads-motorway-glow-outer',
-        'roads-motorway-base',
-        'roads-motorway-inner',
-        'roads-motorway-vein',
-        'roads-major-glow',
-        'roads-major-base',
-        'roads-major-inner',
-        'roads-major-vein',
-        'roads-minor-glow',
-        'roads-minor-base',
-        'roads-minor-inner',
-        'roads-minor-vein'
-      ];
-
-      roadLayers.forEach(layerId => {
-        if (map.current?.getLayer(layerId)) {
-          // Затемняем постепенно от 60% до 6% (90% затемнение)
-          map.current.setPaintProperty(
-            layerId,
-            'line-opacity',
-            0.6 * (1 - (progress * 0.9))
-          );
-        }
-      });
-
-      // Затемняем все маркеры кроме выбранного
-      const allMarkers = document.querySelectorAll('.map-marker');
-      allMarkers.forEach((marker) => {
-        const markerShopId = marker.getAttribute('data-shop-id');
-        const shopIds = markerShopId?.split(',') || [];
-        const containsSelectedShop = shopIds.includes(targetShop.id.toString());
-        
-        if (!containsSelectedShop) {
-          // Затемняем невыбранные маркеры
-          (marker as HTMLElement).style.opacity = (1 - (progress * 0.9)).toString();
-        }
-      });
-
-      // Постепенно проявляем маршрут
-      if (map.current?.getLayer('route-glow')) {
-        map.current.setPaintProperty('route-glow', 'line-opacity', progress * 0.5);
-      }
-      if (map.current?.getLayer('route-base')) {
-        map.current.setPaintProperty('route-base', 'line-opacity', progress * 0.6);
-      }
-      if (map.current?.getLayer('route-vein')) {
-        map.current.setPaintProperty('route-vein', 'line-opacity', progress * 0.6);
-      }
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        // После завершения анимации оставляем маркеры затемнёнными
-        const allMarkers = document.querySelectorAll('.map-marker');
-        allMarkers.forEach((marker) => {
-          const markerShopId = marker.getAttribute('data-shop-id');
-          const shopIds = markerShopId?.split(',') || [];
-          const containsSelectedShop = shopIds.includes(targetShop.id.toString());
-          
-          if (!containsSelectedShop) {
-            (marker as HTMLElement).style.opacity = '0.1';
-          }
-        });
-        
-        // Запускаем обратный импульс от магазина
-        animateShopResponse(startLocation, targetShop);
-      }
-    };
-
-    requestAnimationFrame(animate);
-  };
-
-  // Анимация обратного импульса от магазина (бесконечная пульсация)
-  const animateShopResponse = (_startLocation: [number, number], targetShop: Shop) => {
-    if (!map.current) return;
-
-    // Останавливаем предыдущую анимацию если есть
-    if (shopPulseAnimationId.current !== null) {
-      cancelAnimationFrame(shopPulseAnimationId.current);
-    }
-
-    const pulseDuration = 1500; // 1.5 секунды на один цикл расширения
-    let pulseStartTime = performance.now();
-
-    const animatePulse = (currentTime: number) => {
-      if (!map.current) return;
-
-      const elapsed = (currentTime - pulseStartTime) % pulseDuration;
-      const progress = elapsed / pulseDuration;
-
-      // Расширение от 0 до 150px без возврата
-      const shopPoint = map.current.project([targetShop.lng, targetShop.lat]);
-      const responseRadius = progress * 150;
-      
-      // Затухание волны по мере расширения (от 0.7 до 0)
-      const fadeOpacity = 0.7 * (1 - progress);
-
-      // Показываем расширяющийся импульс от магазина с затуханием
-      setEchoWave({
-        x: shopPoint.x,
-        y: shopPoint.y,
-        radius: responseRadius,
-        angle: 0, // Полный круг
-        opacity: fadeOpacity
-      });
-
-      // Продолжаем анимацию
-      shopPulseAnimationId.current = requestAnimationFrame(animatePulse);
-    };
-
-    // Усиливаем проявление маршрута до максимума
-    if (map.current?.getLayer('route-glow')) {
-      map.current.setPaintProperty('route-glow', 'line-opacity', 0.8);
-    }
-    if (map.current?.getLayer('route-base')) {
-      map.current.setPaintProperty('route-base', 'line-opacity', 1);
-    }
-    if (map.current?.getLayer('route-vein')) {
-      map.current.setPaintProperty('route-vein', 'line-opacity', 1);
-    }
-
-    shopPulseAnimationId.current = requestAnimationFrame(animatePulse);
-  };
 
   // Сброс (показать все дороги обратно)
   const resetRoute = () => {
@@ -1087,8 +913,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       shopPulseAnimationId.current = null;
     }
 
-    // Убираем эхо
-    setEchoWave(null);
+
 
     // Показываем дороги обратно
     toggleRoadsVisibility(true);
@@ -1132,7 +957,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     setSelectedShop(null);
     setPopupShop(null);
     setPopupPosition(null);
-    setEchoWave(null);
     setSelectedCategory(null); // Сбрасываем выбранную категорию
 
     // Показываем все магазины города на карте
@@ -2398,120 +2222,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         />
       )}
       
-      {/* Эхо-волна визуализация (полукруг для прямого импульса, круг для обратного) */}
-      {echoWave && (
-        <div
-          style={{
-            position: 'absolute',
-            left: `${echoWave.x}px`,
-            top: `${echoWave.y}px`,
-            pointerEvents: 'none',
-            zIndex: 1500,
-            transform: `rotate(${echoWave.angle}rad)`
-          }}
-        >
-          {/* Основной круг/полукруг */}
-          <div
-            style={{
-              position: 'absolute',
-              width: `${echoWave.radius * 2}px`,
-              height: `${echoWave.radius * 2}px`,
-              marginLeft: `-${echoWave.radius}px`,
-              marginTop: `-${echoWave.radius}px`,
-              borderRadius: '50%',
-              border: '5px solid white',
-              boxShadow: '0 0 40px #f0f8ff, inset 0 0 40px rgba(240, 248, 255, 0.3)',
-              opacity: echoWave.opacity ?? 0.7,
-              // Если angle === 0, показываем полный круг (обратный импульс), иначе полукруг
-              clipPath: echoWave.angle === 0 ? 'none' : 'polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%)'
-            }}
-          />
-          {/* Второй круг/полукруг с задержкой */}
-          <div
-            style={{
-              position: 'absolute',
-              width: `${Math.max(0, echoWave.radius * 2 - 30)}px`,
-              height: `${Math.max(0, echoWave.radius * 2 - 30)}px`,
-              marginLeft: `-${Math.max(0, echoWave.radius - 15)}px`,
-              marginTop: `-${Math.max(0, echoWave.radius - 15)}px`,
-              borderRadius: '50%',
-              border: '4px solid #ff8c00',
-              boxShadow: '0 0 30px #ff8c00',
-              opacity: (echoWave.opacity ?? 0.7) * 0.85,
-              clipPath: echoWave.angle === 0 ? 'none' : 'polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%)'
-            }}
-          />
-          {/* Лучи эхолокации (только для направленного импульса) */}
-          {echoWave.angle !== 0 && (
-            <>
-              <div
-                style={{
-                  position: 'absolute',
-                  width: `${echoWave.radius}px`,
-                  height: '3px',
-                  marginTop: '-1.5px',
-                  background: 'linear-gradient(to right, #f0f8ff, transparent)',
-                  boxShadow: '0 0 15px #f0f8ff',
-                  opacity: 0.8
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  width: `${echoWave.radius}px`,
-                  height: '2px',
-                  marginTop: '-1px',
-                  background: 'linear-gradient(to right, #f0f8ff, transparent)',
-                  boxShadow: '0 0 10px #f0f8ff',
-                  opacity: 0.6,
-                  transform: 'rotate(30deg)',
-                  transformOrigin: 'left center'
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  width: `${echoWave.radius}px`,
-                  height: '2px',
-                  marginTop: '-1px',
-                  background: 'linear-gradient(to right, #f0f8ff, transparent)',
-                  boxShadow: '0 0 10px #f0f8ff',
-                  opacity: 0.6,
-                  transform: 'rotate(-30deg)',
-                  transformOrigin: 'left center'
-                }}
-              />
-            </>
-          )}
-          {/* Центральная точка излучения */}
-          <div
-            style={{
-              position: 'absolute',
-              width: '25px',
-              height: '25px',
-              marginLeft: '-12.5px',
-              marginTop: '-12.5px',
-              borderRadius: '50%',
-              background: 'radial-gradient(circle, #f0f8ff, rgba(240, 248, 255, 0))',
-              boxShadow: '0 0 40px #f0f8ff',
-              animation: 'echoPulse 0.4s ease-in-out infinite'
-            }}
-          />
-          <style>{`
-            @keyframes echoPulse {
-              0%, 100% {
-                transform: scale(1);
-                opacity: 1;
-              }
-              50% {
-                transform: scale(1.4);
-                opacity: 0.6;
-              }
-            }
-          `}</style>
-        </div>
-      )}
-      
       {/* Popup карточка магазина */}
       {popupShop && popupPosition && (
         <>
@@ -2627,9 +2337,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
                 cancelAnimationFrame(shopPulseAnimationId.current);
                 shopPulseAnimationId.current = null;
               }
-              
-              // Убираем эхо
-              setEchoWave(null);
               
               // Закрываем popup
               setPopupShop(null);
