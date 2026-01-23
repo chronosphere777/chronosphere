@@ -1325,14 +1325,15 @@ export function MapView({ onShopClick, onResetMap, isShopInfoOpen = false }: Map
         setShowCityLabels(false);
       }
       
-      // Управляем видимостью белых неоновых дорог между городами без магазинов (zoom 3+)
+      // Управляем видимостью белых неоновых дорог между городами без магазинов
+      // Показываем только при zoom 3-9.6 (когда видны таблички городов)
       if (map.current.getSource('no-shops-inter-city-roads')) {
-        if (zoom >= 3) {
-          // Показываем белые неоновые дороги на zoom 3 и выше
+        if (zoom >= 3 && zoom < 9.6) {
+          // Показываем белые неоновые дороги вместе с табличками городов
           map.current.setLayoutProperty('no-shops-inter-city-roads-glow', 'visibility', 'visible');
           map.current.setLayoutProperty('no-shops-inter-city-roads', 'visibility', 'visible');
         } else {
-          // Скрываем на других зумах
+          // Скрываем на других зумах (и при входе в город)
           map.current.setLayoutProperty('no-shops-inter-city-roads-glow', 'visibility', 'none');
           map.current.setLayoutProperty('no-shops-inter-city-roads', 'visibility', 'none');
         }
