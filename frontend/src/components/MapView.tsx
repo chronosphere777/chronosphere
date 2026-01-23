@@ -1047,12 +1047,11 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       // Обновляем maxZoom карты
       map.current.setMaxZoom(newMaxZoom);
       
-      // Летим к городу с наклоном камеры 60 градусов
+      // Летим к городу
       map.current.stop(); // Останавливаем предыдущую анимацию
       map.current.easeTo({
         center: [selectedCity.lng, selectedCity.lat],
         zoom: targetZoom,
-        pitch: 60,
         duration: 1500,
         essential: true
       });
@@ -1190,7 +1189,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         map.current.easeTo({
           center: [city.lng, city.lat],
           zoom: targetZoom,
-          pitch: 60,
           duration: 2000,
           essential: true
         });
@@ -1988,12 +1986,11 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               skipAutoLoadRef.current = true;
               const targetZoom = 12;
               
-              // CRITICAL: Используем easeTo вместо flyTo для поддержки pitch
+              // Летим к городу
               map.current.stop(); // Останавливаем предыдущую анимацию
               map.current.easeTo({
                 center: [fullCity.lng, fullCity.lat],
                 zoom: targetZoom,
-                pitch: 60,
                 duration: 2000,
                 essential: true
               });
