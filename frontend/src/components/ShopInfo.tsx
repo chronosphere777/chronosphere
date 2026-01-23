@@ -45,6 +45,11 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
 
+  // DEBUG: Version indicator
+  useEffect(() => {
+    console.log('🔵 ShopInfo loaded - VERSION 2.0 with logging');
+  }, []);
+
   // Отслеживание активности в магазине
   const { stats } = useActivity({
     shop_id: shop.id,
@@ -216,6 +221,22 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
         height: '100%'
       }}>
         
+        {/* DEBUG VERSION INDICATOR */}
+        <div style={{
+          position: 'absolute',
+          top: '5px',
+          right: '5px',
+          background: 'rgba(0, 255, 0, 0.8)',
+          color: 'black',
+          padding: '3px 8px',
+          borderRadius: '4px',
+          fontSize: '11px',
+          fontWeight: 'bold',
+          zIndex: 9999
+        }}>
+          v2.0-debug
+        </div>
+
         {/* Карточка магазина - закреплена */}
         <div style={{
           flexShrink: 0,
