@@ -1380,7 +1380,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         }
         // Сбрасываем наклон камеры при выходе из города
         if (map.current.getPitch() !== 0) {
-          map.current.easeTo({ pitch: 0, duration: 1000 });
+          map.current.easeTo({ pitch: 0, duration: 1000, essential: true });
         }
       }
       
@@ -1470,7 +1470,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         center: [selectedCity.lng, selectedCity.lat],
         zoom: targetZoom,
         pitch: 60,
-        duration: 1500
+        duration: 1500,
+        essential: true
       });
     }
   }, [selectedCity]);
@@ -1612,7 +1613,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
           center: [city.lng, city.lat],
           zoom: targetZoom,
           pitch: 60,
-          duration: 2000
+          duration: 2000,
+          essential: true
         });
         
         // Устанавливаем отложенную загрузку дорог ПОСЛЕ окончания анимации
