@@ -1787,7 +1787,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     }
 
     // Создаем GeoJSON с полигонами зданий вокруг магазинов
-    const buildingSize = 0.0001; // Размер здания (примерно 10 метров)
+    const buildingSize = 0.0004; // Размер здания в 4 раза больше (примерно 40 метров)
     const features = displayShops.map(shop => {
       const lng = shop.lng;
       const lat = shop.lat;
@@ -1795,7 +1795,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       return {
         type: 'Feature' as const,
         properties: {
-          height: 50 + Math.random() * 100, // Высота от 50 до 150 метров
+          height: 1000 + Math.random() * 2000, // Высота от 1000 до 3000 метров
           shopId: shop.id
         },
         geometry: {
