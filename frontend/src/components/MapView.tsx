@@ -1466,7 +1466,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       map.current.setMaxZoom(newMaxZoom);
       
       // Летим к городу с наклоном камеры 60 градусов
-      map.current.flyTo({
+      map.current.easeTo({
         center: [selectedCity.lng, selectedCity.lat],
         zoom: targetZoom,
         pitch: 60,
@@ -1608,7 +1608,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         // Клик на город → зум 12 для показа категорий
         const targetZoom = 12;
         
-        map.current.flyTo({
+        map.current.easeTo({
           center: [city.lng, city.lat],
           zoom: targetZoom,
           pitch: 60,
