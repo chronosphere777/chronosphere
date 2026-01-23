@@ -2,16 +2,18 @@ import { useEffect, useState, useRef } from 'preact/hooks';
 import { MapView } from './components/MapView';
 import { LoadingScreen } from './components/LoadingScreen';
 import { ShopInfo } from './components/ShopInfo';
+import { SearchBar } from './components/SearchBar';
 import { useMapStore } from './store/mapStore';
 import { api, updateCitiesWithoutShops } from './api/client';
 import type { Shop, City } from './types';
 import { showBackButton, hideBackButton, hapticFeedback } from './utils/telegram';
 
 export function App() {
-  const { setCities, setShops } = useMapStore();
+  const { setCities, setShops, shops } = useMapStore();
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const mapResetRef = useRef<(() => void) | null>(null);
+  const mapFlyToShopRef = useRef<((shop: Shop) => void) | null>(null);
 
   // Функция для загрузки и обновления данных (используется при первой загрузке и периодически)
   const loadData = async () => {
@@ -98,9 +100,19 @@ export function App() {
       <MapView 
         onShopClick={handleShopClick} 
         onResetMap={(fn) => { mapResetRef.current = fn; }}
+        onFlyToShop={(fn) => { mapFlyToShopRef.current = fn; }}
         isShopInfoOpen={selectedShop !== null}
       />
       {selectedShop && <ShopInfo shop={selectedShop} onClose={() => setSelectedShop(null)} />}
+      <SearchBar 
+        onShopSelect={handleShopClick}
+        shops={shops}
+        onFlyToShop={(shop) => {
+          if (mapFlyToShopRef.current) {
+            mapFlyToShopRef.current(shop);
+          }
+        }}
+      />
     </div>
   );
 }

@@ -207,5 +207,10 @@ export const api = {
   getCategories: async (city: string) => {
     const response = await fetch(`${API_BASE}/api/categories/${city}`);
     return response.json();
+  },
+  
+  searchProducts: async (query: string, sort: 'relevance' | 'price_asc' | 'price_desc' = 'relevance') => {
+    const response = await fetch(`${API_BASE}/api/search-products?q=${encodeURIComponent(query)}&sort=${sort}`);
+    return response.json();
   }
 };

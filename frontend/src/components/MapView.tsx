@@ -14,10 +14,11 @@ import { getUserCounterHTML } from './UserCounter';
 interface MapViewProps {
   onShopClick?: (shop: Shop) => void;
   onResetMap?: (resetFn: () => void) => void;
+  onFlyToShop?: (flyFn: (shop: Shop) => void) => void;
   isShopInfoOpen?: boolean;
 }
 
-export function MapView({ onShopClick, onResetMap, isShopInfoOpen = false }: MapViewProps) {
+export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen = false }: MapViewProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const pixelOverlayRef = useRef<HTMLCanvasElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
@@ -1149,6 +1150,74 @@ export function MapView({ onShopClick, onResetMap, isShopInfoOpen = false }: Map
       });
     }
   };
+
+  // Анимированный перелет к магазину через город и категорию
+  const flyToShop = async (shop: Shop) => {
+    if (!map.current) return;
+    
+    // Сбрасываем текущее состояние
+    resetRoute();
+    
+    // 1. Летим к городу
+    const cityCoords = CITY_COORDS[shop.city];
+    if (cityCoords) {
+      map.current.flyTo({
+        center: [cityCoords.lng, cityCoords.lat],
+        zoom: 7,
+        duration: 1000,
+        essential: true
+      });
+      
+      await new Promise(resolve => setTimeout(resolve, 1200));
+    }
+    
+    // 2. Зумим на категорию (магазины этой категории в городе)
+    const categoryShops = shops.filter(s => s.city === shop.city && s.category === shop.category);
+    if (categoryShops.length > 0) {
+      const bounds = new maplibregl.LngLatBounds();
+      categoryShops.forEach(s => bounds.extend([s.lng, s.lat]));
+      
+      map.current.fitBounds(bounds, {
+        padding: 80,
+        maxZoom: 12,
+        duration: 1000,
+        essential: true
+      });
+      
+      await new Promise(resolve => setTimeout(resolve, 1200));
+    }
+    
+    // 3. Летим к конкретному магазину
+    map.current.flyTo({
+      center: [shop.lng, shop.lat],
+      zoom: 15,
+      duration: 1000,
+      essential: true
+    });
+    
+    // Подсвечиваем магазин
+    await new Promise(resolve => setTimeout(resolve, 1200));
+    
+    // Находим маркер магазина и подсвечиваем его
+    const shopMarker = markers.current.find(m => {
+      const lngLat = m.getLngLat();
+      return Math.abs(lngLat.lng - shop.lng) < 0.0001 && Math.abs(lngLat.lat - shop.lat) < 0.0001;
+    });
+    
+    if (shopMarker) {
+      const el = shopMarker.getElement();
+      if (el) {
+        el.style.animation = 'pulse 1s ease-in-out 3';
+      }
+    }
+  };
+
+  // Передаем функцию flyToShop родительскому компоненту
+  useEffect(() => {
+    if (onFlyToShop) {
+      onFlyToShop(flyToShop);
+    }
+  }, [onFlyToShop, shops]);
 
   // Переместить камеру к местоположению пользователя
   const flyToUserLocation = () => {
