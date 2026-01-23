@@ -1495,10 +1495,11 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       // Обновляем maxZoom карты
       map.current.setMaxZoom(newMaxZoom);
       
-      // Летим к городу
+      // Летим к городу с наклоном камеры 60 градусов
       map.current.flyTo({
         center: [selectedCity.lng, selectedCity.lat],
         zoom: targetZoom,
+        pitch: 60,
         duration: 1500
       });
     }
