@@ -25,12 +25,9 @@ export function useActivity(options: UseActivityOptions = {}) {
   const [stats, setStats] = useState<ActivityStats | null>(null);
   const userId = getUserId();
 
-  // ВРЕМЕННО ОТКЛЮЧЕНО: endpoints активности не развернуты на сервере
-  const ACTIVITY_ENABLED = false;
-
   // Отправка текущего контекста на сервер
   const updateContext = useCallback(() => {
-    if (!options.enabled || !ACTIVITY_ENABLED) return;
+    if (!options.enabled) return;
     
     trackActivity({
       user_id: userId,
@@ -42,7 +39,6 @@ export function useActivity(options: UseActivityOptions = {}) {
 
   // Получение статистики
   const updateStats = useCallback(async () => {
-    if (!ACTIVITY_ENABLED) return;
     const data = await getActivityStats();
     if (data) setStats(data);
   }, []);

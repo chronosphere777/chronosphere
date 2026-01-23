@@ -2,14 +2,13 @@ import { useEffect, useState, useRef } from 'preact/hooks';
 import { MapView } from './components/MapView';
 import { LoadingScreen } from './components/LoadingScreen';
 import { ShopInfo } from './components/ShopInfo';
-import { SearchBar } from './components/SearchBar';
 import { useMapStore } from './store/mapStore';
 import { api, updateCitiesWithoutShops } from './api/client';
 import type { Shop, City } from './types';
 import { showBackButton, hideBackButton, hapticFeedback } from './utils/telegram';
 
 export function App() {
-  const { setCities, setShops, shops } = useMapStore();
+  const { setCities, setShops } = useMapStore();
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const mapResetRef = useRef<(() => void) | null>(null);
@@ -100,10 +99,6 @@ export function App() {
         onShopClick={handleShopClick} 
         onResetMap={(fn) => { mapResetRef.current = fn; }}
         isShopInfoOpen={selectedShop !== null}
-      />
-      <SearchBar 
-        onShopSelect={handleShopClick}
-        shops={shops}
       />
       {selectedShop && <ShopInfo shop={selectedShop} onClose={() => setSelectedShop(null)} />}
     </div>
