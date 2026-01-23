@@ -1762,8 +1762,89 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       markers.current.forEach(marker => marker.remove());
       markers.current = [];
       map.current?.off('zoom', updateMarkersVisibility);
+      
+      // Удаляем 3D здания при размонтировании
+      if (map.current?.getSource('shop-buildings')) {
+        if (map.current.getLayer('shop-buildings-3d')) {
+          map.current.removeLayer('shop-buildings-3d');
+        }
+        map.current.removeSource('shop-buildings');
+      }
     };
   }, [displayShops, onShopClick, currentZoom, stats]);
+
+  // 3D экструзия зданий для магазинов выбранной категории
+  useEffect(() => {
+    if (!map.current || !selectedCategory || displayShops.length === 0) {
+      // Удаляем 3D здания если категория не выбрана
+      if (map.current?.getSource('shop-buildings')) {
+        if (map.current.getLayer('shop-buildings-3d')) {
+          map.current.removeLayer('shop-buildings-3d');
+        }
+        map.current.removeSource('shop-buildings');
+      }
+      return;
+    }
+
+    // Создаем GeoJSON с полигонами зданий вокруг магазинов
+    const buildingSize = 0.0001; // Размер здания (примерно 10 метров)
+    const features = displayShops.map(shop => {
+      const lng = shop.lng;
+      const lat = shop.lat;
+      
+      return {
+        type: 'Feature' as const,
+        properties: {
+          height: 50 + Math.random() * 100, // Высота от 50 до 150 метров
+          shopId: shop.id
+        },
+        geometry: {
+          type: 'Polygon' as const,
+          coordinates: [[
+            [lng - buildingSize, lat - buildingSize],
+            [lng + buildingSize, lat - buildingSize],
+            [lng + buildingSize, lat + buildingSize],
+            [lng - buildingSize, lat + buildingSize],
+            [lng - buildingSize, lat - buildingSize]
+          ]]
+        }
+      };
+    });
+
+    const buildingsGeoJSON = {
+      type: 'FeatureCollection' as const,
+      features
+    };
+
+    // Удаляем старый источник если есть
+    if (map.current.getSource('shop-buildings')) {
+      if (map.current.getLayer('shop-buildings-3d')) {
+        map.current.removeLayer('shop-buildings-3d');
+      }
+      map.current.removeSource('shop-buildings');
+    }
+
+    // Добавляем источник с данными зданий
+    map.current.addSource('shop-buildings', {
+      type: 'geojson',
+      data: buildingsGeoJSON
+    });
+
+    // Добавляем 3D слой
+    map.current.addLayer({
+      id: 'shop-buildings-3d',
+      type: 'fill-extrusion',
+      source: 'shop-buildings',
+      paint: {
+        'fill-extrusion-color': '#f0f8ff',
+        'fill-extrusion-height': ['get', 'height'],
+        'fill-extrusion-base': 0,
+        'fill-extrusion-opacity': 0.6,
+        'fill-extrusion-vertical-gradient': true
+      }
+    });
+
+  }, [selectedCategory, displayShops]);
 
   // Отдельный useEffect для применения затемнения при выборе магазина
   useEffect(() => {
