@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import preact from '@preact/preset-vite'
 
 export default defineConfig({
-  base: '/',
+  base: '/chronosphere/',
   plugins: [preact()],
   build: {
     target: 'es2015',
