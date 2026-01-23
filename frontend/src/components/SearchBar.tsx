@@ -18,15 +18,24 @@ interface SearchBarProps {
   onShopSelect: (shop: Shop) => void;
   shops: Shop[];
   onFlyToShop?: (shop: Shop) => void;
+  onCloseCatalog?: () => void;
 }
 
-export function SearchBar({ onShopSelect, shops, onFlyToShop }: SearchBarProps) {
+export function SearchBar({ onShopSelect, shops, onFlyToShop, onCloseCatalog }: SearchBarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState<'relevance' | 'price_asc' | 'price_desc'>('relevance');
   const searchTimeoutRef = useRef<number | null>(null);
+
+  // Закрываем каталог при открытии поиска
+  const handleOpenSearch = () => {
+    if (onCloseCatalog) {
+      onCloseCatalog();
+    }
+    setIsOpen(true);
+  };
 
   useEffect(() => {
     if (query.length < 2) {
@@ -68,6 +77,11 @@ export function SearchBar({ onShopSelect, shops, onFlyToShop }: SearchBarProps) 
       setQuery('');
       setResults([]);
       
+      // Закрываем текущий каталог если открыт
+      if (onCloseCatalog) {
+        onCloseCatalog();
+      }
+      
       // Сначала летим к магазину на карте
       if (onFlyToShop) {
         onFlyToShop(shop);
@@ -84,7 +98,7 @@ export function SearchBar({ onShopSelect, shops, onFlyToShop }: SearchBarProps) 
   if (!isOpen) {
     return (
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpenSearch}
         style={{
           position: 'fixed',
           bottom: '80px',

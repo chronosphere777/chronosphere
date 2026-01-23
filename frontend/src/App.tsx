@@ -113,6 +113,7 @@ export function App() {
               mapFlyToShopRef.current(shop);
             }
           }}
+          onCloseCatalog={() => setSelectedShop(null)}
         />
       )}
     </div>
