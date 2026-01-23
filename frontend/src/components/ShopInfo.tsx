@@ -110,8 +110,30 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
     if (breadcrumbs.length === 0) {
       onClose();
     } else {
-      const newBreadcrumbs = [...breadcrumbs];
+      // Пробуем вернуться на один уровень назад
+      let newBreadcrumbs = [...breadcrumbs];
       newBreadcrumbs.pop();
+      
+      // Проверяем, есть ли на этом уровне категории или товары
+      while (newBreadcrumbs.length > 0) {
+        const testPath = newBreadcrumbs.join(' > ');
+        
+        // Проверяем есть ли точное совпадение (товары)
+        const hasExactMatch = products.some(p => p.category_path === testPath);
+        if (hasExactMatch) {
+          break;
+        }
+        
+        // Проверяем есть ли подкатегории
+        const hasSubcategories = products.some(p => p.category_path.startsWith(testPath + ' > '));
+        if (hasSubcategories) {
+          break;
+        }
+        
+        // Если на этом уровне ничего нет, поднимаемся еще выше
+        newBreadcrumbs.pop();
+      }
+      
       setBreadcrumbs(newBreadcrumbs);
       setCurrentPath(newBreadcrumbs.join(' > '));
     }
@@ -302,9 +324,36 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 <span key={i}>
                   {' > '}
                   <span onClick={() => {
+                    // При клике на хлебную крошку переходим на этот уровень
                     const newBreadcrumbs = breadcrumbs.slice(0, i + 1);
-                    setBreadcrumbs(newBreadcrumbs);
-                    setCurrentPath(newBreadcrumbs.join(' > '));
+                    const targetPath = newBreadcrumbs.join(' > ');
+                    
+                    // Проверяем, есть ли на целевом уровне контент
+                    const hasExactMatch = products.some(p => p.category_path === targetPath);
+                    const hasSubcategories = products.some(p => p.category_path.startsWith(targetPath + ' > '));
+                    
+                    if (hasExactMatch || hasSubcategories) {
+                      setBreadcrumbs(newBreadcrumbs);
+                      setCurrentPath(targetPath);
+                    } else {
+                      // Если на целевом уровне нет контента, ищем ближайший родительский с контентом
+                      let testBreadcrumbs = [...newBreadcrumbs];
+                      while (testBreadcrumbs.length > 0) {
+                        const testPath = testBreadcrumbs.join(' > ');
+                        const testHasExact = products.some(p => p.category_path === testPath);
+                        const testHasSub = products.some(p => p.category_path.startsWith(testPath + ' > '));
+                        
+                        if (testHasExact || testHasSub) {
+                          setBreadcrumbs(testBreadcrumbs);
+                          setCurrentPath(testPath);
+                          return;
+                        }
+                        testBreadcrumbs.pop();
+                      }
+                      // Если ничего не нашли, возвращаемся на главную
+                      setBreadcrumbs([]);
+                      setCurrentPath('');
+                    }
                   }}>
                     {crumb}
                   </span>
