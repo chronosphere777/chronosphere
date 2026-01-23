@@ -29,14 +29,6 @@ export function SearchBar({ onShopSelect, shops, onFlyToShop, onCloseCatalog }: 
   const [sortBy, setSortBy] = useState<'relevance' | 'price_asc' | 'price_desc'>('relevance');
   const searchTimeoutRef = useRef<number | null>(null);
 
-  // Закрываем каталог при открытии поиска
-  const handleOpenSearch = () => {
-    if (onCloseCatalog) {
-      onCloseCatalog();
-    }
-    setIsOpen(true);
-  };
-
   useEffect(() => {
     if (query.length < 2) {
       setResults([]);
@@ -98,7 +90,7 @@ export function SearchBar({ onShopSelect, shops, onFlyToShop, onCloseCatalog }: 
   if (!isOpen) {
     return (
       <button
-        onClick={handleOpenSearch}
+        onClick={() => setIsOpen(true)}
         style={{
           position: 'fixed',
           bottom: '80px',

@@ -343,7 +343,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
           fontSize: '16px',
           fontWeight: 'bold',
           cursor: 'pointer',
-          zIndex: 1001,
+          zIndex: 900,
           boxShadow: '0 4px 20px rgba(240, 248, 255, 0.3)',
           transition: 'all 0.2s ease'
         }}
