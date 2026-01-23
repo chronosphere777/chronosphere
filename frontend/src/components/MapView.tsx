@@ -1468,6 +1468,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       mapInstance.flyTo({
         center: [selectedCity.lng, selectedCity.lat],
         zoom: 12,
+        pitch: 60,
         duration: 2000
       });
       
@@ -1647,6 +1648,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         map.current.flyTo({
           center: [city.lng, city.lat],
           zoom: targetZoom,
+          pitch: 60,
           duration: 2000
         });
         
