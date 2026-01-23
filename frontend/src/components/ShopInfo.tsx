@@ -67,6 +67,9 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
 
   // Получить уникальные пути на текущем уровне
   const getCurrentLevelItems = (): ListItem[] => {
+    console.log('[GET_ITEMS] Current path:', currentPath);
+    console.log('[GET_ITEMS] Current breadcrumbs:', breadcrumbs);
+    
     if (!currentPath) {
       // Корневой уровень - показываем первый уровень категорий
       const uniquePaths = new Set<string>();
@@ -74,6 +77,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
         const firstLevel = p.category_path.split(' > ')[0];
         if (firstLevel) uniquePaths.add(firstLevel);
       });
+      console.log('[GET_ITEMS] Root level categories:', Array.from(uniquePaths));
       return Array.from(uniquePaths).map(path => ({ path, isLeaf: false }));
     }
 
@@ -93,15 +97,18 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
 
     // Если есть подкатегории - показываем их
     if (uniquePaths.size > 0) {
+      console.log('[GET_ITEMS] Found subcategories:', Array.from(uniquePaths));
       return Array.from(uniquePaths).map(path => ({ path, isLeaf: false }));
     }
 
     // Если подкатегорий нет - показываем товары с точным совпадением пути
     const exactMatches = products.filter(p => p.category_path === currentPath);
     if (exactMatches.length > 0) {
+      console.log('[GET_ITEMS] Showing products:', exactMatches.length);
       return exactMatches.map(p => ({ path: currentPath, product: p, isLeaf: true }));
     }
 
+    console.log('[GET_ITEMS] No items found');
     return [];
   };
 
@@ -111,18 +118,24 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
   };
 
   const handleBack = () => {
+    console.log('[BACK] Current breadcrumbs:', breadcrumbs);
+    console.log('[BACK] Current path:', currentPath);
     if (breadcrumbs.length === 0) {
       onClose();
     } else {
       const newBreadcrumbs = [...breadcrumbs];
       newBreadcrumbs.pop();
+      console.log('[BACK] New breadcrumbs after pop:', newBreadcrumbs);
       setBreadcrumbs(newBreadcrumbs);
       setCurrentPath(newBreadcrumbs.join(' > '));
+      console.log('[BACK] New path:', newBreadcrumbs.join(' > '));
     }
   };
 
   const handleNavigate = (path: string) => {
+    console.log('[NAVIGATE] To path:', path);
     const pathParts = path.split(' > ');
+    console.log('[NAVIGATE] Path parts:', pathParts);
     setBreadcrumbs(pathParts);
     setCurrentPath(path);
   };
