@@ -75,7 +75,7 @@ export function SearchBar({ onShopSelect, shops }: SearchBarProps) {
         style={{
           position: 'fixed',
           top: '16px',
-          right: '16px',
+          left: '16px',
           width: '48px',
           height: '48px',
           borderRadius: '50%',
