@@ -45,11 +45,6 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
 
-  // DEBUG: Version indicator
-  useEffect(() => {
-    console.log('🔵 ShopInfo loaded - VERSION 2.0 with logging');
-  }, []);
-
   // Отслеживание активности в магазине
   const { stats } = useActivity({
     shop_id: shop.id,
@@ -72,9 +67,6 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
 
   // Получить уникальные пути на текущем уровне
   const getCurrentLevelItems = (): ListItem[] => {
-    console.log('[GET_ITEMS] Current path:', currentPath);
-    console.log('[GET_ITEMS] Current breadcrumbs:', breadcrumbs);
-    
     if (!currentPath) {
       // Корневой уровень - показываем первый уровень категорий
       const uniquePaths = new Set<string>();
@@ -82,7 +74,6 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
         const firstLevel = p.category_path.split(' > ')[0];
         if (firstLevel) uniquePaths.add(firstLevel);
       });
-      console.log('[GET_ITEMS] Root level categories:', Array.from(uniquePaths));
       return Array.from(uniquePaths).map(path => ({ path, isLeaf: false }));
     }
 
@@ -102,18 +93,15 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
 
     // Если есть подкатегории - показываем их
     if (uniquePaths.size > 0) {
-      console.log('[GET_ITEMS] Found subcategories:', Array.from(uniquePaths));
       return Array.from(uniquePaths).map(path => ({ path, isLeaf: false }));
     }
 
     // Если подкатегорий нет - показываем товары с точным совпадением пути
     const exactMatches = products.filter(p => p.category_path === currentPath);
     if (exactMatches.length > 0) {
-      console.log('[GET_ITEMS] Showing products:', exactMatches.length);
       return exactMatches.map(p => ({ path: currentPath, product: p, isLeaf: true }));
     }
 
-    console.log('[GET_ITEMS] No items found');
     return [];
   };
 
@@ -123,24 +111,18 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
   };
 
   const handleBack = () => {
-    console.log('[BACK] Current breadcrumbs:', breadcrumbs);
-    console.log('[BACK] Current path:', currentPath);
     if (breadcrumbs.length === 0) {
       onClose();
     } else {
       const newBreadcrumbs = [...breadcrumbs];
       newBreadcrumbs.pop();
-      console.log('[BACK] New breadcrumbs after pop:', newBreadcrumbs);
       setBreadcrumbs(newBreadcrumbs);
       setCurrentPath(newBreadcrumbs.join(' > '));
-      console.log('[BACK] New path:', newBreadcrumbs.join(' > '));
     }
   };
 
   const handleNavigate = (path: string) => {
-    console.log('[NAVIGATE] To path:', path);
     const pathParts = path.split(' > ');
-    console.log('[NAVIGATE] Path parts:', pathParts);
     setBreadcrumbs(pathParts);
     setCurrentPath(path);
   };
@@ -214,29 +196,13 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
   }
 
   return (
-    <div className="shop-info-modal" onClick={handleBack}>
-      <div className="shop-info-content" onClick={(e) => e.stopPropagation()} style={{
+    <div className="shop-info-modal">
+      <div className="shop-info-content" style={{
         display: 'flex',
         flexDirection: 'column',
         height: '100%'
       }}>
         
-        {/* DEBUG VERSION INDICATOR */}
-        <div style={{
-          position: 'absolute',
-          top: '5px',
-          right: '5px',
-          background: 'rgba(0, 255, 0, 0.8)',
-          color: 'black',
-          padding: '3px 8px',
-          borderRadius: '4px',
-          fontSize: '11px',
-          fontWeight: 'bold',
-          zIndex: 9999
-        }}>
-          v2.0-debug
-        </div>
-
         {/* Карточка магазина - закреплена */}
         <div style={{
           flexShrink: 0,
