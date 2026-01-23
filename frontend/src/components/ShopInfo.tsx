@@ -77,14 +77,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
       return Array.from(uniquePaths).map(path => ({ path, isLeaf: false }));
     }
 
-    // Проверяем есть ли товары с точным совпадением пути
-    const exactMatches = products.filter(p => p.category_path === currentPath);
-    if (exactMatches.length > 0) {
-      // Это конечный уровень - показываем товары
-      return exactMatches.map(p => ({ path: currentPath, product: p, isLeaf: true }));
-    }
-
-    // Получаем следующий уровень вложенности
+    // Сначала проверяем есть ли подкатегории
     const uniquePaths = new Set<string>();
     const currentDepth = currentPath.split(' > ').length;
     
@@ -98,7 +91,18 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
       }
     });
 
-    return Array.from(uniquePaths).map(path => ({ path, isLeaf: false }));
+    // Если есть подкатегории - показываем их
+    if (uniquePaths.size > 0) {
+      return Array.from(uniquePaths).map(path => ({ path, isLeaf: false }));
+    }
+
+    // Если подкатегорий нет - показываем товары с точным совпадением пути
+    const exactMatches = products.filter(p => p.category_path === currentPath);
+    if (exactMatches.length > 0) {
+      return exactMatches.map(p => ({ path: currentPath, product: p, isLeaf: true }));
+    }
+
+    return [];
   };
 
   // Подсчет товаров в категории
@@ -110,7 +114,6 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
     if (breadcrumbs.length === 0) {
       onClose();
     } else {
-      // Просто возвращаемся на один уровень назад
       const newBreadcrumbs = [...breadcrumbs];
       newBreadcrumbs.pop();
       setBreadcrumbs(newBreadcrumbs);
