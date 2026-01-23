@@ -1449,44 +1449,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     };
   }, []); // Карта создаётся ТОЛЬКО ОДИН РАЗ при монтировании компонента
 
-  // АВТОМАТИЧЕСКОЕ ПРИБЛИЖЕНИЕ К ГОРОДУ ПРИ ПЕРВОМ ЗАПУСКЕ
-  const hasFlownToCity = useRef<boolean>(false);
-  
-  useEffect(() => {
-    // Ждем пока и карта, и город будут готовы
-    if (!map.current || !selectedCity) return;
-    
-    // Проверяем что карта полностью загружена
-    const mapInstance = map.current;
-    
-    const performInitialFly = () => {
-      if (hasFlownToCity.current) return;
-      
-      hasFlownToCity.current = true;
-      
-      // Летим к городу на зум 12
-      mapInstance.flyTo({
-        center: [selectedCity.lng, selectedCity.lat],
-        zoom: 12,
-        pitch: 60,
-        duration: 2000
-      });
-      
-      // Загружаем дороги города
-      skipAutoLoadRef.current = true;
-      pendingCityLoadRef.current = selectedCity;
-    };
-    
-    // Если карта уже загружена - летим сразу
-    if (mapInstance.loaded()) {
-      performInitialFly();
-    } else {
-      // Иначе ждем события load
-      mapInstance.once('load', performInitialFly);
-    }
-  }, [selectedCity]);
-
-  // Отдельный эффект для реакции на изменение selectedCity
+  // Эффект для реакции на изменение selectedCity
   useEffect(() => {
     if (!map.current || !selectedCity) return;
     
