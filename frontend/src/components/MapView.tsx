@@ -1527,9 +1527,21 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         // Получаем счетчик пользователей для магазина
         const shopUserCount = getCount(stats, 'shop', shop.id);
         
-        // Для режима категорий используем 3D кубики
+        // Для режима категорий используем октаэдроны с лучами
         if (isCategoryMode) {
           el.innerHTML = `
+            <div class="neon-beam" style="
+              position: absolute;
+              bottom: 20px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 2px;
+              height: 800px;
+              background: linear-gradient(to top, rgba(240, 248, 255, 0.9), rgba(240, 248, 255, 0));
+              box-shadow: 0 0 10px rgba(240, 248, 255, 0.8), 0 0 20px rgba(240, 248, 255, 0.6);
+              pointer-events: none;
+              z-index: 1;
+            "></div>
             <div class="shop-label" style="
               position: absolute;
               top: -40px;
@@ -1557,28 +1569,52 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
             ">
               ${markerText}
             </div>
-            <div class="cube-3d" style="
-              width: 30px;
-              height: 30px;
+            <div class="octahedron-container" style="
+              width: 40px;
+              height: 40px;
               position: relative;
               transform-style: preserve-3d;
-              animation: rotateCube 8s infinite linear;
+              animation: rotateOctahedron 6s infinite linear;
+              z-index: 5;
             ">
-              <div class="cube-face" style="position: absolute; width: 30px; height: 30px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 0 20px rgba(240, 248, 255, 0.6); transform: translateZ(15px);"></div>
-              <div class="cube-face" style="position: absolute; width: 30px; height: 30px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 0 20px rgba(240, 248, 255, 0.6); transform: rotateY(180deg) translateZ(15px);"></div>
-              <div class="cube-face" style="position: absolute; width: 30px; height: 30px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 0 20px rgba(240, 248, 255, 0.6); transform: rotateY(90deg) translateZ(15px);"></div>
-              <div class="cube-face" style="position: absolute; width: 30px; height: 30px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 0 20px rgba(240, 248, 255, 0.6); transform: rotateY(-90deg) translateZ(15px);"></div>
-              <div class="cube-face" style="position: absolute; width: 30px; height: 30px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 0 20px rgba(240, 248, 255, 0.6); transform: rotateX(90deg) translateZ(15px);"></div>
-              <div class="cube-face" style="position: absolute; width: 30px; height: 30px; background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 0 20px rgba(240, 248, 255, 0.6); transform: rotateX(-90deg) translateZ(15px);"></div>
+              <div class="octahedron-wireframe" style="
+                position: absolute;
+                width: 40px;
+                height: 40px;
+                border: 2px solid rgba(240, 248, 255, 0.8);
+                transform: rotateX(45deg) rotateZ(45deg);
+                box-shadow: 0 0 20px rgba(240, 248, 255, 0.6), inset 0 0 20px rgba(240, 248, 255, 0.3);
+              "></div>
+              <div class="octahedron-wireframe" style="
+                position: absolute;
+                width: 28px;
+                height: 28px;
+                left: 6px;
+                top: 6px;
+                border: 2px solid rgba(240, 248, 255, 0.6);
+                transform: rotateX(45deg) rotateZ(45deg) translateZ(10px);
+                box-shadow: 0 0 15px rgba(240, 248, 255, 0.5);
+              "></div>
             </div>
-            <div class="map-marker__glow"></div>
           `;
         } else {
-          // Для обычных магазинов оставляем стандартный маркер
+          // Для обычных магазинов используем октаэдроны с лучами
           el.innerHTML = `
+            <div class="neon-beam" style="
+              position: absolute;
+              bottom: 20px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 2px;
+              height: 800px;
+              background: linear-gradient(to top, rgba(240, 248, 255, 0.9), rgba(240, 248, 255, 0));
+              box-shadow: 0 0 10px rgba(240, 248, 255, 0.8), 0 0 20px rgba(240, 248, 255, 0.6);
+              pointer-events: none;
+              z-index: 1;
+            "></div>
             <div class="shop-label" style="
               position: absolute;
-              bottom: 35px;
+              top: -40px;
               left: 50%;
               transform: translateX(-50%) scale(${scale});
               background: rgba(0, 0, 0, 0.1);
@@ -1599,12 +1635,37 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               opacity: ${labelOpacity};
               display: ${labelDisplay};
               transition: opacity 0.3s ease;
+              z-index: 10;
             ">
               ${markerText}${getUserCounterHTML(shopUserCount)}
             </div>
-            <div class="map-marker__glow"></div>
-            <div class="map-marker__dot" style="background: rgba(240, 248, 255, ${shop.activity || 0.7}); box-shadow: 0 0 15px rgba(240, 248, 255, ${shop.activity || 0.7})"></div>
-            <div class="map-marker__pulse"></div>
+            <div class="octahedron-container" style="
+              width: 40px;
+              height: 40px;
+              position: relative;
+              transform-style: preserve-3d;
+              animation: rotateOctahedron 6s infinite linear;
+              z-index: 5;
+            ">
+              <div class="octahedron-wireframe" style="
+                position: absolute;
+                width: 40px;
+                height: 40px;
+                border: 2px solid rgba(240, 248, 255, 0.8);
+                transform: rotateX(45deg) rotateZ(45deg);
+                box-shadow: 0 0 20px rgba(240, 248, 255, 0.6), inset 0 0 20px rgba(240, 248, 255, 0.3);
+              "></div>
+              <div class="octahedron-wireframe" style="
+                position: absolute;
+                width: 28px;
+                height: 28px;
+                left: 6px;
+                top: 6px;
+                border: 2px solid rgba(240, 248, 255, 0.6);
+                transform: rotateX(45deg) rotateZ(45deg) translateZ(10px);
+                box-shadow: 0 0 15px rgba(240, 248, 255, 0.5);
+              "></div>
+            </div>
           `;
         }
         
@@ -1763,89 +1824,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       markers.current.forEach(marker => marker.remove());
       markers.current = [];
       map.current?.off('zoom', updateMarkersVisibility);
-      
-      // Удаляем 3D здания при размонтировании
-      if (map.current?.getSource('shop-buildings')) {
-        if (map.current.getLayer('shop-buildings-3d')) {
-          map.current.removeLayer('shop-buildings-3d');
-        }
-        map.current.removeSource('shop-buildings');
-      }
     };
   }, [displayShops, onShopClick, currentZoom, stats]);
-
-  // 3D экструзия зданий для магазинов выбранной категории
-  useEffect(() => {
-    if (!map.current || !selectedCategory || displayShops.length === 0) {
-      // Удаляем 3D здания если категория не выбрана
-      if (map.current?.getSource('shop-buildings')) {
-        if (map.current.getLayer('shop-buildings-3d')) {
-          map.current.removeLayer('shop-buildings-3d');
-        }
-        map.current.removeSource('shop-buildings');
-      }
-      return;
-    }
-
-    // Создаем GeoJSON с полигонами зданий вокруг магазинов
-    const buildingSize = 0.0004; // Размер здания в 4 раза больше (примерно 40 метров)
-    const features = displayShops.map(shop => {
-      const lng = shop.lng;
-      const lat = shop.lat;
-      
-      return {
-        type: 'Feature' as const,
-        properties: {
-          height: 1000 + Math.random() * 2000, // Высота от 1000 до 3000 метров
-          shopId: shop.id
-        },
-        geometry: {
-          type: 'Polygon' as const,
-          coordinates: [[
-            [lng - buildingSize, lat - buildingSize],
-            [lng + buildingSize, lat - buildingSize],
-            [lng + buildingSize, lat + buildingSize],
-            [lng - buildingSize, lat + buildingSize],
-            [lng - buildingSize, lat - buildingSize]
-          ]]
-        }
-      };
-    });
-
-    const buildingsGeoJSON = {
-      type: 'FeatureCollection' as const,
-      features
-    };
-
-    // Удаляем старый источник если есть
-    if (map.current.getSource('shop-buildings')) {
-      if (map.current.getLayer('shop-buildings-3d')) {
-        map.current.removeLayer('shop-buildings-3d');
-      }
-      map.current.removeSource('shop-buildings');
-    }
-
-    // Добавляем источник с данными зданий
-    map.current.addSource('shop-buildings', {
-      type: 'geojson',
-      data: buildingsGeoJSON
-    });
-
-    // Добавляем 3D слой
-    map.current.addLayer({
-      id: 'shop-buildings-3d',
-      type: 'fill-extrusion',
-      source: 'shop-buildings',
-      paint: {
-        'fill-extrusion-color': '#f0f8ff',
-        'fill-extrusion-height': ['get', 'height'],
-        'fill-extrusion-base': 0,
-        'fill-extrusion-opacity': 0.6,
-        'fill-extrusion-vertical-gradient': true
-      }
-    });
-
-  }, [selectedCategory, displayShops]);
 
   // Отдельный useEffect для применения затемнения при выборе магазина
   useEffect(() => {

@@ -689,26 +689,40 @@ items {
   }
 }
 
-/* 3D Cube Animation for Category Markers */
-@keyframes rotateCube {
+/* Octahedron Animation with Neon Beam */
+@keyframes rotateOctahedron {
   from {
-    transform: rotateX(0deg) rotateY(0deg);
+    transform: rotateY(0deg) rotateX(0deg);
   }
   to {
-    transform: rotateX(360deg) rotateY(360deg);
+    transform: rotateY(360deg) rotateX(360deg);
   }
 }
 
-.cube-3d {
+.octahedron-container {
   transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
-.cube-3d:hover {
+.octahedron-container:hover {
   animation-play-state: paused !important;
 }
 
-.cube-face {
-  backface-visibility: hidden;
+.octahedron-wireframe {
+  transform-style: preserve-3d;
+}
+
+.neon-beam {
+  animation: beamPulse 2s ease-in-out infinite;
+}
+
+@keyframes beamPulse {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .activation-ritual__title {
