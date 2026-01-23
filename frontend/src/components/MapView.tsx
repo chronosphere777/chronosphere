@@ -1977,15 +1977,18 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
             const { selectCity } = useMapStore.getState();
             selectCity(fullCity);
             
-            // Зумим к городу
+            // Зумим к городу с углом 60°
             if (map.current) {
               skipAutoLoadRef.current = true;
               const targetZoom = 12;
               
-              map.current.flyTo({
+              // CRITICAL: Используем easeTo вместо flyTo для поддержки pitch
+              map.current.easeTo({
                 center: [fullCity.lng, fullCity.lat],
                 zoom: targetZoom,
-                duration: 2000
+                pitch: 60,
+                duration: 2000,
+                essential: true
               });
               
               pendingCityLoadRef.current = fullCity;
