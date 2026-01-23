@@ -4,7 +4,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Shop } from '../types';
 import { neonRoadsStyle } from '../styles/neon-roads-style';
-import { requestLocation, hapticFeedback } from '../utils/telegram';
+import { hapticFeedback } from '../utils/telegram';
 import { CITIES_WITHOUT_SHOPS_VISUAL, CITY_COORDS } from '../api/client';
 import { CityModal } from './CityModal';
 import { useActivity, getCount } from '../hooks/useActivity';
@@ -69,21 +69,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       }
     };
   }, [popupShop]);
-
-  // Функция построения маршрута через OSRM API
-  const buildRoute = async (from: [number, number], to: [number, number]) => {
-    try {
-      const url = `https://router.project-osrm.org/route/v1/driving/${from[0]},${from[1]};${to[0]},${to[1]}?overview=full&geometries=geojson`;
-      const response = await fetch(url);
-      const data = await response.json();
-      
-      if (data.code === 'Ok' && data.routes.length > 0) {
-        return data.routes[0].geometry;
-      }
-    } catch (error) {
-    }
-    return null;
-  };
 
   // Debounce таймер больше не нужен - дороги загружаются один раз
   const cityRoadsLoaded = useRef<{[key: string]: boolean}>({}); // Флаги для каждого города (полные дороги)
@@ -748,35 +733,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     }
   };
 
-  // Скрыть/показать слои дорог
-  const toggleRoadsVisibility = (visible: boolean) => {
-    if (!map.current) return;
-    
-    const roadLayers = [
-      'roads-motorway-glow-outer',
-      'roads-motorway-base',
-      'roads-motorway-vein',
-      'roads-major-glow',
-      'roads-major-base',
-      'roads-major-vein',
-      'roads-minor-glow',
-      'roads-minor-base',
-      'roads-minor-vein'
-    ];
-
-    roadLayers.forEach(layerId => {
-      if (map.current?.getLayer(layerId)) {
-        map.current.setLayoutProperty(
-          layerId,
-          'visibility',
-          visible ? 'visible' : 'none'
-        );
-      }
-    });
-  };
-
-  // Показать маршрут до магазина
-  // Сброс
+  // Функция сброса выбора магазина и возврата к обзору города
   const resetRoute = () => {
     if (!map.current) return;
 
@@ -1456,15 +1413,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     return selectedCity ? shops.filter(shop => shop.city === selectedCity.name) : [];
   }, [selectedCity, shops]);
   
-  // Вычисляем все уникальные категории в городе
-  const categoriesInCity = useMemo(() => {
-    const categories = new Set<string>();
-    cityShops.forEach(shop => {
-      categories.add(shop.category || 'Без категории');
-    });
-    return Array.from(categories);
-  }, [cityShops]);
-  
   // Группировка по категориям или фильтрация по выбранной категории
   const displayShops = useMemo(() => {
     if (!selectedCity || cityShops.length === 0) return [];
@@ -1931,12 +1879,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               
               // Сохраняем магазин ДО любых изменений состояния
               const shopToOpen = popupShop;
-              
-              // Останавливаем анимацию пульсации
-              if (shopPulseAnimationId.current !== null) {
-                cancelAnimationFrame(shopPulseAnimationId.current);
-                shopPulseAnimationId.current = null;
-              }
               
               // Закрываем popup
               setPopupShop(null);
