@@ -286,7 +286,8 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                   color: '#f0f8ff', 
                   fontSize: '13px',
                   lineHeight: '1.4',
-                  opacity: 0.9
+                  opacity: 0.9,
+                  whiteSpace: 'pre-line'
                 }}>
                   {shop.description}
                 </div>

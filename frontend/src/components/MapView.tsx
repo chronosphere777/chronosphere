@@ -2563,7 +2563,8 @@ export function MapView({ onShopClick, onResetMap, isShopInfoOpen = false }: Map
               marginBottom: '6px',
               fontSize: '8px',
               lineHeight: '1.3',
-              opacity: 0.9
+              opacity: 0.9,
+              whiteSpace: 'pre-line'
             }}>
               {popupShop.description}
             </div>
