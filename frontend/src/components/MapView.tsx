@@ -382,6 +382,7 @@ export function MapView({ onShopClick, onResetMap, isShopInfoOpen = false }: Map
       const features: any[] = [];
       const maxDistance = 800; // км - максимальное расстояние для связи
       const connectionsPerCity = 3; // количество ближайших городов для связи
+      const labelRadiusKm = 0.15; // ~150м - расстояние от центра города до края таблички (в км)
       
       // Функция расчета расстояния (примерная)
       const getDistance = (lat1: number, lng1: number, lat2: number, lng2: number) => {
@@ -393,6 +394,27 @@ export function MapView({ onShopClick, onResetMap, isShopInfoOpen = false }: Map
                   Math.sin(dLng/2) * Math.sin(dLng/2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return R * c;
+      };
+      
+      // Функция для сдвига координат от центра города на заданное расстояние
+      const offsetCoordinate = (
+        fromLat: number, 
+        fromLng: number, 
+        toLat: number, 
+        toLng: number, 
+        distanceKm: number
+      ) => {
+        // Вычисляем угол направления
+        const dLat = toLat - fromLat;
+        const dLng = toLng - fromLng;
+        const angle = Math.atan2(dLng, dLat);
+        
+        // Сдвигаем координаты на заданное расстояние в направлении angle
+        const R = 6371; // Радиус Земли в км
+        const offsetLat = fromLat + (distanceKm / R) * (180 / Math.PI) * Math.cos(angle);
+        const offsetLng = fromLng + (distanceKm / R) * (180 / Math.PI) * Math.sin(angle) / Math.cos(fromLat * Math.PI / 180);
+        
+        return [offsetLng, offsetLat];
       };
       
       // Для каждого города находим ближайшие города
@@ -413,13 +435,26 @@ export function MapView({ onShopClick, onResetMap, isShopInfoOpen = false }: Map
           const connectionKey = [city1.name, city2.name].sort().join('|');
           if (!addedConnections.has(connectionKey)) {
             addedConnections.add(connectionKey);
+            
+            // Сдвигаем начальную и конечную точки линии к краям табличек городов
+            const startCoord = offsetCoordinate(
+              city1.lat, city1.lng, 
+              city2.lat, city2.lng, 
+              labelRadiusKm
+            );
+            const endCoord = offsetCoordinate(
+              city2.lat, city2.lng, 
+              city1.lat, city1.lng, 
+              labelRadiusKm
+            );
+            
             features.push({
               type: 'Feature',
               geometry: {
                 type: 'LineString',
                 coordinates: [
-                  [city1.lng, city1.lat],
-                  [city2.lng, city2.lat]
+                  startCoord,
+                  endCoord
                 ]
               },
               properties: {}
