@@ -767,7 +767,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     // 1. Летим к городу
     const cityCoords = CITY_COORDS[shop.city];
     if (cityCoords) {
-      map.current.easeTo({
+      map.current.flyTo({
         center: [cityCoords.lng, cityCoords.lat],
         zoom: 7,
         duration: 1000,
@@ -794,7 +794,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     }
     
     // 3. Летим к конкретному магазину
-    map.current.easeTo({
+    map.current.flyTo({
       center: [shop.lng, shop.lat],
       zoom: 15,
       duration: 1000,
@@ -1045,7 +1045,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       map.current.setMaxZoom(newMaxZoom);
       
       // Летим к городу
-      map.current.easeTo({
+      map.current.flyTo({
         center: [selectedCity.lng, selectedCity.lat],
         zoom: targetZoom,
         duration: 1500,
@@ -1182,7 +1182,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         // Клик на город → зум 12 для показа категорий
         const targetZoom = 12;
         
-        map.current.easeTo({
+        map.current.flyTo({
           center: [city.lng, city.lat],
           zoom: targetZoom,
           duration: 2000,
@@ -1566,7 +1566,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
           
           // Центрируем камеру на кластере и показываем список магазинов
           if (map.current) {
-            map.current.easeTo({
+            map.current.flyTo({
               center: [lng, lat],
               zoom: 15,
               duration: 1000,
@@ -1982,7 +1982,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               const targetZoom = 12;
               
               // Летим к городу
-              map.current.easeTo({
+              map.current.flyTo({
                 center: [fullCity.lng, fullCity.lat],
                 zoom: targetZoom,
                 duration: 2000,
