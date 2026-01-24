@@ -100,7 +100,7 @@ export function CityModal({ cities, onSelectCity, onClose }: CityModalProps) {
           </button>
         </div>
 
-        {/* Список городов в виде сот */}
+        {/* Список городов в виде сот (3-5-3 паттерн) */}
         <div style={{
           flex: 1,
           overflowY: 'auto',
@@ -108,13 +108,13 @@ export function CityModal({ cities, onSelectCity, onClose }: CityModalProps) {
           padding: '10px 0'
         }}>
           {letters.map(letter => (
-            <div key={letter} style={{ marginBottom: '25px' }}>
+            <div key={letter} style={{ marginBottom: '30px' }}>
               {/* Буква-заголовок */}
               <div style={{
                 color: '#fff',
                 fontSize: '20px',
                 fontWeight: '600',
-                marginBottom: '15px',
+                marginBottom: '20px',
                 textShadow: '0 0 10px rgba(255, 255, 255, 0.6)',
                 borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
                 paddingBottom: '4px'
@@ -122,83 +122,103 @@ export function CityModal({ cities, onSelectCity, onClose }: CityModalProps) {
                 {letter}
               </div>
               
-              {/* Города в виде сот - 3 ряда */}
+              {/* Соты в паттерне 3-5-3 */}
               <div style={{
                 display: 'flex',
-                flexWrap: 'wrap',
-                gap: '8px',
-                marginLeft: '-4px'
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '0'
               }}>
-                {citiesByLetter[letter].map((city, index) => {
-                  const cityUserCount = getCount(stats, 'city', city.name);
-                  // Определяем позицию в сетке сот
-                  const row = index % 3; // 3 ряда
-                  const isEvenRow = row === 1; // средний ряд немного смещен
+                {(() => {
+                  const cities = citiesByLetter[letter];
+                  const rows: any[][] = [];
+                  let currentIndex = 0;
                   
-                  return (
-                    <div
-                      key={city.name}
-                      style={{
-                        position: 'relative',
-                        marginLeft: isEvenRow ? '50px' : '0',
-                        marginBottom: '-12px'
-                      }}
-                    >
-                      <button
-                        onClick={() => {
-                          onSelectCity(city);
-                          onClose();
-                        }}
+                  // Распределяем города по рядам (3-5-3-5-3...)
+                  while (currentIndex < cities.length) {
+                    const rowIndex = rows.length;
+                    const isMiddleRow = rowIndex % 2 === 1;
+                    const rowSize = isMiddleRow ? 5 : 3;
+                    rows.push(cities.slice(currentIndex, currentIndex + rowSize));
+                    currentIndex += rowSize;
+                  }
+                  
+                  return rows.map((row, rowIndex) => {
+                    const isMiddleRow = rowIndex % 2 === 1;
+                    
+                    return (
+                      <div
+                        key={rowIndex}
                         style={{
-                          position: 'relative',
-                          width: '110px',
-                          height: '64px',
-                          background: 'rgba(255, 255, 255, 0.08)',
-                          backdropFilter: 'blur(10px)',
-                          border: '1.5px solid rgba(255, 255, 255, 0.3)',
-                          clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
-                          color: '#fff',
-                          fontSize: '13px',
-                          fontWeight: '300',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease',
                           display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '4px',
-                          padding: '8px',
-                          textAlign: 'center',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap'
-                        }}
-                        onMouseEnter={(e) => {
-                          const target = e.currentTarget as HTMLButtonElement;
-                          target.style.background = 'rgba(255, 255, 255, 0.2)';
-                          target.style.borderColor = 'rgba(255, 255, 255, 0.6)';
-                          target.style.transform = 'scale(1.08)';
-                          target.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.4)';
-                        }}
-                        onMouseLeave={(e) => {
-                          const target = e.currentTarget as HTMLButtonElement;
-                          target.style.background = 'rgba(255, 255, 255, 0.08)';
-                          target.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-                          target.style.transform = 'scale(1)';
-                          target.style.boxShadow = 'none';
+                          gap: '6px',
+                          marginBottom: '-18px',
+                          marginLeft: isMiddleRow ? '0' : '68px'
                         }}
                       >
-                        <span style={{
-                          maxWidth: '90px',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap'
-                        }}>{city.name}</span>
-                        {cityUserCount > 0 && <UserCounter count={cityUserCount} />}
-                      </button>
-                    </div>
-                  );
-                })}
+                        {row.map(city => {
+                          const cityUserCount = getCount(stats, 'city', city.name);
+                          
+                          return (
+                            <button
+                              key={city.name}
+                              onClick={() => {
+                                onSelectCity(city);
+                                onClose();
+                              }}
+                              style={{
+                                position: 'relative',
+                                width: '120px',
+                                height: '70px',
+                                background: 'rgba(255, 255, 255, 0.08)',
+                                backdropFilter: 'blur(10px)',
+                                border: '1.5px solid rgba(255, 255, 255, 0.3)',
+                                clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
+                                color: '#fff',
+                                fontSize: '12px',
+                                fontWeight: '300',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '4px',
+                                padding: '8px',
+                                textAlign: 'center'
+                              }}
+                              onMouseEnter={(e) => {
+                                const target = e.currentTarget as HTMLButtonElement;
+                                target.style.background = 'rgba(255, 255, 255, 0.2)';
+                                target.style.borderColor = 'rgba(255, 255, 255, 0.6)';
+                                target.style.transform = 'scale(1.08)';
+                                target.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.4)';
+                              }}
+                              onMouseLeave={(e) => {
+                                const target = e.currentTarget as HTMLButtonElement;
+                                target.style.background = 'rgba(255, 255, 255, 0.08)';
+                                target.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                                target.style.transform = 'scale(1)';
+                                target.style.boxShadow = 'none';
+                              }}
+                            >
+                              <span style={{
+                                maxWidth: '100px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                lineHeight: '1.2'
+                              }}>{city.name}</span>
+                              {cityUserCount > 0 && <UserCounter count={cityUserCount} />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    );
+                  });
+                })()}
               </div>
             </div>
           ))}
