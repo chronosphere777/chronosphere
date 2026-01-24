@@ -100,23 +100,21 @@ export function CityModal({ cities, onSelectCity, onClose }: CityModalProps) {
           </button>
         </div>
 
-        {/* Список городов по алфавиту */}
+        {/* Список городов в виде сот */}
         <div style={{
           flex: 1,
           overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
+          overflowX: 'hidden',
           padding: '10px 0'
         }}>
           {letters.map(letter => (
-            <div key={letter}>
+            <div key={letter} style={{ marginBottom: '25px' }}>
               {/* Буква-заголовок */}
               <div style={{
                 color: '#fff',
                 fontSize: '20px',
                 fontWeight: '600',
-                marginBottom: '8px',
+                marginBottom: '15px',
                 textShadow: '0 0 10px rgba(255, 255, 255, 0.6)',
                 borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
                 paddingBottom: '4px'
@@ -124,52 +122,81 @@ export function CityModal({ cities, onSelectCity, onClose }: CityModalProps) {
                 {letter}
               </div>
               
-              {/* Города под этой буквой */}
+              {/* Города в виде сот - 3 ряда */}
               <div style={{
                 display: 'flex',
-                flexDirection: 'column',
-                gap: '8px'
+                flexWrap: 'wrap',
+                gap: '8px',
+                marginLeft: '-4px'
               }}>
-                {citiesByLetter[letter].map(city => {
+                {citiesByLetter[letter].map((city, index) => {
                   const cityUserCount = getCount(stats, 'city', city.name);
+                  // Определяем позицию в сетке сот
+                  const row = index % 3; // 3 ряда
+                  const isEvenRow = row === 1; // средний ряд немного смещен
                   
                   return (
-                    <button
+                    <div
                       key={city.name}
-                      onClick={() => {
-                        onSelectCity(city);
-                        onClose();
-                      }}
                       style={{
-                        padding: '12px 16px',
-                        background: 'rgba(255, 255, 255, 0.08)',
-                        backdropFilter: 'blur(10px)',
-                        border: '1px solid rgba(255, 255, 255, 0.3)',
-                        borderRadius: '12px',
-                        color: '#fff',
-                        fontSize: '16px',
-                        fontWeight: '300',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        textAlign: 'left',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
-                      }}
-                      onMouseEnter={(e) => {
-                        const target = e.currentTarget as HTMLButtonElement;
-                        target.style.background = 'rgba(255, 255, 255, 0.15)';
-                        target.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-                      }}
-                      onMouseLeave={(e) => {
-                        const target = e.currentTarget as HTMLButtonElement;
-                        target.style.background = 'rgba(255, 255, 255, 0.08)';
-                        target.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                        position: 'relative',
+                        marginLeft: isEvenRow ? '50px' : '0',
+                        marginBottom: '-12px'
                       }}
                     >
-                      <span>{city.name}</span>
-                      <UserCounter count={cityUserCount} />
-                    </button>
+                      <button
+                        onClick={() => {
+                          onSelectCity(city);
+                          onClose();
+                        }}
+                        style={{
+                          position: 'relative',
+                          width: '110px',
+                          height: '64px',
+                          background: 'rgba(255, 255, 255, 0.08)',
+                          backdropFilter: 'blur(10px)',
+                          border: '1.5px solid rgba(255, 255, 255, 0.3)',
+                          clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
+                          color: '#fff',
+                          fontSize: '13px',
+                          fontWeight: '300',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '4px',
+                          padding: '8px',
+                          textAlign: 'center',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}
+                        onMouseEnter={(e) => {
+                          const target = e.currentTarget as HTMLButtonElement;
+                          target.style.background = 'rgba(255, 255, 255, 0.2)';
+                          target.style.borderColor = 'rgba(255, 255, 255, 0.6)';
+                          target.style.transform = 'scale(1.08)';
+                          target.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.4)';
+                        }}
+                        onMouseLeave={(e) => {
+                          const target = e.currentTarget as HTMLButtonElement;
+                          target.style.background = 'rgba(255, 255, 255, 0.08)';
+                          target.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                          target.style.transform = 'scale(1)';
+                          target.style.boxShadow = 'none';
+                        }}
+                      >
+                        <span style={{
+                          maxWidth: '90px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}>{city.name}</span>
+                        {cityUserCount > 0 && <UserCounter count={cityUserCount} />}
+                      </button>
+                    </div>
                   );
                 })}
               </div>

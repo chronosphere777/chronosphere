@@ -485,6 +485,7 @@ canvas {
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -544,7 +545,10 @@ items {
   .shop-info__items {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   }
-}x) {
+}
+
+/* Responsive - Tablet (768px-1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
   .city-selector__content {
     max-width: 500px;
   }
@@ -959,37 +963,57 @@ items {
 
 .cluster-modal__shops {
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 16px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: -4px;
 }
 
 .cluster-shop-card {
-  background: rgba(240, 248, 255, 0.05);
-  border: 1px solid rgba(240, 248, 255, 0.3);
-  border-radius: 12px;
-  overflow: hidden;
+  position: relative;
+  width: 130px;
+  height: 150px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  overflow: hidden;
+}
+
+/* Смещение для среднего ряда (каждый 2-й элемент в группе из 3) */
+.cluster-shop-card:nth-child(3n+2) {
+  margin-left: 60px;
+  margin-bottom: -15px;
+}
+
+.cluster-shop-card:nth-child(3n+1), .cluster-shop-card:nth-child(3n) {
+  margin-bottom: -15px;
 }
 
 .cluster-shop-card:hover {
-  background: rgba(240, 248, 255, 0.1);
-  border-color: rgba(240, 248, 255, 0.5);
-  transform: scale(1.02);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
 }
 
 .cluster-shop-card__photo {
-  width: 100%;
-  height: 200px;
+  width: 80px;
+  height: 80px;
   flex-shrink: 0;
   overflow: hidden;
-  border-bottom: 1px solid rgba(240, 248, 255, 0.3);
-  background: rgba(255, 255, 255, 0.03);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  margin-bottom: 8px;
 }
 
 .cluster-shop-card__photo img {
@@ -999,32 +1023,36 @@ items {
 }
 
 .cluster-shop-card__info {
-  padding: 16px;
-  flex: 1;
+  text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: center;
+  gap: 4px;
 }
 
 .cluster-shop-card__info h3 {
   color: #f0f8ff;
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0 0 8px 0;
+  font-size: 12px;
+  font-weight: 500;
+  margin: 0;
   text-shadow: 0 0 10px rgba(240, 248, 255, 0.5);
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
+  line-height: 1.2;
+  max-width: 100px;
 }
 
 .cluster-shop-card__city {
   color: rgba(240, 248, 255, 0.6);
-  font-size: 14px;
+  font-size: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 100px;
 }
 
 /* MapLibre overrides */
