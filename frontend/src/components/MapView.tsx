@@ -1048,39 +1048,37 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
   useEffect(() => {
     if (!map.current || !selectedCity) return;
     
-    // Если это уже загруженный город - переключаемся на него
+    // Загружаем дороги города
     if (cityRoadsLoaded.current[selectedCity.name]) {
       loadCityRoads(selectedCity);
-      
-      // Определяем zoom и maxZoom в зависимости от типа города
-      const isCityWithoutShops = CITIES_WITHOUT_SHOPS_VISUAL.includes(selectedCity.name);
-      const targetZoom = isCityWithoutShops ? 11 : 12;
-      const newMaxZoom = isCityWithoutShops ? 11.5 : 18;
-      
-      // Обновляем maxZoom карты
-      map.current.setMaxZoom(newMaxZoom);
-      
-      // 1. Изменяем pitch на 60 градусов и вращаем на 180
-      const currentBearing = map.current.getBearing();
-      map.current.easeTo({
-        pitch: 60,
-        bearing: currentBearing + 180,
-        duration: 1000,
-        essential: true
-      });
-      
-      // 2. После вращения летим к городу
-      setTimeout(() => {
-        if (map.current) {
-          map.current.flyTo({
-            center: [selectedCity.lng, selectedCity.lat],
-            zoom: targetZoom,
-            duration: 1500,
-            essential: true
-          });
-        }
-      }, 1000);
     }
+    
+    // Определяем zoom и maxZoom в зависимости от типа города
+    const isCityWithoutShops = CITIES_WITHOUT_SHOPS_VISUAL.includes(selectedCity.name);
+    const targetZoom = isCityWithoutShops ? 11 : 12;
+    const newMaxZoom = isCityWithoutShops ? 11.5 : 18;
+    
+    // Обновляем maxZoom карты
+    map.current.setMaxZoom(newMaxZoom);
+    
+    // 1. Изменяем pitch на 60 градусов
+    map.current.easeTo({
+      pitch: 60,
+      duration: 800,
+      essential: true
+    });
+    
+    // 2. После изменения pitch летим к городу
+    setTimeout(() => {
+      if (map.current) {
+        map.current.flyTo({
+          center: [selectedCity.lng, selectedCity.lat],
+          zoom: targetZoom,
+          duration: 1500,
+          essential: true
+        });
+      }
+    }, 800);
   }, [selectedCity]);
 
   // Загрузка дорог при обновлении списка cities
