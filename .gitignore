@@ -20,8 +20,8 @@ README_ROADS.md
 фронтэнд/
 
 # Build артефакты
-frontend/dist/
-dist/
+# frontend/dist/ - теперь коммитим для GitHub Pages
+# dist/
 build/
 
 # База данных
