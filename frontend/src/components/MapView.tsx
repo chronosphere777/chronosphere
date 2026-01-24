@@ -429,14 +429,24 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               labelRadiusKm
             );
             
+            // Создаём дугообразную линию (20 сегментов)
+            const segments = 20;
+            const arcCoords = [];
+            for (let i = 0; i <= segments; i++) {
+              const t = i / segments;
+              // Линейная интерполяция между точками
+              const lat = startCoord[1] + (endCoord[1] - startCoord[1]) * t;
+              const lng = startCoord[0] + (endCoord[0] - startCoord[0]) * t;
+              // Добавляем высоту (параболическая кривая)
+              const height = Math.sin(t * Math.PI) * 0.5; // Максимум 0.5 в середине
+              arcCoords.push([lng, lat, height]);
+            }
+            
             features.push({
               type: 'Feature',
               geometry: {
                 type: 'LineString',
-                coordinates: [
-                  startCoord,
-                  endCoord
-                ]
+                coordinates: arcCoords
               },
               properties: {}
             });
@@ -852,7 +862,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       zoom: 3, // Минимальный зум чтобы показать всю страну
       minZoom: 3, // Минимальный zoom
       maxZoom: 18,
-      pitch: 85, // Максимально возможный угол (MapLibre ограничивает до 85)
+      pitch: 60, // Фиксированный угол 60 градусов
       maxPitch: 85, // Максимальный наклон
       attributionControl: false
     });
@@ -1061,24 +1071,13 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     // Обновляем maxZoom карты
     map.current.setMaxZoom(newMaxZoom);
     
-    // 1. Изменяем pitch на 60 градусов
-    map.current.easeTo({
-      pitch: 60,
-      duration: 800,
+    // Летим к городу
+    map.current.flyTo({
+      center: [selectedCity.lng, selectedCity.lat],
+      zoom: targetZoom,
+      duration: 1500,
       essential: true
     });
-    
-    // 2. После изменения pitch летим к городу
-    setTimeout(() => {
-      if (map.current) {
-        map.current.flyTo({
-          center: [selectedCity.lng, selectedCity.lat],
-          zoom: targetZoom,
-          duration: 1500,
-          essential: true
-        });
-      }
-    }, 800);
   }, [selectedCity]);
 
   // Загрузка дорог при обновлении списка cities
