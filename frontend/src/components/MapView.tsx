@@ -591,8 +591,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     try {
       // Сначала пробуем загрузить статический файл (мгновенно)
       const citySlug = cityToSlug(targetCity.name);
-      // Используем import.meta.env.BASE_URL для корректного пути на GitHub Pages
-      const staticUrl = `${import.meta.env.BASE_URL}roads/${citySlug}.geojson`;
+      const staticUrl = `/roads/${citySlug}.geojson`;
       
       
       let response = await fetch(staticUrl);
@@ -853,9 +852,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       zoom: 3, // Минимальный зум чтобы показать всю страну
       minZoom: 3, // Минимальный zoom
       maxZoom: 18,
-      pitch: 60, // Постоянный наклон камеры 60 градусов
-      minPitch: 60, // Фиксируем минимальный наклон
-      maxPitch: 60, // Фиксируем максимальный наклон
+      pitch: 0, // Начальный наклон камеры
+      maxPitch: 85, // Максимальный наклон
       attributionControl: false
     });
 
@@ -974,6 +972,10 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       if (zoom < 9.6) {
         if (selectedCategoryRef.current) {
           setSelectedCategory(null);
+        }
+        // Сбрасываем наклон камеры при выходе из города
+        if (map.current.getPitch() !== 0) {
+          map.current.easeTo({ pitch: 0, duration: 1000, essential: true });
         }
       }
       
@@ -1527,147 +1529,37 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         // Получаем счетчик пользователей для магазина
         const shopUserCount = getCount(stats, 'shop', shop.id);
         
-        // Для режима категорий используем октаэдроны с лучами
-        if (isCategoryMode) {
-          el.innerHTML = `
-            <div class="neon-beam" style="
-              position: absolute;
-              bottom: 20px;
-              left: 50%;
-              transform: translateX(-50%);
-              width: 2px;
-              height: 800px;
-              background: linear-gradient(to top, rgba(240, 248, 255, 0.9), rgba(240, 248, 255, 0));
-              box-shadow: 0 0 10px rgba(240, 248, 255, 0.8), 0 0 20px rgba(240, 248, 255, 0.6);
-              pointer-events: none;
-              z-index: 1;
-            "></div>
-            <div class="shop-label" style="
-              position: absolute;
-              top: -40px;
-              left: 50%;
-              transform: translateX(-50%) scale(${scale});
-              background: rgba(0, 0, 0, 0.1);
-              backdrop-filter: blur(10px);
-              color: #f0f8ff;
-              padding: ${padding}px ${padding * 2}px;
-              border-radius: 5px;
-              border: 1px solid rgba(255, 255, 255, 0.8);
-              white-space: nowrap;
-              font-size: ${fontSize}px;
-              font-weight: 300;
-              box-shadow: 0 0 10px rgba(240, 248, 255, 0.4);
-              pointer-events: auto;
-              cursor: pointer;
-              max-width: 150px;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              opacity: ${labelOpacity};
-              display: ${labelDisplay};
-              transition: opacity 0.3s ease;
-              z-index: 10;
-            ">
-              ${markerText}
-            </div>
-            <div class="octahedron-container" style="
-              width: 40px;
-              height: 40px;
-              position: relative;
-              transform-style: preserve-3d;
-              animation: rotateOctahedron 6s infinite linear;
-              z-index: 5;
-            ">
-              <div class="octahedron-wireframe" style="
-                position: absolute;
-                width: 40px;
-                height: 40px;
-                border: 2px solid rgba(240, 248, 255, 0.8);
-                transform: rotateX(45deg) rotateZ(45deg);
-                box-shadow: 0 0 20px rgba(240, 248, 255, 0.6), inset 0 0 20px rgba(240, 248, 255, 0.3);
-              "></div>
-              <div class="octahedron-wireframe" style="
-                position: absolute;
-                width: 28px;
-                height: 28px;
-                left: 6px;
-                top: 6px;
-                border: 2px solid rgba(240, 248, 255, 0.6);
-                transform: rotateX(45deg) rotateZ(45deg) translateZ(10px);
-                box-shadow: 0 0 15px rgba(240, 248, 255, 0.5);
-              "></div>
-            </div>
-          `;
-        } else {
-          // Для обычных магазинов используем октаэдроны с лучами
-          el.innerHTML = `
-            <div class="neon-beam" style="
-              position: absolute;
-              bottom: 20px;
-              left: 50%;
-              transform: translateX(-50%);
-              width: 2px;
-              height: 800px;
-              background: linear-gradient(to top, rgba(240, 248, 255, 0.9), rgba(240, 248, 255, 0));
-              box-shadow: 0 0 10px rgba(240, 248, 255, 0.8), 0 0 20px rgba(240, 248, 255, 0.6);
-              pointer-events: none;
-              z-index: 1;
-            "></div>
-            <div class="shop-label" style="
-              position: absolute;
-              top: -40px;
-              left: 50%;
-              transform: translateX(-50%) scale(${scale});
-              background: rgba(0, 0, 0, 0.1);
-              backdrop-filter: blur(10px);
-              color: #f0f8ff;
-              padding: ${padding}px ${padding * 2}px;
-              border-radius: 5px;
-              border: 1px solid rgba(255, 255, 255, 0.8);
-              white-space: nowrap;
-              font-size: ${fontSize}px;
-              font-weight: 300;
-              box-shadow: 0 0 10px rgba(240, 248, 255, 0.4);
-              pointer-events: auto;
-              cursor: pointer;
-              max-width: 150px;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              opacity: ${labelOpacity};
-              display: ${labelDisplay};
-              transition: opacity 0.3s ease;
-              z-index: 10;
-            ">
-              ${markerText}${getUserCounterHTML(shopUserCount)}
-            </div>
-            <div class="octahedron-container" style="
-              width: 40px;
-              height: 40px;
-              position: relative;
-              transform-style: preserve-3d;
-              animation: rotateOctahedron 6s infinite linear;
-              z-index: 5;
-            ">
-              <div class="octahedron-wireframe" style="
-                position: absolute;
-                width: 40px;
-                height: 40px;
-                border: 2px solid rgba(240, 248, 255, 0.8);
-                transform: rotateX(45deg) rotateZ(45deg);
-                box-shadow: 0 0 20px rgba(240, 248, 255, 0.6), inset 0 0 20px rgba(240, 248, 255, 0.3);
-              "></div>
-              <div class="octahedron-wireframe" style="
-                position: absolute;
-                width: 28px;
-                height: 28px;
-                left: 6px;
-                top: 6px;
-                border: 2px solid rgba(240, 248, 255, 0.6);
-                transform: rotateX(45deg) rotateZ(45deg) translateZ(10px);
-                box-shadow: 0 0 15px rgba(240, 248, 255, 0.5);
-              "></div>
-            </div>
-          `;
-        }
+        el.innerHTML = `
+          <div class="shop-label" style="
+            position: absolute;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%) scale(${scale});
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            color: #f0f8ff;
+            padding: ${padding}px ${padding * 2}px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            white-space: nowrap;
+            font-size: ${fontSize}px;
+            font-weight: 300;
+            box-shadow: 0 0 10px rgba(240, 248, 255, 0.4);
+            pointer-events: auto;
+            cursor: pointer;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            opacity: ${labelOpacity};
+            display: ${labelDisplay};
+            transition: opacity 0.3s ease;
+          ">
+            ${markerText}${getUserCounterHTML(shopUserCount)}
+          </div>
+          <div class="map-marker__glow"></div>
+          <div class="map-marker__dot" style="background: rgba(240, 248, 255, ${shop.activity || 0.7}); box-shadow: 0 0 15px rgba(240, 248, 255, ${shop.activity || 0.7})"></div>
+          <div class="map-marker__pulse"></div>
+        `;
         
         const handleShopClick = async (e: Event) => {
           e.stopPropagation();

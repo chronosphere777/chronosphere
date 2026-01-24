@@ -73,6 +73,7 @@ export function CategoryModal({ categories, selectedCategory, onSelectCategory, 
     const diff = currentX - startX;
     setDragOffset(diff);
 
+    // Переключаем категорию при значительном перетаскивании
     if (diff < -80) {
       handleNext();
       setStartX(currentX);
@@ -103,6 +104,7 @@ export function CategoryModal({ categories, selectedCategory, onSelectCategory, 
     const diff = currentX - startX;
     setDragOffset(diff);
 
+    // Переключаем категорию при значительном перетаскивании
     if (diff < -80) {
       handleNext();
       setStartX(currentX);
@@ -184,7 +186,7 @@ export function CategoryModal({ categories, selectedCategory, onSelectCategory, 
           transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
         }}
       >
-        {/* Предыдущая категория */}
+        {/* Предыдущая категория (стеклянная) */}
         <div
           onClick={handlePrev}
           style={{
@@ -218,7 +220,7 @@ export function CategoryModal({ categories, selectedCategory, onSelectCategory, 
           })()}
         </div>
 
-        {/* Текущая категория */}
+        {/* Текущая категория (яркая) */}
         <div
           style={{
             flex: '0 0 auto',
@@ -252,7 +254,7 @@ export function CategoryModal({ categories, selectedCategory, onSelectCategory, 
           )}
         </div>
 
-        {/* Следующая категория */}
+        {/* Следующая категория (стеклянная) */}
         <div
           onClick={handleNext}
           style={{
