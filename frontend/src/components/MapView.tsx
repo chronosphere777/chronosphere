@@ -852,8 +852,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       zoom: 3, // Минимальный зум чтобы показать всю страну
       minZoom: 3, // Минимальный zoom
       maxZoom: 18,
-      pitch: 0, // Начальный наклон камеры
-      maxPitch: 85, // Максимальный наклон
+      pitch: 90, // Фиксированный угол 90 градусов
+      maxPitch: 90, // Максимальный наклон
       attributionControl: false
     });
 
@@ -1060,13 +1060,26 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       // Обновляем maxZoom карты
       map.current.setMaxZoom(newMaxZoom);
       
-      // Летим к городу
-      map.current.flyTo({
-        center: [selectedCity.lng, selectedCity.lat],
-        zoom: targetZoom,
-        duration: 1500,
+      // 1. Изменяем pitch на 60 градусов и вращаем на 180
+      const currentBearing = map.current.getBearing();
+      map.current.easeTo({
+        pitch: 60,
+        bearing: currentBearing + 180,
+        duration: 1000,
         essential: true
       });
+      
+      // 2. После вращения летим к городу
+      setTimeout(() => {
+        if (map.current) {
+          map.current.flyTo({
+            center: [selectedCity.lng, selectedCity.lat],
+            zoom: targetZoom,
+            duration: 1500,
+            essential: true
+          });
+        }
+      }, 1000);
     }
   }, [selectedCity]);
 
