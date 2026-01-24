@@ -852,8 +852,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       zoom: 3, // Минимальный зум чтобы показать всю страну
       minZoom: 3, // Минимальный zoom
       maxZoom: 18,
-      pitch: 90, // Фиксированный угол 90 градусов
-      maxPitch: 90, // Максимальный наклон
+      pitch: 85, // Максимально возможный угол (MapLibre ограничивает до 85)
+      maxPitch: 85, // Максимальный наклон
       attributionControl: false
     });
 
