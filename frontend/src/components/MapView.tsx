@@ -793,6 +793,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       map.current.flyTo({
         center: [cityCoords.lng, cityCoords.lat],
         zoom: 7,
+        pitch: 60,
         duration: 1000,
         essential: true
       });
@@ -820,6 +821,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     map.current.flyTo({
       center: [shop.lng, shop.lat],
       zoom: 15,
+      pitch: 60,
       duration: 1000,
       essential: true
     });
@@ -983,10 +985,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         if (selectedCategoryRef.current) {
           setSelectedCategory(null);
         }
-        // Сбрасываем наклон камеры при выходе из города
-        if (map.current.getPitch() !== 0) {
-          map.current.easeTo({ pitch: 0, duration: 1000, essential: true });
-        }
       }
       
       // ПОСТОЯННАЯ ЗАВИСИМОСТЬ: zoom < 9.6 → city labels, zoom >= 9.6 → маркеры
@@ -1075,6 +1073,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     map.current.flyTo({
       center: [selectedCity.lng, selectedCity.lat],
       zoom: targetZoom,
+      pitch: 60,
       duration: 1500,
       essential: true
     });
@@ -1211,6 +1210,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         map.current.flyTo({
           center: [city.lng, city.lat],
           zoom: targetZoom,
+          pitch: 60,
           duration: 2000,
           essential: true
         });
@@ -1627,6 +1627,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
             map.current.flyTo({
               center: [lng, lat],
               zoom: 15,
+              pitch: 60,
               duration: 1000,
               essential: true
             });
@@ -2059,6 +2060,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               map.current.flyTo({
                 center: [fullCity.lng, fullCity.lat],
                 zoom: targetZoom,
+                pitch: 60,
                 duration: 2000,
                 essential: true
               });
