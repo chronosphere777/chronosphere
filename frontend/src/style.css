@@ -50,12 +50,12 @@ body {
 }
 
 /* Эффект изогнутости карты */
-.maplibregl-map {
-  transform-style: preserve-3d;
+.map-view {
   position: relative;
+  transform-style: preserve-3d;
 }
 
-.maplibregl-map::before {
+.map-view::before {
   content: '';
   position: absolute;
   top: 0;
@@ -63,15 +63,20 @@ body {
   right: 0;
   bottom: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 5;
   background: radial-gradient(
     ellipse at center,
     transparent 0%,
-    transparent 40%,
-    rgba(0, 0, 0, 0.1) 70%,
-    rgba(0, 0, 0, 0.3) 90%,
-    rgba(0, 0, 0, 0.6) 100%
+    transparent 30%,
+    rgba(0, 0, 0, 0.15) 60%,
+    rgba(0, 0, 0, 0.4) 85%,
+    rgba(0, 0, 0, 0.7) 100%
   );
+}
+
+.maplibregl-map {
+  transform-style: preserve-3d;
+  position: relative;
 }
 
 .maplibregl-canvas-container {
