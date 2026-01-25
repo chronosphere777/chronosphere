@@ -867,6 +867,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       pitch: 60, // Фиксированный угол 60 градусов
       minPitch: 60, // Минимальный наклон (блокировка изменения)
       maxPitch: 60, // Максимальный наклон (блокировка изменения)
+      projection: 'globe', // Режим глобуса - карта как планета
       attributionControl: false
     });
 
