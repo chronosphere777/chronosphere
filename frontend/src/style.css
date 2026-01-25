@@ -41,46 +41,11 @@ body {
   width: 100vw;
   height: 100vh;
   position: relative;
-  perspective: 2000px;
 }
 
 .app {
   width: 100%;
   height: 100%;
-}
-
-/* Эффект изогнутости карты */
-.map-view {
-  position: relative;
-  transform-style: preserve-3d;
-}
-
-.map-view::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 5;
-  background: radial-gradient(
-    ellipse at center,
-    transparent 0%,
-    transparent 30%,
-    rgba(0, 0, 0, 0.15) 60%,
-    rgba(0, 0, 0, 0.4) 85%,
-    rgba(0, 0, 0, 0.7) 100%
-  );
-}
-
-.maplibregl-map {
-  transform-style: preserve-3d;
-  position: relative;
-}
-
-.maplibregl-canvas-container {
-  filter: brightness(1.05);
 }
 
 canvas {
