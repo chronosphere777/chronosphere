@@ -1651,13 +1651,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         
         // Масштабирование: минимальный размер при zoom 10, полный при zoom 17+
         const baseScale = Math.max(0, Math.min(1, (zoom - 10) / 7)); // От 0 при zoom 10 до 1 при zoom 17
-        const scale = 0.5 + baseScale * 1.6; // От 0.5 до 2.1
-        const fontSize = Math.floor((10 + baseScale * 2) * 3 * 0.7 / 2);
-        const padding = Math.floor(3 + baseScale * 3);
-        
-        // Названия всегда видны
-        const labelOpacity = 1;
-        const labelDisplay = 'block';
         
         // Определяем текст маркера: категория или название магазина
         const isCategoryMode = !selectedCategory;
@@ -1833,6 +1826,10 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       // Маркеры магазинов видны всегда начиная с zoom 8
       const visible = zoom >= 8;
       
+      // Адаптивный масштаб для голографических карточек
+      const baseScale = Math.max(0, Math.min(1, (zoom - 8) / 10)); // От 0 при zoom 8 до 1 при zoom 18
+      const holoScale = 0.4 + baseScale * 0.4; // От 0.4 до 0.8
+      
       // Собираем позиции всех маркеров на экране
       const markerPositions: { marker: maplibregl.Marker; screenX: number; screenY: number; label: HTMLElement | null }[] = [];
       
@@ -1841,10 +1838,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         if (el) {
           // Применяем видимость: показываем начиная с zoom 8
           el.style.display = visible ? 'block' : 'none';
-          
-          // Адаптивный масштаб для голографических карточек
-          const baseScale = Math.max(0, Math.min(1, (zoom - 8) / 10)); // От 0 при zoom 8 до 1 при zoom 18
-          const holoScale = 0.4 + baseScale * 0.4; // От 0.4 до 0.8
           
           const label = el.querySelector('.shop-holo-card') as HTMLElement;
           if (label) {
