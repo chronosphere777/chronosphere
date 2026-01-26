@@ -1112,12 +1112,12 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     }
     
     
-    // Функция для расчета масштаба от zoom (zoom 4 = 0.5x, zoom 9 = 1x)
+    // Функция для расчета масштаба от zoom (zoom 4 = 0.3x, zoom 9 = 0.8x)
     const getScale = (zoom: number) => {
       const minZoom = 4;
       const maxZoom = 9.6;
-      const minScale = 0.5;
-      const maxScale = 1;
+      const minScale = 0.3;
+      const maxScale = 0.8;
       const t = Math.max(0, Math.min(1, (zoom - minZoom) / (maxZoom - minZoom)));
       return minScale + (maxScale - minScale) * t;
     };
@@ -1158,28 +1158,28 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
           <!-- Голографическая проекция -->
           <div class="city-holo-projector" style="
             position: absolute;
-            top: -40px;
+            top: -25px;
             left: 50%;
             transform: translateX(-50%);
-            width: 60px;
-            height: 30px;
+            width: 40px;
+            height: 20px;
             background: linear-gradient(
               to bottom,
-              rgba(100, 200, 255, 0.3),
+              rgba(100, 200, 255, 0.2),
               transparent
             );
-            border-radius: 30px 30px 0 0;
+            border-radius: 20px 20px 0 0;
             z-index: 1;
             animation: projectorScan 4s infinite alternate;
           ">
             <div style="
               position: absolute;
               bottom: 0;
-              left: 10px;
-              right: 10px;
-              height: 3px;
-              background: rgba(100, 200, 255, 0.8);
-              box-shadow: 0 0 10px rgba(100, 200, 255, 0.8);
+              left: 8px;
+              right: 8px;
+              height: 2px;
+              background: rgba(100, 200, 255, 0.6);
+              box-shadow: 0 0 8px rgba(100, 200, 255, 0.6);
             "></div>
           </div>
           
@@ -1191,14 +1191,14 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               rgba(0, 50, 100, 0.2),
               rgba(0, 20, 50, 0.3)
             );
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(100, 200, 255, 0.3);
-            border-radius: 12px;
-            padding: 20px 28px;
+            backdrop-filter: blur(8px);
+            border: 1.5px solid rgba(100, 200, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px 18px;
             transform: rotateX(10deg);
             box-shadow: 
-              0 0 40px rgba(100, 200, 255, 0.2),
-              inset 0 0 40px rgba(100, 200, 255, 0.1);
+              0 0 25px rgba(100, 200, 255, 0.15),
+              inset 0 0 25px rgba(100, 200, 255, 0.08);
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
@@ -1227,37 +1227,37 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
             ">
               <div class="city-holo-name" style="
                 color: rgba(200, 240, 255, 0.9);
-                font-size: 20px;
+                font-size: 15px;
                 font-weight: 700;
-                margin-bottom: 10px;
+                margin-bottom: 6px;
                 text-shadow: 
-                  0 0 10px rgba(100, 200, 255, 0.5),
-                  0 0 20px rgba(100, 200, 255, 0.3);
-                letter-spacing: 1.2px;
+                  0 0 8px rgba(100, 200, 255, 0.4),
+                  0 0 15px rgba(100, 200, 255, 0.25);
+                letter-spacing: 0.8px;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
               ">${city.name}${getUserCounterHTML(cityUserCount)}</div>
               
               <div class="city-holo-stats" style="
                 display: flex;
-                gap: 15px;
+                gap: 10px;
                 justify-content: center;
-                padding: 12px;
+                padding: 8px 10px;
                 background: rgba(0, 30, 60, 0.3);
-                border-radius: 8px;
+                border-radius: 6px;
                 border: 1px solid rgba(100, 200, 255, 0.2);
               ">
                 <div class="holo-stat">
                   <div style="
                     color: rgba(150, 220, 255, 0.7);
-                    font-size: 11px;
-                    margin-bottom: 4px;
+                    font-size: 9px;
+                    margin-bottom: 2px;
                   ">МАГАЗИНОВ</div>
                   <div style="
                     color: #ff8c00;
-                    font-size: 22px;
+                    font-size: 16px;
                     font-weight: 900;
                     font-family: monospace;
-                    text-shadow: 0 0 15px #ff8c00;
+                    text-shadow: 0 0 12px #ff8c00;
                   ">${shopCount}</div>
                 </div>
               </div>
@@ -1266,9 +1266,9 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               <div style="
                 display: flex;
                 justify-content: space-between;
-                margin-top: 10px;
-                font-size: 9px;
-                color: rgba(100, 200, 255, 0.5);
+                margin-top: 6px;
+                font-size: 7px;
+                color: rgba(100, 200, 255, 0.4);
                 font-family: monospace;
               ">
                 <div>LAT: ${city.lat.toFixed(4)}</div>
@@ -1298,17 +1298,17 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
           <!-- Опорная платформа -->
           <div class="holo-base" style="
             position: absolute;
-            bottom: -20px;
-            left: 20%;
-            right: 20%;
-            height: 10px;
+            bottom: -12px;
+            left: 25%;
+            right: 25%;
+            height: 6px;
             background: linear-gradient(
               to top,
-              rgba(50, 100, 150, 0.5),
+              rgba(50, 100, 150, 0.4),
               transparent
             );
             border-radius: 50%;
-            filter: blur(5px);
+            filter: blur(4px);
           "></div>
         </div>
       `;
