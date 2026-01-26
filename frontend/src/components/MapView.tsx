@@ -8,6 +8,7 @@ import { hapticFeedback, getTelegramUserId } from '../utils/telegram';
 import { CITIES_WITHOUT_SHOPS_VISUAL, CITY_COORDS } from '../api/client';
 import { CategoryModal } from './CategoryModal';
 import { CityModal } from './CityModal';
+import { WholesaleCatalog } from './WholesaleCatalog';
 import { useActivity, getCount } from '../hooks/useActivity';
 import { getUserCounterHTML } from './UserCounter';
 
@@ -37,6 +38,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const selectedCategoryRef = useRef<string | null>(null);
   const [showEmptyCityModal, setShowEmptyCityModal] = useState<boolean>(false);
+  const [showWholesaleCatalog, setShowWholesaleCatalog] = useState<boolean>(false);
 
   // Отслеживание активности на карте (передаем текущий город)
   const { stats } = useActivity({
@@ -2016,8 +2018,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     
     el.addEventListener('click', () => {
       hapticFeedback('medium');
-      console.log(`Открыть каталог ОПТ для города ${selectedCity.name}`);
-      // TODO: показать список оптовых товаров
+      setShowWholesaleCatalog(true);
     });
     
     const marker = new maplibregl.Marker({ 
@@ -2460,6 +2461,14 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
             </button>
           </div>
         </div>
+      )}
+      
+      {/* Каталог ОПТ */}
+      {showWholesaleCatalog && selectedCity && (
+        <WholesaleCatalog
+          cityName={selectedCity.name}
+          onClose={() => setShowWholesaleCatalog(false)}
+        />
       )}
     </>
   );
