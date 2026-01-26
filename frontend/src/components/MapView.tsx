@@ -1688,7 +1688,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
                 0 0 20px rgba(100, 200, 255, 0.2),
                 inset 0 0 20px rgba(100, 200, 255, 0.1);
               min-width: 80px;
-              max-width: 220px;
+              max-width: 250px;
             ">
               <!-- Сканирующая линия -->
               <div style="
@@ -1711,11 +1711,15 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
                 font-size: 13px;
                 font-weight: 600;
                 text-align: center;
-                white-space: nowrap;
+                word-wrap: break-word;
+                word-break: break-word;
+                overflow-wrap: break-word;
+                hyphens: auto;
+                max-height: 60px;
                 overflow: hidden;
-                text-overflow: ellipsis;
                 text-shadow: 0 0 6px rgba(100, 200, 255, 0.4);
                 letter-spacing: 0.5px;
+                line-height: 1.3;
               ">${markerText}${getUserCounterHTML(shopUserCount)}</div>
               
               <!-- Помехи -->
