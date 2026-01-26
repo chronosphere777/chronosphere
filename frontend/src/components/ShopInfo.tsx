@@ -203,10 +203,10 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                   </button>
                 )}
                 
-                {shop.spreadsheet_url && shop.spreadsheet_url.includes('2gis.ru') && (
+                {shop.gis_url && shop.gis_url.includes('2gis.ru') && (
                   <button
                     onClick={() => {
-                      const match = shop.spreadsheet_url?.match(/(\d+\.\d+),(\d+\.\d+)/);
+                      const match = shop.gis_url?.match(/(\d+\.\d+),(\d+\.\d+)/);
                       if (match) {
                         const lat = match[1];
                         const lon = match[2];
@@ -414,11 +414,11 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                   </button>
                 )}
                 
-                {shop.spreadsheet_url && shop.spreadsheet_url.includes('2gis.ru') && (
+                {shop.gis_url && shop.gis_url.includes('2gis.ru') && (
                   <button
                     onClick={() => {
                       // Парсим координаты из ссылки 2ГИС
-                      const match = shop.spreadsheet_url?.match(/(\d+\.\d+),(\d+\.\d+)/);
+                      const match = shop.gis_url?.match(/(\d+\.\d+),(\d+\.\d+)/);
                       if (match) {
                         const lat = match[1];
                         const lon = match[2];

@@ -10,6 +10,7 @@ export interface Shop {
   spreadsheet_url?: string;
   description?: string | null; // Описание магазина из столбца G
   username?: string | null; // Telegram username из столбца J
+  gis_url?: string | null; // 2GIS ссылка из столбца F
 }
 
 export interface AccessEntry {
