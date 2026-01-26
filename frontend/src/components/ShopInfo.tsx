@@ -166,7 +166,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
               )}
               
               {/* Кнопки действий для товара */}
-              <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+              <div style={{ display: 'flex', gap: '8px', marginTop: '12px', width: '100%', boxSizing: 'border-box' }}>
                 {shop.username && (
                   <button
                     onClick={() => {
@@ -378,7 +378,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
               )}
               
               {/* Кнопки действий */}
-              <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+              <div style={{ display: 'flex', gap: '8px', marginTop: '8px', width: '100%', boxSizing: 'border-box' }}>
                 {shop.username && (
                   <button
                     onClick={() => {
