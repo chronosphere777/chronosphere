@@ -1943,6 +1943,43 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     return () => clearTimeout(timer);
   }, [selectedShop, cityShops]);
 
+  // Скрываем название магазина при открытии popup
+  useEffect(() => {
+    if (!popupShop) return;
+    
+    const timer = setTimeout(() => {
+      const allMarkers = document.querySelectorAll('.map-marker');
+      
+      allMarkers.forEach((marker) => {
+        const markerShopId = marker.getAttribute('data-shop-id');
+        const shopIds = markerShopId?.split(',') || [];
+        const containsPopupShop = shopIds.includes(popupShop.id.toString());
+        
+        if (containsPopupShop) {
+          // Скрываем голографическую карточку для popup магазина
+          const holoCard = (marker as HTMLElement).querySelector('.shop-holo-card') as HTMLElement;
+          if (holoCard) {
+            holoCard.style.opacity = '0';
+            holoCard.style.pointerEvents = 'none';
+          }
+        }
+      });
+    }, 50);
+    
+    return () => {
+      clearTimeout(timer);
+      // Восстанавливаем видимость при закрытии popup
+      const allMarkers = document.querySelectorAll('.map-marker');
+      allMarkers.forEach((marker) => {
+        const holoCard = (marker as HTMLElement).querySelector('.shop-holo-card') as HTMLElement;
+        if (holoCard) {
+          holoCard.style.opacity = '1';
+          holoCard.style.pointerEvents = 'auto';
+        }
+      });
+    };
+  }, [popupShop]);
+
   // Рендеринг маркеров ОПТ для городов с доступом
   useEffect(() => {
     if (!map.current) return;
