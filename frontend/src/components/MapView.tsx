@@ -1666,32 +1666,83 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         // Получаем счетчик пользователей для магазина
         const shopUserCount = getCount(stats, 'shop', shop.id);
         
+        // Масштаб для голографической карточки (меньше чем у городов)
+        const holoScale = 0.4 + baseScale * 0.4; // От 0.4 до 0.8
+        
         el.innerHTML = `
-          <div class="shop-label" style="
+          <div class="shop-holo-card" style="
             position: absolute;
-            bottom: 35px;
+            bottom: 30px;
             left: 50%;
-            transform: translateX(-50%) scale(${scale});
-            background: rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            color: #f0f8ff;
-            padding: ${padding}px ${padding * 2}px;
-            border-radius: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            white-space: nowrap;
-            font-size: ${fontSize}px;
-            font-weight: 300;
-            box-shadow: 0 0 10px rgba(240, 248, 255, 0.4);
+            transform: translateX(-50%) scale(${holoScale});
+            transform-origin: center bottom;
             pointer-events: auto;
             cursor: pointer;
-            max-width: 150px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            opacity: ${labelOpacity};
-            display: ${labelDisplay};
-            transition: opacity 0.3s ease;
+            transition: transform 0.3s ease;
           ">
-            ${markerText}${getUserCounterHTML(shopUserCount)}
+            <div style="
+              position: relative;
+              background: linear-gradient(
+                135deg,
+                rgba(0, 50, 100, 0.25),
+                rgba(0, 20, 50, 0.35)
+              );
+              backdrop-filter: blur(8px);
+              border: 1.5px solid rgba(100, 200, 255, 0.4);
+              border-radius: 8px;
+              padding: 6px 12px;
+              box-shadow: 
+                0 0 20px rgba(100, 200, 255, 0.2),
+                inset 0 0 20px rgba(100, 200, 255, 0.1);
+              min-width: 60px;
+              max-width: 180px;
+            ">
+              <!-- Сканирующая линия -->
+              <div style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(
+                  90deg,
+                  transparent,
+                  rgba(100, 200, 255, 0.6),
+                  transparent
+                );
+                animation: scanLine 3s infinite linear;
+              "></div>
+              
+              <div style="
+                color: rgba(200, 240, 255, 0.95);
+                font-size: 11px;
+                font-weight: 600;
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                text-shadow: 0 0 6px rgba(100, 200, 255, 0.4);
+                letter-spacing: 0.5px;
+              ">${markerText}${getUserCounterHTML(shopUserCount)}</div>
+              
+              <!-- Помехи -->
+              <div style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(
+                  0deg,
+                  transparent 30%,
+                  rgba(100, 200, 255, 0.03) 50%,
+                  transparent 70%
+                );
+                opacity: 0.3;
+                animation: glitch 0.1s infinite;
+                pointer-events: none;
+              "></div>
+            </div>
           </div>
           <div class="map-marker__glow"></div>
           <div class="map-marker__dot" style="background: rgba(240, 248, 255, ${shop.activity || 0.7}); box-shadow: 0 0 15px rgba(240, 248, 255, ${shop.activity || 0.7})"></div>
@@ -1779,8 +1830,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     const updateMarkersVisibility = () => {
       if (!map.current) return;
       const zoom = map.current.getZoom();
-      // Маркеры категорий/магазинов видны только при zoom >= 9.6
-      const visible = zoom >= 9.6;
+      // Маркеры магазинов видны всегда начиная с zoom 8
+      const visible = zoom >= 8;
       
       // Собираем позиции всех маркеров на экране
       const markerPositions: { marker: maplibregl.Marker; screenX: number; screenY: number; label: HTMLElement | null }[] = [];
@@ -1788,24 +1839,16 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       markers.current.forEach(marker => {
         const el = marker.getElement();
         if (el) {
-          // Применяем видимость: показываем только если zoom > 9.5
+          // Применяем видимость: показываем начиная с zoom 8
           el.style.display = visible ? 'block' : 'none';
           
-          // Названия всегда видны, только масштабируются
-          const baseScale = Math.max(0, Math.min(1, (zoom - 10) / 7));
-          const scale = 0.5 + baseScale * 1.6;
-          const fontSize = Math.floor((10 + baseScale * 2) * 3 * 0.7 / 2);
-          const padding = Math.floor(3 + baseScale * 3);
-          const labelOpacity = 1;
-          const labelDisplay = 'block';
+          // Адаптивный масштаб для голографических карточек
+          const baseScale = Math.max(0, Math.min(1, (zoom - 8) / 10)); // От 0 при zoom 8 до 1 при zoom 18
+          const holoScale = 0.4 + baseScale * 0.4; // От 0.4 до 0.8
           
-          const label = el.querySelector('.shop-label') as HTMLElement;
+          const label = el.querySelector('.shop-holo-card') as HTMLElement;
           if (label) {
-            label.style.transform = `translateX(-50%) scale(${scale})`;
-            label.style.fontSize = `${fontSize}px`;
-            label.style.padding = `${padding}px ${padding * 2}px`;
-            label.style.opacity = String(labelOpacity);
-            label.style.display = labelDisplay;
+            label.style.transform = `translateX(-50%) scale(${holoScale})`;
             
             // Сохраняем позицию для проверки перекрытий
             const lngLat = marker.getLngLat();
@@ -1820,26 +1863,44 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         }
       });
       
-      // Проверяем расстояния между маркерами и скрываем те, что слишком близко (при любом зуме)
-      if (zoom >= 10) {
-        // Минимальное расстояние между названиями в пикселях (зависит от зума)
-        const minDistance = Math.max(50, 150 - (zoom - 10) * 10); // От 150px при зуме 10 до 50px при зуме 20
+      // Проверяем расстояния между маркерами и регулируем размер для избежания перекрытий
+      if (zoom >= 8) {
+        // Минимальное расстояние между карточками в пикселях (зависит от зума)
+        const minDistance = Math.max(40, 120 - (zoom - 8) * 8); // От 120px при зуме 8 до 40px при зуме 18
         
         markerPositions.forEach((pos1, i) => {
-          if (!pos1.label || pos1.label.style.display === 'none') return;
+          if (!pos1.label) return;
+          
+          let minDistanceToOther = Infinity;
           
           markerPositions.forEach((pos2, j) => {
-            if (i >= j) return; // Проверяем только уникальные пары
-            if (!pos2.label || pos2.label.style.display === 'none') return;
+            if (i === j) return;
+            if (!pos2.label) return;
             
             // Вычисляем расстояние между маркерами на экране
             const distance = Math.hypot(pos2.screenX - pos1.screenX, pos2.screenY - pos1.screenY);
             
-            // Если магазины слишком близко - скрываем название у второго
-            if (distance < minDistance) {
-              pos2.label.style.opacity = '0';
+            if (distance < minDistanceToOther) {
+              minDistanceToOther = distance;
             }
           });
+          
+          // Если есть близкие маркеры - уменьшаем размер текущего
+          if (minDistanceToOther < minDistance) {
+            const reductionFactor = Math.max(0.5, minDistanceToOther / minDistance);
+            const currentScale = 0.4 + baseScale * 0.4;
+            const newScale = currentScale * reductionFactor;
+            pos1.label.style.transform = `translateX(-50%) scale(${newScale})`;
+            
+            // Снижаем прозрачность у маркеров, которые очень близко
+            if (minDistanceToOther < minDistance * 0.5) {
+              pos1.label.style.opacity = '0.7';
+            } else {
+              pos1.label.style.opacity = '1';
+            }
+          } else {
+            pos1.label.style.opacity = '1';
+          }
         });
       }
     };

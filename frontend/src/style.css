@@ -78,6 +78,28 @@ body {
   animation: contentFloat 3s infinite alternate;
 }
 
+/* Голографические карточки магазинов */
+.shop-holo-card {
+  filter: brightness(1);
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.shop-holo-card:hover {
+  filter: brightness(1.2);
+  transform: translateX(-50%) scale(1.05) !important;
+}
+
+.shop-holo-card > div {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.shop-holo-card:hover > div {
+  border-color: rgba(100, 200, 255, 0.6) !important;
+  box-shadow: 
+    0 0 30px rgba(100, 200, 255, 0.3),
+    inset 0 0 30px rgba(100, 200, 255, 0.15) !important;
+}
+
 
 #app {
   width: 100vw;
