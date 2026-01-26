@@ -468,7 +468,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       source: 'no-shops-inter-city-roads',
       paint: {
         'line-color': '#ffffff',
-        'line-width': ['interpolate', ['linear'], ['zoom'], 4, 3, 10, 8, 11.5, 10],
+        'line-width': ['interpolate', ['linear'], ['zoom'], 4, 1.2, 10, 3.2, 11.5, 4],
         'line-blur': 12,
         'line-opacity': 0.4
       },
@@ -481,7 +481,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       source: 'no-shops-inter-city-roads',
       paint: {
         'line-color': '#ffffff',
-        'line-width': ['interpolate', ['linear'], ['zoom'], 4, 1.5, 10, 4, 11.5, 5],
+        'line-width': ['interpolate', ['linear'], ['zoom'], 4, 0.6, 10, 1.6, 11.5, 2],
         'line-opacity': 0.6
       },
       layout: { 'visibility': 'none' }
