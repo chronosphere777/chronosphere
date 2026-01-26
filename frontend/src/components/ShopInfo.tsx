@@ -165,95 +165,44 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 <div className="product-description">{product.description}</div>
               )}
               
-              {/* Кнопки действий для товара */}
-              <div style={{ display: 'flex', gap: '6px', marginTop: '12px', width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
-                {shop.username && (
-                  <button
-                    onClick={() => {
-                      const cleanUsername = shop.username?.replace('@', '') || '';
-                      window.open(`https://t.me/${cleanUsername}`, '_blank');
-                    }}
-                    style={{
-                      flex: 1,
-                      minWidth: 0,
-                      maxWidth: '50%',
-                      padding: '6px 8px',
-                      background: 'rgba(240, 248, 255, 0.15)',
-                      border: '1.5px solid rgba(240, 248, 255, 0.5)',
-                      borderRadius: '8px',
-                      color: '#f0f8ff',
-                      fontSize: '11px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '4px',
-                      transition: 'all 0.2s ease',
-                      boxSizing: 'border-box',
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap'
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.background = 'rgba(240, 248, 255, 0.25)';
-                      e.currentTarget.style.boxShadow = '0 0 12px rgba(240, 248, 255, 0.3)';
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.background = 'rgba(240, 248, 255, 0.15)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
-                  >
-                    <span>✉️</span>
-                    <span>Написать</span>
-                  </button>
-                )}
-                
-                {shop.gis_url && shop.gis_url.includes('2gis.ru') && (
-                  <button
-                    onClick={() => {
-                      // Парсим координаты из 2GIS URL (формат: m=lng,lat или m=lng%2Clat)
-                      const match = shop.gis_url?.match(/m=([0-9.]+)(?:%2C|,)([0-9.]+)/);
-                      if (match) {
-                        const lng = match[1];
-                        const lat = match[2];
-                        window.open(`https://3.redirect.appmetrica.yandex.com/route?end-lat=${lat}&end-lon=${lng}&appmetrica_tracking_id=1178268795219780156`, '_blank');
-                      }
-                    }}
-                    style={{
-                      flex: 1,
-                      minWidth: 0,
-                      maxWidth: '50%',
-                      padding: '6px 8px',
-                      background: 'rgba(255, 215, 0, 0.15)',
-                      border: '1.5px solid rgba(255, 215, 0, 0.5)',
-                      borderRadius: '8px',
-                      color: '#FFD700',
-                      fontSize: '11px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '4px',
-                      transition: 'all 0.2s ease',
-                      boxSizing: 'border-box',
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap'
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.background = 'rgba(255, 215, 0, 0.25)';
-                      e.currentTarget.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.3)';
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.background = 'rgba(255, 215, 0, 0.15)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
-                  >
-                    <span>🚕</span>
-                    <span>Такси</span>
-                  </button>
-                )}
-              </div>
+              {/* Кнопка действия для товара */}
+              {shop.username && (
+                <button
+                  onClick={() => {
+                    const cleanUsername = shop.username?.replace('@', '') || '';
+                    window.open(`https://t.me/${cleanUsername}`, '_blank');
+                  }}
+                  style={{
+                    width: '100%',
+                    marginTop: '12px',
+                    padding: '8px 12px',
+                    background: 'rgba(240, 248, 255, 0.15)',
+                    border: '1.5px solid rgba(240, 248, 255, 0.5)',
+                    borderRadius: '8px',
+                    color: '#f0f8ff',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    transition: 'all 0.2s ease',
+                    boxSizing: 'border-box'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.background = 'rgba(240, 248, 255, 0.25)';
+                    e.currentTarget.style.boxShadow = '0 0 12px rgba(240, 248, 255, 0.3)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.background = 'rgba(240, 248, 255, 0.15)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <span>✉️</span>
+                  <span>Написать</span>
+                </button>
+              )}
             </div>
           </div>
         );
