@@ -166,7 +166,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
               )}
               
               {/* Кнопки действий для товара */}
-              <div style={{ display: 'flex', gap: '8px', marginTop: '12px', width: '100%', boxSizing: 'border-box' }}>
+              <div style={{ display: 'flex', gap: '6px', marginTop: '12px', width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
                 {shop.username && (
                   <button
                     onClick={() => {
@@ -175,19 +175,24 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                     }}
                     style={{
                       flex: 1,
-                      padding: '8px 12px',
+                      minWidth: 0,
+                      maxWidth: '50%',
+                      padding: '6px 8px',
                       background: 'rgba(240, 248, 255, 0.15)',
                       border: '1.5px solid rgba(240, 248, 255, 0.5)',
                       borderRadius: '8px',
                       color: '#f0f8ff',
-                      fontSize: '12px',
+                      fontSize: '11px',
                       fontWeight: '600',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '6px',
-                      transition: 'all 0.2s ease'
+                      gap: '4px',
+                      transition: 'all 0.2s ease',
+                      boxSizing: 'border-box',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap'
                     }}
                     onMouseOver={(e) => {
                       e.currentTarget.style.background = 'rgba(240, 248, 255, 0.25)';
@@ -216,19 +221,24 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                     }}
                     style={{
                       flex: 1,
-                      padding: '8px 12px',
+                      minWidth: 0,
+                      maxWidth: '50%',
+                      padding: '6px 8px',
                       background: 'rgba(255, 215, 0, 0.15)',
                       border: '1.5px solid rgba(255, 215, 0, 0.5)',
                       borderRadius: '8px',
                       color: '#FFD700',
-                      fontSize: '12px',
+                      fontSize: '11px',
                       fontWeight: '600',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '6px',
-                      transition: 'all 0.2s ease'
+                      gap: '4px',
+                      transition: 'all 0.2s ease',
+                      boxSizing: 'border-box',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap'
                     }}
                     onMouseOver={(e) => {
                       e.currentTarget.style.background = 'rgba(255, 215, 0, 0.25)';
@@ -378,7 +388,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
               )}
               
               {/* Кнопки действий */}
-              <div style={{ display: 'flex', gap: '8px', marginTop: '8px', width: '100%', boxSizing: 'border-box' }}>
+              <div style={{ display: 'flex', gap: '6px', marginTop: '8px', width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
                 {shop.username && (
                   <button
                     onClick={() => {
@@ -387,19 +397,24 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                     }}
                     style={{
                       flex: 1,
-                      padding: '8px 16px',
+                      minWidth: 0,
+                      maxWidth: '50%',
+                      padding: '8px 12px',
                       background: 'rgba(240, 248, 255, 0.15)',
                       border: '1.5px solid rgba(240, 248, 255, 0.5)',
                       borderRadius: '8px',
                       color: '#f0f8ff',
-                      fontSize: '13px',
+                      fontSize: '12px',
                       fontWeight: '600',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '6px',
-                      transition: 'all 0.2s ease'
+                      gap: '5px',
+                      transition: 'all 0.2s ease',
+                      boxSizing: 'border-box',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap'
                     }}
                     onMouseOver={(e) => {
                       e.currentTarget.style.background = 'rgba(240, 248, 255, 0.25)';
@@ -428,19 +443,24 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                     }}
                     style={{
                       flex: 1,
-                      padding: '8px 16px',
+                      minWidth: 0,
+                      maxWidth: '50%',
+                      padding: '8px 12px',
                       background: 'rgba(255, 215, 0, 0.15)',
                       border: '1.5px solid rgba(255, 215, 0, 0.5)',
                       borderRadius: '8px',
                       color: '#FFD700',
-                      fontSize: '13px',
+                      fontSize: '12px',
                       fontWeight: '600',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '6px',
-                      transition: 'all 0.2s ease'
+                      gap: '5px',
+                      transition: 'all 0.2s ease',
+                      boxSizing: 'border-box',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap'
                     }}
                     onMouseOver={(e) => {
                       e.currentTarget.style.background = 'rgba(255, 215, 0, 0.25)';
