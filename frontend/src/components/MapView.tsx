@@ -1660,7 +1660,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         const shopUserCount = getCount(stats, 'shop', shop.id);
         
         // Масштаб для голографической карточки (меньше чем у городов)
-        const holoScale = 0.4 + baseScale * 0.4; // От 0.4 до 0.8
+        const holoScale = 0.6 + baseScale * 0.6; // От 0.6 до 1.2
         
         el.innerHTML = `
           <div class="shop-holo-card" style="
@@ -1683,12 +1683,12 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               backdrop-filter: blur(8px);
               border: 1.5px solid rgba(100, 200, 255, 0.4);
               border-radius: 8px;
-              padding: 6px 12px;
+              padding: 8px 16px;
               box-shadow: 
                 0 0 20px rgba(100, 200, 255, 0.2),
                 inset 0 0 20px rgba(100, 200, 255, 0.1);
-              min-width: 60px;
-              max-width: 180px;
+              min-width: 80px;
+              max-width: 220px;
             ">
               <!-- Сканирующая линия -->
               <div style="
@@ -1708,7 +1708,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               
               <div style="
                 color: rgba(200, 240, 255, 0.95);
-                font-size: 11px;
+                font-size: 13px;
                 font-weight: 600;
                 text-align: center;
                 white-space: nowrap;
@@ -1828,7 +1828,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       
       // Адаптивный масштаб для голографических карточек
       const baseScale = Math.max(0, Math.min(1, (zoom - 8) / 10)); // От 0 при zoom 8 до 1 при zoom 18
-      const holoScale = 0.4 + baseScale * 0.4; // От 0.4 до 0.8
+      const holoScale = 0.6 + baseScale * 0.6; // От 0.6 до 1.2
       
       // Собираем позиции всех маркеров на экране
       const markerPositions: { marker: maplibregl.Marker; screenX: number; screenY: number; label: HTMLElement | null }[] = [];
@@ -1881,7 +1881,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
           // Если есть близкие маркеры - уменьшаем размер текущего
           if (minDistanceToOther < minDistance) {
             const reductionFactor = Math.max(0.5, minDistanceToOther / minDistance);
-            const currentScale = 0.4 + baseScale * 0.4;
+            const currentScale = 0.6 + baseScale * 0.6;
             const newScale = currentScale * reductionFactor;
             pos1.label.style.transform = `translateX(-50%) scale(${newScale})`;
             
