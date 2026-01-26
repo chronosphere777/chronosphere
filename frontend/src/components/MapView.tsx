@@ -2294,7 +2294,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       )}
 
       {/* Радиальный акселератор категорий */}
-      {!selectedShop && !isShopInfoOpen && categoriesInCity.length > 1 && currentZoom >= 9.6 && (
+      {!selectedShop && !isShopInfoOpen && !showWholesaleCatalog && categoriesInCity.length > 1 && currentZoom >= 9.6 && (
         <CategoryModal
           categories={categoriesInCity}
           selectedCategory={selectedCategory}
@@ -2468,6 +2468,12 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         <WholesaleCatalog
           cityName={selectedCity.name}
           onClose={() => setShowWholesaleCatalog(false)}
+          onShopClick={(shop) => {
+            setShowWholesaleCatalog(false);
+            if (onShopClick) {
+              onShopClick(shop);
+            }
+          }}
         />
       )}
     </>

@@ -1,178 +1,27 @@
 import { useState, useEffect } from 'preact/hooks';
 import { api } from '../api/client';
-
-// API base URL
-const API_BASE = 'https://chronosphere7777.pythonanywhere.com';
-
-// Функция для проксирования Google Drive изображений
-const getProxiedImageUrl = (url: string | null): string | null => {
-  if (!url) return null;
-  
-  // Если это Google Drive URL - проксируем через наш сервер
-  if (url.includes('drive.google.com')) {
-    return `${API_BASE}/api/proxy-image?url=${encodeURIComponent(url)}`;
-  }
-  
-  // Если это GitHub raw URL - оставляем как есть
-  return url;
-};
+import type { Shop } from '../types';
+import { hapticFeedback } from '../utils/telegram';
 
 interface WholesaleCatalogProps {
   cityName: string;
   onClose: () => void;
+  onShopClick: (shop: Shop) => void;
 }
 
-interface WholesaleProduct {
-  category_path: string;
-  size_color: string | null;
-  size_color_label: string;
-  price: string | null;
-  photo_url: string | null;
-  description: string | null;
-  row_index: number;
-}
-
-type CategoryItem = { path: string; isLeaf: false };
-type ProductItem = { path: string; product: WholesaleProduct; isLeaf: true };
-type ListItem = CategoryItem | ProductItem;
-
-export function WholesaleCatalog({ cityName, onClose }: WholesaleCatalogProps) {
-  const [products, setProducts] = useState<WholesaleProduct[]>([]);
+export function WholesaleCatalog({ cityName, onClose, onShopClick }: WholesaleCatalogProps) {
+  const [shops, setShops] = useState<Shop[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentPath, setCurrentPath] = useState<string>('');
-  const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
-  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
 
   useEffect(() => {
-    // Загрузка каталога ОПТ
+    // Загрузка магазинов ОПТ
     api.getWholesaleShops().then(data => {
-      // wholesaleShops на самом деле это продукты из листа ОПТ
-      setProducts(data.shops || []);
+      setShops(data.shops || []);
       setLoading(false);
     }).catch(() => {
       setLoading(false);
     });
   }, []);
-
-  // Получить уникальные пути на текущем уровне
-  const getCurrentLevelItems = (): ListItem[] => {
-    if (!currentPath) {
-      // Корневой уровень - показываем первый уровень категорий
-      const uniquePaths = new Set<string>();
-      products.forEach(p => {
-        const firstLevel = p.category_path.split(' > ')[0];
-        if (firstLevel) uniquePaths.add(firstLevel);
-      });
-      return Array.from(uniquePaths).map(path => ({ path, isLeaf: false }));
-    }
-
-    // Сначала проверяем есть ли подкатегории
-    const uniquePaths = new Set<string>();
-    const currentDepth = currentPath.split(' > ').length;
-    
-    products.forEach(p => {
-      if (p.category_path.startsWith(currentPath + ' > ')) {
-        const pathParts = p.category_path.split(' > ');
-        if (pathParts.length > currentDepth) {
-          const nextLevelPath = pathParts.slice(0, currentDepth + 1).join(' > ');
-          uniquePaths.add(nextLevelPath);
-        }
-      }
-    });
-
-    // Если есть подкатегории - показываем их
-    if (uniquePaths.size > 0) {
-      return Array.from(uniquePaths).map(path => ({ path, isLeaf: false }));
-    }
-
-    // Если подкатегорий нет - показываем товары с точным совпадением пути
-    const exactMatches = products.filter(p => p.category_path === currentPath);
-    if (exactMatches.length > 0) {
-      return exactMatches.map(p => ({ path: currentPath, product: p, isLeaf: true }));
-    }
-
-    return [];
-  };
-
-  // Подсчет товаров в категории
-  const countProducts = (path: string) => {
-    return products.filter(p => p.category_path.startsWith(path)).length;
-  };
-
-  const handleBack = () => {
-    if (breadcrumbs.length === 0) {
-      onClose();
-    } else {
-      const newBreadcrumbs = [...breadcrumbs];
-      newBreadcrumbs.pop();
-      setBreadcrumbs(newBreadcrumbs);
-      setCurrentPath(newBreadcrumbs.join(' > '));
-    }
-  };
-
-  const handleNavigate = (path: string) => {
-    const pathParts = path.split(' > ');
-    setBreadcrumbs(pathParts);
-    setCurrentPath(path);
-  };
-
-  const renderItems = () => {
-    const items = getCurrentLevelItems();
-
-    if (items.length === 0) {
-      return <div className="empty-state">Товары не найдены</div>;
-    }
-
-    return items.map((item, index) => {
-      if (item.isLeaf && item.product) {
-        // Рендерим товар
-        const product = item.product;
-        return (
-          <div key={index} className="product-card">
-            {product.photo_url && (
-              <img 
-                src={getProxiedImageUrl(product.photo_url) || ''} 
-                alt="" 
-                className="product-image" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setFullscreenImage(product.photo_url);
-                }}
-                style={{ cursor: 'pointer' }}
-              />
-            )}
-            <div className="product-info">
-              {product.size_color && (
-                <div className="product-detail">
-                  {product.size_color_label || 'Размер/Цвет'}: {product.size_color}
-                </div>
-              )}
-              {product.price && (
-                <div className="product-price">Цена: {product.price} ₽</div>
-              )}
-              {product.description && (
-                <div className="product-description">{product.description}</div>
-              )}
-            </div>
-          </div>
-        );
-      } else {
-        // Рендерим категорию
-        const displayName = item.path.split(' > ').pop() || item.path;
-        const count = countProducts(item.path);
-        return (
-          <div 
-            key={item.path} 
-            className="category-card" 
-            onClick={() => handleNavigate(item.path)}
-          >
-            <h3>{displayName}</h3>
-            <div className="count">{count} {count === 1 ? 'товар' : 'товаров'}</div>
-          </div>
-        );
-      }
-    });
-  };
 
   if (loading) {
     return (
@@ -217,7 +66,7 @@ export function WholesaleCatalog({ cityName, onClose }: WholesaleCatalogProps) {
               textAlign: 'center',
               textShadow: '0 0 8px rgba(255, 215, 0, 0.5)'
             }}>
-              💼 Оптовый каталог
+              Оптовый каталог
             </h3>
             
             <div style={{ 
@@ -229,41 +78,118 @@ export function WholesaleCatalog({ cityName, onClose }: WholesaleCatalogProps) {
               {cityName}
             </div>
           </div>
-          
-          {breadcrumbs.length > 0 && (
-            <div className="breadcrumbs">
-              <span onClick={() => { setBreadcrumbs([]); setCurrentPath(''); }}>Главная</span>
-              {breadcrumbs.map((crumb, i) => (
-                <span key={i}>
-                  {' > '}
-                  <span onClick={() => {
-                    const newBreadcrumbs = breadcrumbs.slice(0, i + 1);
-                    setBreadcrumbs(newBreadcrumbs);
-                    setCurrentPath(newBreadcrumbs.join(' > '));
-                  }}>
-                    {crumb}
-                  </span>
-                </span>
-              ))}
-            </div>
-          )}
         </div>
 
-        {/* Контейнер для товаров с overflow */}
+        {/* Контейнер для магазинов с overflow */}
         <div style={{
           flex: 1,
           overflowY: 'auto',
-          minHeight: 0
+          minHeight: 0,
+          padding: '0 8px'
         }}>
-          <div className="shop-info-body">
-            {renderItems()}
-          </div>
+          {shops.length === 0 ? (
+            <div className="empty-state">Магазины не найдены</div>
+          ) : (
+            shops.map((shop) => {
+              const photoUrl = shop.photo_url 
+                ? `https://raw.githubusercontent.com/chronosphere777/chronosphere/main/frontend/images/${shop.photo_url}`
+                : null;
+              
+              return (
+                <div 
+                  key={shop.id} 
+                  style={{
+                    background: 'rgba(255, 215, 0, 0.1)',
+                    border: '1.5px solid rgba(255, 215, 0, 0.4)',
+                    borderRadius: '12px',
+                    padding: '12px',
+                    marginBottom: '12px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    gap: '12px',
+                    alignItems: 'flex-start',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 0 15px rgba(255, 215, 0, 0.2)'
+                  }}
+                  onClick={() => {
+                    hapticFeedback('medium');
+                    onClose();
+                    onShopClick(shop);
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 215, 0, 0.2)';
+                    e.currentTarget.style.boxShadow = '0 0 25px rgba(255, 215, 0, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 215, 0, 0.1)';
+                    e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 215, 0, 0.2)';
+                  }}
+                >
+                  {photoUrl && (
+                    <div style={{
+                      flex: '0 0 80px',
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      border: '1.5px solid rgba(255, 215, 0, 0.5)',
+                      boxShadow: '0 0 10px rgba(255, 215, 0, 0.3)'
+                    }}>
+                      <img 
+                        src={photoUrl} 
+                        alt={shop.name}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover'
+                        }}
+                      />
+                    </div>
+                  )}
+                  
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{
+                      color: '#FFD700',
+                      margin: '0 0 6px 0',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      textShadow: '0 0 6px rgba(255, 215, 0, 0.4)'
+                    }}>
+                      {shop.name}
+                    </h3>
+                    
+                    {shop.city && (
+                      <div style={{ 
+                        color: '#FFA500', 
+                        fontSize: '13px',
+                        marginBottom: '4px',
+                        opacity: 0.9
+                      }}>
+                        {shop.city}
+                      </div>
+                    )}
+                    
+                    {shop.description && (
+                      <div style={{ 
+                        color: '#FFD700', 
+                        fontSize: '12px',
+                        lineHeight: '1.4',
+                        opacity: 0.8
+                      }}>
+                        {shop.description}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
 
         {/* Кнопка "Назад" */}
         <button 
           className="back-button" 
-          onClick={handleBack}
+          onClick={onClose}
           style={{
             position: 'fixed',
             bottom: '20px',
@@ -275,20 +201,6 @@ export function WholesaleCatalog({ cityName, onClose }: WholesaleCatalogProps) {
           Назад
         </button>
       </div>
-
-      {/* Полноэкранное изображение */}
-      {fullscreenImage && (
-        <div 
-          className="fullscreen-image-overlay"
-          onClick={() => setFullscreenImage(null)}
-        >
-          <img 
-            src={getProxiedImageUrl(fullscreenImage) || ''} 
-            alt="Полноэкранное изображение"
-            className="fullscreen-image"
-          />
-        </div>
-      )}
     </div>
   );
 }
