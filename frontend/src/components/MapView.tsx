@@ -1953,6 +1953,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     wholesaleMarkersRef.current = [];
     
     // Показываем маркер ОПТ ТОЛЬКО если находимся В ГОРОДЕ
+    // Если selectedCity === null (вышли на глобальную карту), маркеры уже удалены выше
     if (!selectedCity) return;
     
     // Проверяем что данные загружены

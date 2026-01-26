@@ -206,11 +206,12 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 {shop.gis_url && shop.gis_url.includes('2gis.ru') && (
                   <button
                     onClick={() => {
-                      const match = shop.gis_url?.match(/(\d+\.\d+),(\d+\.\d+)/);
+                      // Парсим координаты из 2GIS URL (формат: m=lng,lat или m=lng%2Clat)
+                      const match = shop.gis_url?.match(/m=([0-9.]+)(?:%2C|,)([0-9.]+)/);
                       if (match) {
-                        const lat = match[1];
-                        const lon = match[2];
-                        window.open(`https://taxi.yandex.ru/route/?end-lat=${lat}&end-lon=${lon}`, '_blank');
+                        const lng = match[1];
+                        const lat = match[2];
+                        window.open(`https://taxi.yandex.ru/route/?end-lat=${lat}&end-lon=${lng}`, '_blank');
                       }
                     }}
                     style={{
@@ -417,12 +418,12 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 {shop.gis_url && shop.gis_url.includes('2gis.ru') && (
                   <button
                     onClick={() => {
-                      // Парсим координаты из ссылки 2ГИС
-                      const match = shop.gis_url?.match(/(\d+\.\d+),(\d+\.\d+)/);
+                      // Парсим координаты из 2GIS URL (формат: m=lng,lat или m=lng%2Clat)
+                      const match = shop.gis_url?.match(/m=([0-9.]+)(?:%2C|,)([0-9.]+)/);
                       if (match) {
-                        const lat = match[1];
-                        const lon = match[2];
-                        window.open(`https://taxi.yandex.ru/route/?end-lat=${lat}&end-lon=${lon}`, '_blank');
+                        const lng = match[1];
+                        const lat = match[2];
+                        window.open(`https://taxi.yandex.ru/route/?end-lat=${lat}&end-lon=${lng}`, '_blank');
                       }
                     }}
                     style={{
