@@ -46,9 +46,12 @@ export function WholesaleCatalog({ cityName, onClose }: WholesaleCatalogProps) {
   useEffect(() => {
     // Загрузка каталога ОПТ
     api.getWholesaleShops().then(data => {
+      console.log('ОПТ данные:', data);
+      console.log('Товаров загружено:', data.products?.length || 0);
       setProducts(data.products || []);
       setLoading(false);
-    }).catch(() => {
+    }).catch((error) => {
+      console.error('Ошибка загрузки ОПТ:', error);
       setLoading(false);
     });
   }, []);
