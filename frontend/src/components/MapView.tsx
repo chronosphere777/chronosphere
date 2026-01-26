@@ -2030,6 +2030,25 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       .addTo(map.current!);
     
     wholesaleMarkersRef.current.push(marker);
+    
+    // Добавляем обработчик zoom для скрытия маркера ОПТ на глобальной карте
+    const updateWholesaleMarkerVisibility = () => {
+      const zoom = map.current?.getZoom() || 0;
+      // Скрываем маркер на том же zoom что и магазины (< 9.4)
+      const shouldShow = zoom >= 9.4;
+      const markerEl = marker.getElement();
+      if (markerEl) {
+        markerEl.style.display = shouldShow ? 'block' : 'none';
+      }
+    };
+    
+    map.current?.on('zoom', updateWholesaleMarkerVisibility);
+    updateWholesaleMarkerVisibility(); // Применяем сразу
+    
+    // Cleanup: удаляем обработчик при размонтировании
+    return () => {
+      map.current?.off('zoom', updateWholesaleMarkerVisibility);
+    };
   }, [accessList, selectedCity]);
 
   return (

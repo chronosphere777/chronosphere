@@ -211,7 +211,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                       if (match) {
                         const lng = match[1];
                         const lat = match[2];
-                        window.open(`https://taxi.yandex.ru/route/?end-lat=${lat}&end-lon=${lng}`, '_blank');
+                        window.open(`https://3.redirect.appmetrica.yandex.com/route?end-lat=${lat}&end-lon=${lng}&appmetrica_tracking_id=1178268795219780156`, '_blank');
                       }
                     }}
                     style={{
@@ -423,7 +423,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                       if (match) {
                         const lng = match[1];
                         const lat = match[2];
-                        window.open(`https://taxi.yandex.ru/route/?end-lat=${lat}&end-lon=${lng}`, '_blank');
+                        window.open(`https://3.redirect.appmetrica.yandex.com/route?end-lat=${lat}&end-lon=${lng}&appmetrica_tracking_id=1178268795219780156`, '_blank');
                       }
                     }}
                     style={{
