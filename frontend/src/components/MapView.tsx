@@ -1246,19 +1246,22 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
                 border-radius: 6px;
                 border: 1px solid rgba(100, 200, 255, 0.2);
               ">
-                <div class="holo-stat">
-                  <div style="
-                    color: rgba(150, 220, 255, 0.7);
-                    font-size: 9px;
-                    margin-bottom: 2px;
-                  ">МАГАЗИНОВ</div>
+                <div class="holo-stat" style="
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                ">
                   <div style="
                     color: #ff8c00;
-                    font-size: 16px;
+                    font-size: 18px;
                     font-weight: 900;
                     font-family: monospace;
                     text-shadow: 0 0 12px #ff8c00;
                   ">${shopCount}</div>
+                  <div style="
+                    color: rgba(150, 220, 255, 0.7);
+                    font-size: 9px;
+                  ">МАГАЗИНОВ</div>
                 </div>
               </div>
               
