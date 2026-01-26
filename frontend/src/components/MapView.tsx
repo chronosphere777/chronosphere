@@ -1957,18 +1957,18 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     const telegramUserId = getTelegramUserId();
     if (!telegramUserId) return;
     
-    // Получаем уникальный список городов из списка доступа для текущего пользователя
-    const citiesWithAccess = new Set<string>();
-    accessList.forEach(access => {
-      if (String(access.telegram_id) === String(telegramUserId)) {
-        citiesWithAccess.add(access.city.toLowerCase());
-      }
-    });
+    // Проверяем есть ли пользователь ВООБЩЕ в списке доступа (в любом городе)
+    const userHasAccess = accessList.some(access => 
+      String(access.telegram_id) === String(telegramUserId)
+    );
     
-    // Для каждого города с доступом создаем маркер ОПТ
+    if (!userHasAccess) return;
+    
+    // Если есть доступ - показываем маркер ОПТ во ВСЕХ городах где есть магазины
     cities.forEach(city => {
-      // Проверяем есть ли доступ к этому городу
-      if (!citiesWithAccess.has(city.name.toLowerCase())) return;
+      // Проверяем что в городе есть магазины
+      const shopCount = typeof city.shops === 'number' ? city.shops : 0;
+      if (shopCount === 0) return;
       
       const coords = CITY_COORDS[city.name];
       if (!coords) return;
