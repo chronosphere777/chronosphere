@@ -1714,10 +1714,9 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
                 font-size: 13px;
                 font-weight: 600;
                 text-align: center;
-                word-wrap: break-word;
-                word-break: break-word;
+                word-break: normal;
                 overflow-wrap: break-word;
-                hyphens: auto;
+                hyphens: none;
                 max-height: 60px;
                 overflow: hidden;
                 text-shadow: 0 0 6px rgba(100, 200, 255, 0.4);
