@@ -2038,7 +2038,10 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       const shouldShow = zoom >= 9.4;
       const markerEl = marker.getElement();
       if (markerEl) {
-        markerEl.style.display = shouldShow ? 'block' : 'none';
+        // Используем opacity + pointer-events вместо display для плавности
+        markerEl.style.opacity = shouldShow ? '1' : '0';
+        markerEl.style.pointerEvents = shouldShow ? 'auto' : 'none';
+        markerEl.style.transition = 'opacity 0.3s ease';
       }
     };
     
