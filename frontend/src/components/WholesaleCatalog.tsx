@@ -257,7 +257,9 @@ export function WholesaleCatalog({ cityName, onClose }: WholesaleCatalogProps) {
           overflowY: 'auto',
           overflowX: 'hidden',
           minHeight: 0,
-          touchAction: 'pan-y'
+          touchAction: 'pan-y',
+          width: '100%',
+          maxWidth: '100%'
         }}>
           <div className="shop-info-body">
             {renderItems()}

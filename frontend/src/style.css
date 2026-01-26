@@ -1217,6 +1217,8 @@ items {
   padding: 0 8px 80px 8px;
   touch-action: pan-y;
   overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .category-card h3 {
@@ -1238,6 +1240,8 @@ items {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .product-image {
