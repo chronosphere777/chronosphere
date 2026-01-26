@@ -164,6 +164,85 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
               {product.description && (
                 <div className="product-description">{product.description}</div>
               )}
+              
+              {/* Кнопки действий для товара */}
+              <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                {shop.username && (
+                  <button
+                    onClick={() => {
+                      const cleanUsername = shop.username?.replace('@', '') || '';
+                      window.open(`https://t.me/${cleanUsername}`, '_blank');
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '8px 12px',
+                      background: 'rgba(240, 248, 255, 0.15)',
+                      border: '1.5px solid rgba(240, 248, 255, 0.5)',
+                      borderRadius: '8px',
+                      color: '#f0f8ff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = 'rgba(240, 248, 255, 0.25)';
+                      e.currentTarget.style.boxShadow = '0 0 12px rgba(240, 248, 255, 0.3)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = 'rgba(240, 248, 255, 0.15)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <span>✉️</span>
+                    <span>Написать</span>
+                  </button>
+                )}
+                
+                {shop.spreadsheet_url && shop.spreadsheet_url.includes('2gis.ru') && (
+                  <button
+                    onClick={() => {
+                      const match = shop.spreadsheet_url?.match(/(\d+\.\d+),(\d+\.\d+)/);
+                      if (match) {
+                        const lat = match[1];
+                        const lon = match[2];
+                        window.open(`https://taxi.yandex.ru/route/?end-lat=${lat}&end-lon=${lon}`, '_blank');
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '8px 12px',
+                      background: 'rgba(255, 215, 0, 0.15)',
+                      border: '1.5px solid rgba(255, 215, 0, 0.5)',
+                      borderRadius: '8px',
+                      color: '#FFD700',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 215, 0, 0.25)';
+                      e.currentTarget.style.boxShadow = '0 0 12px rgba(255, 215, 0, 0.3)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 215, 0, 0.15)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <span>🚕</span>
+                    <span>Такси</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         );
@@ -296,6 +375,86 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                   {shop.description}
                 </div>
               )}
+              
+              {/* Кнопки действий */}
+              <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                {shop.username && (
+                  <button
+                    onClick={() => {
+                      const cleanUsername = shop.username?.replace('@', '') || '';
+                      window.open(`https://t.me/${cleanUsername}`, '_blank');
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '8px 16px',
+                      background: 'rgba(240, 248, 255, 0.15)',
+                      border: '1.5px solid rgba(240, 248, 255, 0.5)',
+                      borderRadius: '8px',
+                      color: '#f0f8ff',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = 'rgba(240, 248, 255, 0.25)';
+                      e.currentTarget.style.boxShadow = '0 0 15px rgba(240, 248, 255, 0.3)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = 'rgba(240, 248, 255, 0.15)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <span>✉️</span>
+                    <span>Написать</span>
+                  </button>
+                )}
+                
+                {shop.spreadsheet_url && shop.spreadsheet_url.includes('2gis.ru') && (
+                  <button
+                    onClick={() => {
+                      // Парсим координаты из ссылки 2ГИС
+                      const match = shop.spreadsheet_url?.match(/(\d+\.\d+),(\d+\.\d+)/);
+                      if (match) {
+                        const lat = match[1];
+                        const lon = match[2];
+                        window.open(`https://taxi.yandex.ru/route/?end-lat=${lat}&end-lon=${lon}`, '_blank');
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '8px 16px',
+                      background: 'rgba(255, 215, 0, 0.15)',
+                      border: '1.5px solid rgba(255, 215, 0, 0.5)',
+                      borderRadius: '8px',
+                      color: '#FFD700',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 215, 0, 0.25)';
+                      e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 215, 0, 0.3)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 215, 0, 0.15)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <span>🚕</span>
+                    <span>Такси</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
           

@@ -1981,54 +1981,34 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       ">
         <div style="
           position: absolute;
-          bottom: 35px;
+          bottom: 30px;
           left: 50%;
           transform: translateX(-50%);
-          background: linear-gradient(
-            135deg,
-            rgba(255, 215, 0, 0.3),
-            rgba(255, 165, 0, 0.4)
-          );
+          background: rgba(255, 215, 0, 0.15);
           backdrop-filter: blur(10px);
-          border: 2px solid rgba(255, 215, 0, 0.6);
-          border-radius: 12px;
-          padding: 10px 20px;
-          box-shadow: 
-            0 0 30px rgba(255, 215, 0, 0.3),
-            inset 0 0 20px rgba(255, 215, 0, 0.1);
+          border: 1px solid rgba(255, 215, 0, 0.3);
+          border-radius: 8px;
+          padding: 4px 10px;
+          box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
           white-space: nowrap;
         ">
           <div style="
-            color: rgba(255, 240, 200, 0.95);
-            font-size: 16px;
-            font-weight: 700;
+            color: rgba(255, 240, 200, 0.9);
+            font-size: 11px;
+            font-weight: 600;
             text-align: center;
-            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-            letter-spacing: 1px;
-          ">💼 ОПТ</div>
-          <div style="
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(
-              90deg,
-              transparent,
-              rgba(255, 215, 0, 0.8),
-              transparent
-            );
-            animation: scanLine 3s infinite linear;
-          "></div>
+            text-shadow: 0 0 4px rgba(255, 215, 0, 0.3);
+            letter-spacing: 0.5px;
+          ">ОПТ</div>
         </div>
         <div style="
-          width: 20px;
-          height: 20px;
-          background: radial-gradient(circle, rgba(255, 215, 0, 0.9), rgba(255, 165, 0, 0.7));
+          width: 16px;
+          height: 16px;
+          background: radial-gradient(circle, rgba(255, 215, 0, 0.5), rgba(255, 165, 0, 0.3));
           border-radius: 50%;
           box-shadow: 
-            0 0 20px rgba(255, 215, 0, 0.6),
-            0 0 40px rgba(255, 215, 0, 0.3);
+            0 0 12px rgba(255, 215, 0, 0.4),
+            0 0 24px rgba(255, 215, 0, 0.2);
           animation: pulse 2s infinite;
         "></div>
       </div>

@@ -9,6 +9,7 @@ export interface Shop {
   photo_url?: string | null;
   spreadsheet_url?: string;
   description?: string | null; // Описание магазина из столбца G
+  username?: string | null; // Telegram username из столбца J
 }
 
 export interface AccessEntry {
