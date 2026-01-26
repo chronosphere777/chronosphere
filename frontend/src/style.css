@@ -1215,6 +1215,8 @@ items {
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
   padding: 0 8px 80px 8px;
+  touch-action: pan-y;
+  overflow-x: hidden;
 }
 
 .category-card h3 {
@@ -1272,6 +1274,28 @@ items {
   padding: 40px 20px;
   font-size: 16px;
   opacity: 0.7;
+}
+
+.fullscreen-image-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  touch-action: pan-y;
+  overflow: hidden;
+}
+
+.fullscreen-image {
+  max-width: 95vw;
+  max-height: 95vh;
+  object-fit: contain;
+  touch-action: pan-y;
 }
 
 /* Loading Screen */

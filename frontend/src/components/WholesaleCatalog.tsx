@@ -255,7 +255,9 @@ export function WholesaleCatalog({ cityName, onClose }: WholesaleCatalogProps) {
         <div style={{
           flex: 1,
           overflowY: 'auto',
-          minHeight: 0
+          overflowX: 'hidden',
+          minHeight: 0,
+          touchAction: 'pan-y'
         }}>
           <div className="shop-info-body">
             {renderItems()}
