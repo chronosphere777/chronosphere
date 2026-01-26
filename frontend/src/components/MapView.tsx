@@ -1944,22 +1944,38 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
 
   // Рендеринг маркеров ОПТ для городов с доступом
   useEffect(() => {
-    if (!map.current || !cities.length || !accessList.length || !wholesaleShops.length) return;
+    if (!map.current || !cities.length) return;
     
     // Очищаем старые маркеры ОПТ
     wholesaleMarkersRef.current.forEach(marker => marker.remove());
     wholesaleMarkersRef.current = [];
     
+    // Проверяем что данные загружены
+    if (!accessList.length || !wholesaleShops.length) return;
+    
     // Получаем Telegram ID текущего пользователя
     const telegramUserId = getTelegramUserId();
-    if (!telegramUserId) return; // Если нет Telegram ID, не показываем маркеры ОПТ
+    if (!telegramUserId) return;
+    
+    // DEBUG
+    console.log('=== OPT MARKER DEBUG ===');
+    console.log('Telegram User ID:', telegramUserId);
+    console.log('Access List:', accessList);
+    console.log('Wholesale Shops:', wholesaleShops);
+    console.log('Cities:', cities.map(c => c.name));
+    
+    // Находим города с оптовыми магазинами
+    const wholesaleCities = new Set(wholesaleShops.map(shop => shop.city));
     
     // Фильтруем города, к которым у пользователя есть доступ
     const citiesWithAccess = cities.filter(city => {
-      return accessList.some(access => 
+      // Город должен быть в списке оптовых И у пользователя должен быть доступ
+      const hasWholesaleShops = wholesaleCities.has(city.name);
+      const hasAccess = accessList.some(access => 
         access.city === city.name && 
-        access.telegram_id === telegramUserId
+        String(access.telegram_id) === String(telegramUserId)
       );
+      return hasWholesaleShops && hasAccess;
     });
     
     // Для каждого города с доступом создаем маркер ОПТ
