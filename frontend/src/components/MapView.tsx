@@ -2468,12 +2468,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         <WholesaleCatalog
           cityName={selectedCity.name}
           onClose={() => setShowWholesaleCatalog(false)}
-          onShopClick={(shop) => {
-            setShowWholesaleCatalog(false);
-            if (onShopClick) {
-              onShopClick(shop);
-            }
-          }}
         />
       )}
     </>
