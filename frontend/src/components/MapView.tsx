@@ -1951,28 +1951,25 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     wholesaleMarkersRef.current = [];
     
     // Проверяем что данные загружены
-    if (!accessList.length || !wholesaleShops.length) return;
+    if (!accessList.length) return;
     
     // Получаем Telegram ID текущего пользователя
     const telegramUserId = getTelegramUserId();
     if (!telegramUserId) return;
     
-    // Находим города с оптовыми магазинами
-    const wholesaleCities = new Set(wholesaleShops.map(shop => shop.city));
-    
-    // Фильтруем города, к которым у пользователя есть доступ
-    const citiesWithAccess = cities.filter(city => {
-      // Город должен быть в списке оптовых И у пользователя должен быть доступ
-      const hasWholesaleShops = wholesaleCities.has(city.name);
-      const hasAccess = accessList.some(access => 
-        access.city.toLowerCase() === city.name.toLowerCase() && 
-        String(access.telegram_id) === String(telegramUserId)
-      );
-      return hasWholesaleShops && hasAccess;
+    // Получаем уникальный список городов из списка доступа для текущего пользователя
+    const citiesWithAccess = new Set<string>();
+    accessList.forEach(access => {
+      if (String(access.telegram_id) === String(telegramUserId)) {
+        citiesWithAccess.add(access.city.toLowerCase());
+      }
     });
     
     // Для каждого города с доступом создаем маркер ОПТ
-    citiesWithAccess.forEach(city => {
+    cities.forEach(city => {
+      // Проверяем есть ли доступ к этому городу
+      if (!citiesWithAccess.has(city.name.toLowerCase())) return;
+      
       const coords = CITY_COORDS[city.name];
       if (!coords) return;
       
@@ -2064,7 +2061,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       wholesaleMarkersRef.current.forEach(marker => marker.remove());
       wholesaleMarkersRef.current = [];
     };
-  }, [cities, accessList, wholesaleShops]);
+  }, [cities, accessList]);
 
   return (
     <>
