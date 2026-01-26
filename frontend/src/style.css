@@ -37,6 +37,48 @@ body {
   }
 }
 
+/* Голографические анимации для табличек городов */
+@keyframes projectorScan {
+  0% { 
+    opacity: 0.3; 
+    transform: translateX(-50%) translateY(0); 
+  }
+  100% { 
+    opacity: 0.7; 
+    transform: translateX(-50%) translateY(-10px); 
+  }
+}
+
+@keyframes scanLine {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes glitch {
+  0% { opacity: 0; }
+  50% { opacity: 0.1; }
+  100% { opacity: 0; }
+}
+
+@keyframes contentFloat {
+  0% { transform: skewY(-1deg) translateY(0); }
+  100% { transform: skewY(1deg) translateY(-5px); }
+}
+
+.city-holo-display:hover {
+  transform: rotateX(0deg) translateY(-10px) !important;
+  box-shadow: 
+    0 0 60px rgba(100, 200, 255, 0.4),
+    0 30px 50px rgba(0, 0, 0, 0.5),
+    inset 0 0 60px rgba(100, 200, 255, 0.2) !important;
+  border-color: rgba(100, 200, 255, 0.6) !important;
+}
+
+.city-holo-display:hover .holo-content {
+  animation: contentFloat 3s infinite alternate;
+}
+
+
 #app {
   width: 100vw;
   height: 100vh;

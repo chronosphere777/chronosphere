@@ -1133,9 +1133,9 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
         if (el) {
           el.style.display = visible ? 'block' : 'none';
         }
-        const innerEl = el?.querySelector('.city-label') as HTMLElement;
-        if (innerEl) {
-          innerEl.style.transform = `scale(${scale})`;
+        const holoContainer = el?.querySelector('.city-holo-container') as HTMLElement;
+        if (holoContainer) {
+          holoContainer.style.transform = `scale(${scale})`;
         }
       });
     };
@@ -1150,50 +1150,173 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       const initialScale = map.current ? getScale(map.current.getZoom()) : 0.5;
       
       el.innerHTML = `
-        <div class="city-label" style="
-          background: rgba(10, 10, 26, 0.95);
-          border: 2px solid white;
-          border-radius: 12px;
-          padding: 12px 20px;
-          cursor: pointer;
-          box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
-          transition: box-shadow 0.3s;
-          font-weight: bold;
-          text-align: center;
-          pointer-events: auto;
-          animation: cityLabelPulse 3s ease-in-out infinite;
+        <div class="city-holo-container" style="
+          perspective: 1000px;
           transform: scale(${initialScale});
           transform-origin: center center;
         ">
-          <div class="city-label__name">${city.name}${getUserCounterHTML(cityUserCount)}</div>
-          <div class="city-label__count">${shopCount} ${shopCount === 1 ? 'магазин' : shopCount < 5 ? 'магазина' : 'магазинов'}</div>
+          <!-- Голографическая проекция -->
+          <div class="city-holo-projector" style="
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 30px;
+            background: linear-gradient(
+              to bottom,
+              rgba(100, 200, 255, 0.3),
+              transparent
+            );
+            border-radius: 30px 30px 0 0;
+            z-index: 1;
+            animation: projectorScan 4s infinite alternate;
+          ">
+            <div style="
+              position: absolute;
+              bottom: 0;
+              left: 10px;
+              right: 10px;
+              height: 3px;
+              background: rgba(100, 200, 255, 0.8);
+              box-shadow: 0 0 10px rgba(100, 200, 255, 0.8);
+            "></div>
+          </div>
+          
+          <!-- Голографический дисплей -->
+          <div class="city-holo-display" style="
+            position: relative;
+            background: linear-gradient(
+              135deg,
+              rgba(0, 50, 100, 0.2),
+              rgba(0, 20, 50, 0.3)
+            );
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(100, 200, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px 28px;
+            transform: rotateX(10deg);
+            box-shadow: 
+              0 0 40px rgba(100, 200, 255, 0.2),
+              inset 0 0 40px rgba(100, 200, 255, 0.1);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            pointer-events: auto;
+          ">
+            <!-- Сканирующая линия -->
+            <div class="holo-scan-line" style="
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              height: 2px;
+              background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(100, 200, 255, 0.8),
+                transparent
+              );
+              animation: scanLine 3s infinite linear;
+            "></div>
+            
+            <!-- Контент с дисторсией -->
+            <div class="holo-content" style="
+              position: relative;
+              transform: skewY(-1deg);
+            ">
+              <div class="city-holo-name" style="
+                color: rgba(200, 240, 255, 0.9);
+                font-size: 20px;
+                font-weight: 700;
+                margin-bottom: 10px;
+                text-shadow: 
+                  0 0 10px rgba(100, 200, 255, 0.5),
+                  0 0 20px rgba(100, 200, 255, 0.3);
+                letter-spacing: 1.2px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+              ">${city.name}${getUserCounterHTML(cityUserCount)}</div>
+              
+              <div class="city-holo-stats" style="
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                padding: 12px;
+                background: rgba(0, 30, 60, 0.3);
+                border-radius: 8px;
+                border: 1px solid rgba(100, 200, 255, 0.2);
+              ">
+                <div class="holo-stat">
+                  <div style="
+                    color: rgba(150, 220, 255, 0.7);
+                    font-size: 11px;
+                    margin-bottom: 4px;
+                  ">МАГАЗИНОВ</div>
+                  <div style="
+                    color: #ff8c00;
+                    font-size: 22px;
+                    font-weight: 900;
+                    font-family: monospace;
+                    text-shadow: 0 0 15px #ff8c00;
+                  ">${shopCount}</div>
+                </div>
+              </div>
+              
+              <!-- Координаты -->
+              <div style="
+                display: flex;
+                justify-content: space-between;
+                margin-top: 10px;
+                font-size: 9px;
+                color: rgba(100, 200, 255, 0.5);
+                font-family: monospace;
+              ">
+                <div>LAT: ${city.lat.toFixed(4)}</div>
+                <div>LNG: ${city.lng.toFixed(4)}</div>
+              </div>
+            </div>
+            
+            <!-- Голографические помехи -->
+            <div class="holo-glitch" style="
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: linear-gradient(
+                0deg,
+                transparent 30%,
+                rgba(100, 200, 255, 0.05) 50%,
+                transparent 70%
+              );
+              opacity: 0.3;
+              animation: glitch 0.1s infinite;
+              pointer-events: none;
+            "></div>
+          </div>
+          
+          <!-- Опорная платформа -->
+          <div class="holo-base" style="
+            position: absolute;
+            bottom: -20px;
+            left: 20%;
+            right: 20%;
+            height: 10px;
+            background: linear-gradient(
+              to top,
+              rgba(50, 100, 150, 0.5),
+              transparent
+            );
+            border-radius: 50%;
+            filter: blur(5px);
+          "></div>
         </div>
       `;
       
-      const innerEl = el.querySelector('.city-label') as HTMLElement;
-      
-      // Hover эффект только для тени, без transform
-      innerEl.addEventListener('mouseenter', () => {
-        innerEl.style.boxShadow = '0 0 40px rgba(255, 255, 255, 0.9)';
-      });
-      
-      innerEl.addEventListener('mouseleave', () => {
-        innerEl.style.boxShadow = '0 0 30px rgba(255, 255, 255, 0.5)';
-      });
-      
-      const labelDiv = el.querySelector('.city-label') as HTMLElement;
-      
-      // Hover эффект только для тени, без transform
-      labelDiv.addEventListener('mouseenter', () => {
-        labelDiv.style.boxShadow = '0 0 40px rgba(255, 255, 255, 0.9)';
-      });
-      
-      labelDiv.addEventListener('mouseleave', () => {
-        labelDiv.style.boxShadow = '0 0 30px rgba(255, 255, 255, 0.5)';
-      });
+      const holoDisplay = el.querySelector('.city-holo-display') as HTMLElement;
       
       // Клик на город
-      labelDiv.addEventListener('click', () => {
+      holoDisplay.addEventListener('click', () => {
         if (!map.current) return;
         
         
