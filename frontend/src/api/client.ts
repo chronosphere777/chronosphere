@@ -218,7 +218,7 @@ export const api = {
     return response.json();
   },
 
-  // Загрузка магазинов из листа ОПТ
+  // Загрузка товаров из листа ОПТ (возвращаем products напрямую)
   getWholesaleShops: async () => {
     try {
       const response = await fetch(`${API_BASE}/api/wholesale-shops`, {
@@ -227,20 +227,11 @@ export const api = {
       if (!response.ok) throw new Error('API unavailable');
       const data = await response.json();
       
-      return data.shops.map((shop: any) => ({
-        id: shop.shop_id,
-        name: shop.name,
-        city: shop.city,
-        category: shop.category,
-        lat: shop.latitude,
-        lng: shop.longitude,
-        photo_url: shop.photo_url,
-        spreadsheet_url: shop.spreadsheet_url,
-        description: shop.description
-      }));
+      // Backend возвращает { products: [...], total: N }
+      return data;
     } catch (error) {
-      console.error('Failed to load wholesale shops:', error);
-      return [];
+      console.error('Failed to load wholesale products:', error);
+      return { products: [], total: 0 };
     }
   },
 

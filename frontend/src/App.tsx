@@ -17,7 +17,7 @@ export function App() {
 
   // Функция для загрузки и обновления данных (используется при первой загрузке и периодически)
   const loadData = async () => {
-    const [citiesData, allShops, wholesaleShops, accessList] = await Promise.all([
+    const [citiesData, allShops, wholesaleData, accessList] = await Promise.all([
       api.getCities(),
       api.getAllShops(),
       api.getWholesaleShops(),
@@ -36,11 +36,8 @@ export function App() {
       activity: Math.random() * 0.5 + 0.5, // 0.5-1.0
     }));
     
-    // Добавляем активность к оптовым магазинам
-    const wholesaleShopsWithActivity = wholesaleShops.map((shop: any) => ({
-      ...shop,
-      activity: Math.random() * 0.5 + 0.5,
-    }));
+    // wholesaleData теперь { products: [], total: N } - не используется для маркеров
+    // Просто сохраняем для WholesaleCatalog
     
     // Подсчитываем количество магазинов для каждого города
     const shopsByCity = shopsWithActivity.reduce((acc: Record<string, number>, shop: Shop) => {
@@ -49,14 +46,14 @@ export function App() {
       return acc;
     }, {});
     
-    // Проверяем наличие оптовых магазинов в каждом городе
-    const wholesaleCities = new Set(wholesaleShopsWithActivity.map((shop: Shop) => shop.city));
+    // ОПТ товары доступны всем городам если есть в accessList
+    const hasWholesale = wholesaleData.products && wholesaleData.products.length > 0;
     
     // Добавляем счетчик магазинов к городам из API
     const citiesWithShopCounts = citiesData.map((city: City) => ({
       ...city,
       shops: shopsByCity[city.name] || 0,
-      hasWholesale: wholesaleCities.has(city.name)
+      hasWholesale: hasWholesale // ОПТ показывается если есть товары и пользователь в списке доступа
     }));
     
     // ВАЖНО: Обновляем глобальный массив CITIES_WITHOUT_SHOPS_VISUAL
@@ -64,7 +61,7 @@ export function App() {
     
     // Устанавливаем магазины и города ВМЕСТЕ
     setShops(shopsWithActivity);
-    setWholesaleShops(wholesaleShopsWithActivity);
+    setWholesaleShops([]); // Очищаем - ОПТ это товары, а не магазины
     setAccessList(accessList);
     setCities(citiesWithShopCounts);
   };
