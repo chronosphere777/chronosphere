@@ -158,7 +158,7 @@ export const api = {
       if (!response.ok) throw new Error('API unavailable');
       const data = await response.json();
       
-      // Структура: { city, category, name, shop_id, spreadsheet_url, description, photo_url, latitude, longitude }
+      // Структура: { city, category, name, shop_id, spreadsheet_url, description, photo_url, latitude, longitude, username, gis_url }
       return data.shops.map((shop: any) => ({
         id: shop.shop_id,
         name: shop.name,
@@ -168,7 +168,9 @@ export const api = {
         lng: shop.longitude,
         photo_url: shop.photo_url,
         spreadsheet_url: shop.spreadsheet_url,
-        description: shop.description
+        description: shop.description,
+        username: shop.username,
+        gis_url: shop.gis_url
       }));
     } catch (error) {
       return [];
@@ -192,7 +194,9 @@ export const api = {
         category: shop.category,
         photo_url: shop.photo_url,
         spreadsheet_url: shop.spreadsheet_url,
-        description: shop.description
+        description: shop.description,
+        username: shop.username,
+        gis_url: shop.gis_url
       }));
     } catch (error) {
       return [];
