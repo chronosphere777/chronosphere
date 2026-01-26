@@ -1957,13 +1957,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     const telegramUserId = getTelegramUserId();
     if (!telegramUserId) return;
     
-    // DEBUG
-    console.log('=== OPT MARKER DEBUG ===');
-    console.log('Telegram User ID:', telegramUserId);
-    console.log('Access List:', accessList);
-    console.log('Wholesale Shops:', wholesaleShops);
-    console.log('Cities:', cities.map(c => c.name));
-    
     // Находим города с оптовыми магазинами
     const wholesaleCities = new Set(wholesaleShops.map(shop => shop.city));
     
@@ -1972,7 +1965,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       // Город должен быть в списке оптовых И у пользователя должен быть доступ
       const hasWholesaleShops = wholesaleCities.has(city.name);
       const hasAccess = accessList.some(access => 
-        access.city === city.name && 
+        access.city.toLowerCase() === city.name.toLowerCase() && 
         String(access.telegram_id) === String(telegramUserId)
       );
       return hasWholesaleShops && hasAccess;
