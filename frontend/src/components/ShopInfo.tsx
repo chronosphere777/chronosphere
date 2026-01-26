@@ -199,8 +199,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
-                  <span>✉️</span>
-                  <span>Написать</span>
+                  <span>НАПИШИ НАМ</span>
                 </button>
               )}
             </div>
@@ -374,8 +373,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                       e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
-                    <span>✉️</span>
-                    <span>Написать</span>
+                    <span>НАПИШИ НАМ</span>
                   </button>
                 )}
                 
@@ -395,10 +393,10 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                       minWidth: 0,
                       maxWidth: '50%',
                       padding: '8px 12px',
-                      background: 'rgba(255, 215, 0, 0.15)',
-                      border: '1.5px solid rgba(255, 215, 0, 0.5)',
+                      background: 'rgba(240, 248, 255, 0.15)',
+                      border: '1.5px solid rgba(240, 248, 255, 0.5)',
                       borderRadius: '8px',
-                      color: '#FFD700',
+                      color: '#f0f8ff',
                       fontSize: '12px',
                       fontWeight: '600',
                       cursor: 'pointer',
@@ -412,16 +410,15 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                       whiteSpace: 'nowrap'
                     }}
                     onMouseOver={(e) => {
-                      e.currentTarget.style.background = 'rgba(255, 215, 0, 0.25)';
-                      e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 215, 0, 0.3)';
+                      e.currentTarget.style.background = 'rgba(240, 248, 255, 0.25)';
+                      e.currentTarget.style.boxShadow = '0 0 15px rgba(240, 248, 255, 0.3)';
                     }}
                     onMouseOut={(e) => {
-                      e.currentTarget.style.background = 'rgba(255, 215, 0, 0.15)';
+                      e.currentTarget.style.background = 'rgba(240, 248, 255, 0.15)';
                       e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
-                    <span>🚕</span>
-                    <span>Такси</span>
+                    <span>ПОЕХАЛИ</span>
                   </button>
                 )}
               </div>
