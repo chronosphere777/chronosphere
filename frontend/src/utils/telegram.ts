@@ -58,6 +58,14 @@ declare global {
 
 export const tg = window.Telegram?.WebApp;
 
+// Получить Telegram ID пользователя
+export function getTelegramUserId(): string | null {
+  if (!tg || !tg.initDataUnsafe || !tg.initDataUnsafe.user) {
+    return null;
+  }
+  return String(tg.initDataUnsafe.user.id);
+}
+
 // Инициализация TMA
 export function initTelegramApp() {
   if (!tg) {

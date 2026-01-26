@@ -4,7 +4,7 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Shop } from '../types';
 import { neonRoadsStyle } from '../styles/neon-roads-style';
-import { hapticFeedback } from '../utils/telegram';
+import { hapticFeedback, getTelegramUserId } from '../utils/telegram';
 import { CITIES_WITHOUT_SHOPS_VISUAL, CITY_COORDS } from '../api/client';
 import { CategoryModal } from './CategoryModal';
 import { CityModal } from './CityModal';
@@ -23,7 +23,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
   const pixelOverlayRef = useRef<HTMLCanvasElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const markers = useRef<maplibregl.Marker[]>([]);
-  const { shops, selectedCity, cities } = useMapStore();
+  const wholesaleMarkersRef = useRef<maplibregl.Marker[]>([]);
+  const { shops, wholesaleShops, accessList, selectedCity, cities } = useMapStore();
   const [clusterShops, setClusterShops] = useState<Shop[] | null>(null);
   const [showCityLabels, setShowCityLabels] = useState<boolean>(false);
   const [showCitySelector, setShowCitySelector] = useState<boolean>(false);
@@ -1940,6 +1941,121 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
     
     return () => clearTimeout(timer);
   }, [selectedShop, cityShops]);
+
+  // Рендеринг маркеров ОПТ для городов с доступом
+  useEffect(() => {
+    if (!map.current || !cities.length || !accessList.length || !wholesaleShops.length) return;
+    
+    // Очищаем старые маркеры ОПТ
+    wholesaleMarkersRef.current.forEach(marker => marker.remove());
+    wholesaleMarkersRef.current = [];
+    
+    // Получаем Telegram ID текущего пользователя
+    const telegramUserId = getTelegramUserId();
+    if (!telegramUserId) return; // Если нет Telegram ID, не показываем маркеры ОПТ
+    
+    // Фильтруем города, к которым у пользователя есть доступ
+    const citiesWithAccess = cities.filter(city => {
+      return accessList.some(access => 
+        access.city === city.name && 
+        access.telegram_id === telegramUserId
+      );
+    });
+    
+    // Для каждого города с доступом создаем маркер ОПТ
+    citiesWithAccess.forEach(city => {
+      const coords = CITY_COORDS[city.name];
+      if (!coords) return;
+      
+      const el = document.createElement('div');
+      el.className = 'wholesale-marker';
+      el.innerHTML = `
+        <div style="
+          position: relative;
+          cursor: pointer;
+          transition: transform 0.3s ease;
+        ">
+          <div style="
+            position: absolute;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(
+              135deg,
+              rgba(255, 215, 0, 0.3),
+              rgba(255, 165, 0, 0.4)
+            );
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 215, 0, 0.6);
+            border-radius: 12px;
+            padding: 10px 20px;
+            box-shadow: 
+              0 0 30px rgba(255, 215, 0, 0.3),
+              inset 0 0 20px rgba(255, 215, 0, 0.1);
+            white-space: nowrap;
+          ">
+            <div style="
+              color: rgba(255, 240, 200, 0.95);
+              font-size: 16px;
+              font-weight: 700;
+              text-align: center;
+              text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+              letter-spacing: 1px;
+            ">💼 ОПТ</div>
+            <div style="
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              height: 2px;
+              background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 215, 0, 0.8),
+                transparent
+              );
+              animation: scanLine 3s infinite linear;
+            "></div>
+          </div>
+          <div style="
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.9), rgba(255, 165, 0, 0.7));
+            border-radius: 50%;
+            box-shadow: 
+              0 0 20px rgba(255, 215, 0, 0.6),
+              0 0 40px rgba(255, 215, 0, 0.3);
+            animation: pulse 2s infinite;
+          "></div>
+        </div>
+      `;
+      
+      el.addEventListener('click', () => {
+        hapticFeedback('medium');
+        
+        // При клике показываем оптовые магазины этого города
+        const cityWholesaleShops = wholesaleShops.filter(shop => shop.city === city.name);
+        if (cityWholesaleShops.length > 0) {
+          // TODO: показать список оптовых магазинов (аналогично обычным магазинам)
+          console.log('Wholesale shops for', city.name, cityWholesaleShops);
+        }
+      });
+      
+      const marker = new maplibregl.Marker({ 
+        element: el,
+        anchor: 'center'
+      })
+        .setLngLat([coords.lng, coords.lat])
+        .addTo(map.current!);
+      
+      wholesaleMarkersRef.current.push(marker);
+    });
+    
+    return () => {
+      wholesaleMarkersRef.current.forEach(marker => marker.remove());
+      wholesaleMarkersRef.current = [];
+    };
+  }, [cities, accessList, wholesaleShops]);
 
   return (
     <>

@@ -212,5 +212,48 @@ export const api = {
   searchProducts: async (query: string, sort: 'relevance' | 'price_asc' | 'price_desc' = 'relevance') => {
     const response = await fetch(`${API_BASE}/api/search-products?q=${encodeURIComponent(query)}&sort=${sort}`);
     return response.json();
+  },
+
+  // Загрузка магазинов из листа ОПТ
+  getWholesaleShops: async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/wholesale-shops`, {
+        signal: AbortSignal.timeout(30000)
+      });
+      if (!response.ok) throw new Error('API unavailable');
+      const data = await response.json();
+      
+      return data.shops.map((shop: any) => ({
+        id: shop.shop_id,
+        name: shop.name,
+        city: shop.city,
+        category: shop.category,
+        lat: shop.latitude,
+        lng: shop.longitude,
+        photo_url: shop.photo_url,
+        spreadsheet_url: shop.spreadsheet_url,
+        description: shop.description
+      }));
+    } catch (error) {
+      console.error('Failed to load wholesale shops:', error);
+      return [];
+    }
+  },
+
+  // Загрузка данных о доступе из листа ДОСТУП
+  getAccessList: async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/access-list`, {
+        signal: AbortSignal.timeout(30000)
+      });
+      if (!response.ok) throw new Error('API unavailable');
+      const data = await response.json();
+      
+      // Структура: { city, telegram_id, shop_name }
+      return data.access_list;
+    } catch (error) {
+      console.error('Failed to load access list:', error);
+      return [];
+    }
   }
 };

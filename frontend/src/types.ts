@@ -11,12 +11,19 @@ export interface Shop {
   description?: string | null; // Описание магазина из столбца G
 }
 
+export interface AccessEntry {
+  city: string;
+  telegram_id: string;
+  shop_name: string;
+}
+
 export interface City {
   name: string;
   apiName?: string; // оригинальное название для API запросов (например "Ishim")
   lat: number;
   lng: number;
   shops: Shop[] | number; // Массив магазинов или количество
+  hasWholesale?: boolean; // Есть ли оптовые магазины в городе
 }
 
 export interface NeuralConnection {

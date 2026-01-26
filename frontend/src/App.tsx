@@ -9,7 +9,7 @@ import type { Shop, City } from './types';
 import { showBackButton, hideBackButton, hapticFeedback } from './utils/telegram';
 
 export function App() {
-  const { setCities, setShops, shops } = useMapStore();
+  const { setCities, setShops, setWholesaleShops, setAccessList, shops } = useMapStore();
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const mapResetRef = useRef<(() => void) | null>(null);
@@ -17,9 +17,11 @@ export function App() {
 
   // Функция для загрузки и обновления данных (используется при первой загрузке и периодически)
   const loadData = async () => {
-    const [citiesData, allShops] = await Promise.all([
+    const [citiesData, allShops, wholesaleShops, accessList] = await Promise.all([
       api.getCities(),
-      api.getAllShops()
+      api.getAllShops(),
+      api.getWholesaleShops(),
+      api.getAccessList()
     ]);
     
     // ВАЖНО: Если API вернул пустой массив магазинов (ошибка/таймаут), не обновляем данные
@@ -34,6 +36,12 @@ export function App() {
       activity: Math.random() * 0.5 + 0.5, // 0.5-1.0
     }));
     
+    // Добавляем активность к оптовым магазинам
+    const wholesaleShopsWithActivity = wholesaleShops.map((shop: any) => ({
+      ...shop,
+      activity: Math.random() * 0.5 + 0.5,
+    }));
+    
     // Подсчитываем количество магазинов для каждого города
     const shopsByCity = shopsWithActivity.reduce((acc: Record<string, number>, shop: Shop) => {
       const cityName = shop.city || '';
@@ -41,10 +49,14 @@ export function App() {
       return acc;
     }, {});
     
+    // Проверяем наличие оптовых магазинов в каждом городе
+    const wholesaleCities = new Set(wholesaleShopsWithActivity.map((shop: Shop) => shop.city));
+    
     // Добавляем счетчик магазинов к городам из API
     const citiesWithShopCounts = citiesData.map((city: City) => ({
       ...city,
-      shops: shopsByCity[city.name] || 0
+      shops: shopsByCity[city.name] || 0,
+      hasWholesale: wholesaleCities.has(city.name)
     }));
     
     // ВАЖНО: Обновляем глобальный массив CITIES_WITHOUT_SHOPS_VISUAL
@@ -52,6 +64,8 @@ export function App() {
     
     // Устанавливаем магазины и города ВМЕСТЕ
     setShops(shopsWithActivity);
+    setWholesaleShops(wholesaleShopsWithActivity);
+    setAccessList(accessList);
     setCities(citiesWithShopCounts);
   };
 
