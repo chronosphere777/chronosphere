@@ -31,7 +31,7 @@ interface Product {
   size_color: string | null;
   size_color_label: string;
   price: string | null;
-  photo_url: string | null;
+  photos: string[];
   description: string | null;
   row_index: number;
 }
@@ -46,6 +46,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
   const [currentPath, setCurrentPath] = useState<string>('');
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+  const [galleryProduct, setGalleryProduct] = useState<Product | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
   const { shops } = useMapStore();
@@ -143,19 +144,43 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
       if (item.isLeaf && item.product) {
         // Рендерим товар
         const product = item.product;
+        const firstPhoto = product.photos[0];
+        const photoCount = product.photos.length;
+        
         return (
           <div key={index} className="product-card">
-            {product.photo_url && (
-              <img 
-                src={getProxiedImageUrl(product.photo_url) || ''} 
-                alt="" 
-                className="product-image" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setFullscreenImage(product.photo_url);
-                }}
-                style={{ cursor: 'pointer' }}
-              />
+            {firstPhoto && (
+              <div style={{ position: 'relative', display: 'inline-block' }}>
+                <img 
+                  src={getProxiedImageUrl(firstPhoto) || ''} 
+                  alt="" 
+                  className="product-image" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (photoCount > 1) {
+                      setGalleryProduct(product);
+                    } else {
+                      setFullscreenImage(firstPhoto);
+                    }
+                  }}
+                  style={{ cursor: 'pointer' }}
+                />
+                {photoCount > 1 && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '8px',
+                    right: '8px',
+                    background: 'rgba(255, 140, 0, 0.9)',
+                    color: 'white',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                  }}>
+                    +{photoCount - 1}
+                  </div>
+                )}
+              </div>
             )}
             <div className="product-info">
               {product.size_color && (
@@ -557,6 +582,149 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
           shops={shops}
           onClose={() => setIsSearchOpen(false)}
         />
+      )}
+      
+      {/* Галерея товара */}
+      {galleryProduct && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'rgba(0, 0, 0, 0.95)',
+            zIndex: 10000,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            overflowY: 'auto',
+            padding: '60px 20px 20px'
+          }}
+          onClick={() => setGalleryProduct(null)}
+        >
+          <button
+            onClick={() => setGalleryProduct(null)}
+            style={{
+              position: 'fixed',
+              top: '20px',
+              right: '20px',
+              background: 'transparent',
+              border: '2px solid white',
+              borderRadius: '50%',
+              color: 'white',
+              fontSize: '36px',
+              fontWeight: 'normal',
+              cursor: 'pointer',
+              width: '64px',
+              height: '64px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0',
+              lineHeight: '1',
+              zIndex: 10001,
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
+            }}
+          >
+            ×
+          </button>
+          
+          <div 
+            style={{
+              maxWidth: '1200px',
+              width: '100%',
+              background: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '20px',
+              padding: '30px',
+              margin: '0 auto'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Сетка фотографий */}
+            <div 
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '20px',
+                marginBottom: '30px'
+              }}
+            >
+              {galleryProduct.photos.map((photo, idx) => (
+                <img 
+                  key={idx}
+                  src={getProxiedImageUrl(photo) || ''} 
+                  alt={`Фото ${idx + 1}`}
+                  style={{
+                    width: '100%',
+                    height: '350px',
+                    objectFit: 'cover',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s'
+                  }}
+                  onClick={() => setFullscreenImage(photo)}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                />
+              ))}
+            </div>
+            
+            {/* Информация о товаре */}
+            <div style={{ color: 'white', marginBottom: '20px' }}>
+              {galleryProduct.size_color && (
+                <div style={{ fontSize: '18px', marginBottom: '10px' }}>
+                  <strong>{galleryProduct.size_color_label}:</strong> {galleryProduct.size_color}
+                </div>
+              )}
+              {galleryProduct.price && (
+                <div style={{ fontSize: '24px', color: '#ff8c00', fontWeight: 'bold', marginBottom: '10px' }}>
+                  Цена: {galleryProduct.price} ₽
+                </div>
+              )}
+              {galleryProduct.description && (
+                <div style={{ fontSize: '16px', lineHeight: '1.6', marginBottom: '20px' }}>
+                  {galleryProduct.description}
+                </div>
+              )}
+            </div>
+            
+            {/* Кнопка "Напиши нам" */}
+            {shop.username && (
+              <a
+                href={`https://t.me/${shop.username.replace('@', '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-block',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  color: 'white',
+                  border: '1.5px solid #ff8c00',
+                  padding: '12px 30px',
+                  borderRadius: '25px',
+                  textDecoration: 'none',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  transition: 'all 0.3s',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 140, 0, 0.2)';
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+              >
+                НАПИШИ НАМ
+              </a>
+            )}
+          </div>
+        </div>
       )}
       
       {/* Полноэкранный просмотр фото */}
