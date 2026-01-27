@@ -867,10 +867,12 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       zoom: 3, // Минимальный зум чтобы показать всю страну
       minZoom: 3, // Минимальный zoom
       maxZoom: 18,
-      pitch: 60, // Фиксированный угол 60 градусов
-      minPitch: 60, // Минимальный наклон (блокировка изменения)
-      maxPitch: 60, // Максимальный наклон (блокировка изменения)
-      attributionControl: false
+      // pitch: 60, // Фиксированный угол 60 градусов
+      // minPitch: 60, // Минимальный наклон (блокировка изменения)
+      // maxPitch: 60, // Максимальный наклон (блокировка изменения)
+      attributionControl: false,
+      renderWorldCopies: true // Бесконечная прокрутка по широте и долготе
+      // Не задаём maxBounds, чтобы не ограничивать карту по вертикали
     });
 
     // Анимация появления карты из квадратиков
