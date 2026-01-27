@@ -1,0 +1,279 @@
+import { useState, useEffect } from 'preact/hooks';
+
+interface Product {
+  category_path: string;
+  size_color: string | null;
+  size_color_label: string;
+  price: string | null;
+  photo_url: string | null;
+  description: string | null;
+  additional_photos: string[];
+}
+
+interface ProductGalleryProps {
+  product: Product;
+  shopUsername?: string | null;
+  onClose: () => void;
+  getProxiedImageUrl: (url: string | null) => string | null;
+}
+
+export function ProductGallery({ product, shopUsername, onClose, getProxiedImageUrl }: ProductGalleryProps) {
+  const photos = product.photo_url 
+    ? [product.photo_url, ...(product.additional_photos || [])]
+    : [];
+  
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
+  const handlePrevious = () => {
+    setCurrentIndex((prev) => (prev === 0 ? photos.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev === photos.length - 1 ? 0 : prev + 1));
+  };
+
+  const handleTouchStart = (e: TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 75) {
+      handleNext();
+    }
+    if (touchStart - touchEnd < -75) {
+      handlePrevious();
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') handlePrevious();
+      if (e.key === 'ArrowRight') handleNext();
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  if (photos.length === 0) return null;
+
+  const progressPercentage = ((currentIndex + 1) / photos.length) * 100;
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        background: 'rgba(0, 0, 0, 0.95)',
+        zIndex: 10000,
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+      onClick={onClose}
+    >
+      {/* Кнопка закрытия */}
+      <button
+        onClick={onClose}
+        style={{
+          position: 'absolute',
+          top: '20px',
+          right: '20px',
+          background: 'transparent',
+          border: '2px solid white',
+          borderRadius: '50%',
+          color: 'white',
+          fontSize: '36px',
+          fontWeight: 'normal',
+          cursor: 'pointer',
+          width: '64px',
+          height: '64px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '0',
+          lineHeight: '1',
+          zIndex: 10001,
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
+        }}
+      >
+        ×
+      </button>
+
+      {/* Фото */}
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+        onClick={(e) => e.stopPropagation()}
+        onTouchStart={handleTouchStart as any}
+        onTouchMove={handleTouchMove as any}
+        onTouchEnd={handleTouchEnd}
+      >
+        <img
+          src={getProxiedImageUrl(photos[currentIndex]) || ''}
+          alt={`Фото ${currentIndex + 1}`}
+          style={{
+            maxWidth: '100%',
+            maxHeight: '100%',
+            objectFit: 'contain',
+            userSelect: 'none'
+          }}
+        />
+
+        {/* Стрелки */}
+        {photos.length > 1 && (
+          <>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePrevious();
+              }}
+              style={{
+                position: 'absolute',
+                left: '20px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'rgba(0, 0, 0, 0.5)',
+                border: '2px solid white',
+                borderRadius: '50%',
+                color: 'white',
+                fontSize: '24px',
+                cursor: 'pointer',
+                width: '50px',
+                height: '50px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10002
+              }}
+            >
+              ‹
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNext();
+              }}
+              style={{
+                position: 'absolute',
+                right: '20px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'rgba(0, 0, 0, 0.5)',
+                border: '2px solid white',
+                borderRadius: '50%',
+                color: 'white',
+                fontSize: '24px',
+                cursor: 'pointer',
+                width: '50px',
+                height: '50px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10002
+              }}
+            >
+              ›
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Информация и прогресс-бар */}
+      <div
+        style={{
+          background: 'rgba(0, 0, 0, 0.8)',
+          padding: '20px',
+          color: 'white'
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Прогресс-бар */}
+        {photos.length > 1 && (
+          <div style={{
+            width: '100%',
+            height: '4px',
+            background: 'rgba(255, 255, 255, 0.2)',
+            borderRadius: '2px',
+            marginBottom: '15px',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              width: `${progressPercentage}%`,
+              height: '100%',
+              background: '#ff8c00',
+              transition: 'width 0.3s ease',
+              borderRadius: '2px'
+            }} />
+          </div>
+        )}
+
+        {/* Описание товара */}
+        <div style={{ marginBottom: '15px' }}>
+          {product.size_color && (
+            <div style={{ fontSize: '16px', marginBottom: '8px' }}>
+              <strong>{product.size_color_label}:</strong> {product.size_color}
+            </div>
+          )}
+          {product.price && (
+            <div style={{ fontSize: '20px', color: '#ff8c00', fontWeight: 'bold', marginBottom: '8px' }}>
+              Цена: {product.price} ₽
+            </div>
+          )}
+          {product.description && (
+            <div style={{ fontSize: '14px', lineHeight: '1.6', color: 'rgba(255, 255, 255, 0.8)' }}>
+              {product.description}
+            </div>
+          )}
+        </div>
+
+        {/* Кнопка "Напиши нам" */}
+        {shopUsername && (
+          <a
+            href={`https://t.me/${shopUsername.replace('@', '')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-block',
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              color: 'white',
+              border: '1.5px solid #ff8c00',
+              padding: '12px 30px',
+              borderRadius: '25px',
+              textDecoration: 'none',
+              fontSize: '16px',
+              fontWeight: '600',
+              transition: 'all 0.3s',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 140, 0, 0.2)';
+              e.currentTarget.style.transform = 'scale(1.05)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            НАПИШИ НАМ
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}

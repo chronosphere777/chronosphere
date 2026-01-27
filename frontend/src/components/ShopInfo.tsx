@@ -3,6 +3,7 @@ import { api } from '../api/client';
 import type { Shop } from '../types';
 import { useActivity, getCount } from '../hooks/useActivity';
 import { ShopSearch } from './ShopSearch';
+import { ProductGallery } from './ProductGallery';
 import { useMapStore } from '../store/mapStore';
 
 // API base URL
@@ -33,6 +34,7 @@ interface Product {
   price: string | null;
   photo_url: string | null;
   description: string | null;
+  additional_photos: string[];
   row_index: number;
 }
 
@@ -46,6 +48,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
   const [currentPath, setCurrentPath] = useState<string>('');
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
   const { shops } = useMapStore();
@@ -152,7 +155,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 className="product-image" 
                 onClick={(e) => {
                   e.stopPropagation();
-                  setFullscreenImage(product.photo_url);
+                  setSelectedProduct(product);
                 }}
                 style={{ cursor: 'pointer' }}
               />
@@ -556,6 +559,16 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
           }}
           shops={shops}
           onClose={() => setIsSearchOpen(false)}
+        />
+      )}
+      
+      {/* Галерея товара */}
+      {selectedProduct && (
+        <ProductGallery
+          product={selectedProduct}
+          shopUsername={shop.username}
+          onClose={() => setSelectedProduct(null)}
+          getProxiedImageUrl={getProxiedImageUrl}
         />
       )}
       
