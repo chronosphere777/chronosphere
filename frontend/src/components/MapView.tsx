@@ -2182,9 +2182,26 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               maxWidth: '150px',
               zIndex: 2000,
               boxShadow: '0 0 15px rgba(240, 248, 255, 0.5)',
-              backdropFilter: 'blur(10px)'
+              backdropFilter: 'blur(10px)',
+              cursor: 'pointer'
             }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              hapticFeedback('light');
+              
+              // Сохраняем магазин ДО любых изменений состояния
+              const shopToOpen = popupShop;
+              
+              // Закрываем popup
+              setPopupShop(null);
+              setPopupPosition(null);
+              
+              // Открываем каталог с сохраненным магазином
+              if (shopToOpen && onShopClick) {
+                onShopClick(shopToOpen);
+              }
+            }}
           >
           <button
             onClick={() => {
