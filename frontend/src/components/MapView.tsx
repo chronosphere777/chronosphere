@@ -2309,23 +2309,26 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
             style={{
               width: '100%',
               padding: '6px',
-              background: 'linear-gradient(135deg, #ff8c00, #cc6600)',
-              border: 'none',
+              background: 'rgba(240, 248, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(240, 248, 255, 0.3)',
               borderRadius: '4px',
-              color: 'white',
+              color: '#f0f8ff',
               fontWeight: 'bold',
               cursor: 'pointer',
               fontSize: '10px',
-              boxShadow: '0 2px 8px rgba(255, 140, 0, 0.4)',
+              boxShadow: '0 2px 8px rgba(255, 255, 255, 0.2)',
               transition: 'all 0.3s'
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 140, 0, 0.6)';
+              e.currentTarget.style.background = 'rgba(240, 248, 255, 0.2)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 255, 255, 0.4)';
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 140, 0, 0.4)';
+              e.currentTarget.style.background = 'rgba(240, 248, 255, 0.1)';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 255, 255, 0.2)';
             }}
           >
             Открыть

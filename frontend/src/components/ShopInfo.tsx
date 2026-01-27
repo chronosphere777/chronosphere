@@ -164,7 +164,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 </div>
               )}
               {product.price && (
-                <div className="product-price">Цена: {product.price} ₽</div>
+                <div className="product-price" style={{ color: '#ff8c00', fontWeight: 'bold' }}>Цена: {product.price} ₽</div>
               )}
               {product.description && (
                 <div className="product-description">{product.description}</div>
@@ -299,7 +299,9 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 <h3 style={{ 
                   color: '#f0f8ff', 
                   margin: '0',
-                  fontSize: '18px'
+                  fontSize: shop.name.length > 20 ? '14px' : (shop.name.length > 15 ? '16px' : '18px'),
+                  lineHeight: '1.2',
+                  wordBreak: 'break-word'
                 }}>
                   {shop.name}
                 </h3>
