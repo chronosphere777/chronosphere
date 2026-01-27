@@ -2311,7 +2311,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               padding: '6px',
               background: 'rgba(240, 248, 255, 0.1)',
               backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(240, 248, 255, 0.3)',
+              border: '1.5px solid #ff8c00',
               borderRadius: '4px',
               color: '#f0f8ff',
               fontWeight: 'bold',
