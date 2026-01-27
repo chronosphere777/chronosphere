@@ -871,11 +871,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
       minPitch: 60, // Минимальный наклон (блокировка изменения)
       maxPitch: 60, // Максимальный наклон (блокировка изменения)
       attributionControl: false,
-      renderWorldCopies: true, // Бесконечная прокрутка по горизонтали
-      maxBounds: [
-        [-180, -85], // Юго-западный угол (долгота, широта)
-        [180, 85]    // Северо-восточный угол - ограничиваем вертикальную прокрутку
-      ]
+      renderWorldCopies: true // Бесконечная прокрутка по горизонтали
     });
 
     // Анимация появления карты из квадратиков
