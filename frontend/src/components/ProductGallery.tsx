@@ -22,6 +22,10 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
     ? [product.photo_url, ...(product.additional_photos || [])]
     : [];
   
+  console.log('ProductGallery photos:', photos);
+  console.log('photo_url:', product.photo_url);
+  console.log('additional_photos:', product.additional_photos);
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
