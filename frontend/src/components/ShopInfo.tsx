@@ -170,7 +170,16 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 <div className="product-price" style={{ color: '#ff8c00', fontWeight: 'bold' }}>Цена: {product.price} ₽</div>
               )}
               {product.description && (
-                <div className="product-description">{product.description}</div>
+                <div className="product-description" style={{ 
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  wordBreak: 'break-word'
+                }}>
+                  {product.description}
+                </div>
               )}
               <div className="product-info__bottom">
                 {/* Кнопка действия для товара */}
