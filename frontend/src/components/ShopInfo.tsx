@@ -147,17 +147,17 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
         // Рендерим товар
         const product = item.product;
         return (
-          <div key={index} className="product-card">
+          <div 
+            key={index} 
+            className="product-card"
+            onClick={() => setSelectedProduct(product)}
+            style={{ cursor: 'pointer' }}
+          >
             {product.photo_url && (
               <img 
                 src={getProxiedImageUrl(product.photo_url) || ''} 
                 alt="" 
-                className="product-image" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedProduct(product);
-                }}
-                style={{ cursor: 'pointer' }}
+                className="product-image"
               />
             )}
             <div className="product-info">
@@ -176,7 +176,8 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 {/* Кнопка действия для товара */}
                 {shop.username && (
                   <button
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       const cleanUsername = shop.username?.replace('@', '') || '';
                       window.open(`https://t.me/${cleanUsername}`, '_blank');
                     }}
