@@ -92,12 +92,12 @@ export function CityModal({ cities, onSelectCity, onClose }: CityModalProps) {
             onClick={onClose}
             style={{
               background: 'transparent',
-              border: '3px solid white',
+              border: '2px solid white',
               borderRadius: '50%',
               width: '48px',
               height: '48px',
               color: 'white',
-              fontSize: '16px',
+              fontSize: '24px',
               fontWeight: 'normal',
               cursor: 'pointer',
               display: 'flex',

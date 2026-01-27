@@ -137,11 +137,11 @@ export function ShopSearch({ shop, onShopSelect, shops, onClose }: ShopSearchPro
             }}
             style={{
               background: 'transparent',
-              border: '3px solid white',
+              border: '2px solid white',
               borderRadius: '50%',
               color: 'white',
               cursor: 'pointer',
-              fontSize: '16px',
+              fontSize: '24px',
               fontWeight: 'normal',
               width: '48px',
               height: '48px',
