@@ -297,6 +297,23 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 }}>
                   {shop.name}
                 </h3>
+                <button
+                  onClick={onClose}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#f0f8ff',
+                    fontSize: '22px',
+                    cursor: 'pointer',
+                    marginLeft: 'auto',
+                    padding: '0 8px',
+                    lineHeight: 1
+                  }}
+                  aria-label="Закрыть каталог"
+                  title="Закрыть каталог"
+                >
+                  ×
+                </button>
                 {shopUserCount > 0 && (
                   <div style={{
                     display: 'flex',
