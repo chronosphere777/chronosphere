@@ -696,9 +696,7 @@ items {
     height: 240px;
   }
 
-  .product-image {
-    height: 180px;
-  }
+  /* Размер фото товаров теперь единый 180px на всех устройствах - перенесено в базовый класс .product-image */
 }
 
 /* Activation Ritual */
@@ -1090,7 +1088,7 @@ items {
 
 .cluster-shop-card__photo {
   width: 100%;
-  height: 200px;
+  height: 120px;
   flex-shrink: 0;
   overflow: hidden;
   border-bottom: 1px solid rgba(240, 248, 255, 0.3);
@@ -1100,7 +1098,7 @@ items {
 .cluster-shop-card__photo img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .cluster-shop-card__info {
@@ -1262,9 +1260,10 @@ items {
 
 .product-image {
   width: 100%;
-  height: 120px;
+  height: 180px;
   object-fit: cover;
   border-radius: 8px;
+  background: rgba(240, 248, 255, 0.05);
 }
 
 .product-info {

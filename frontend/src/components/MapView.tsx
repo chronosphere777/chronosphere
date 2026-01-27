@@ -2248,8 +2248,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
                 alt={popupShop.name}
                 style={{
                   width: '100%',
-                  height: 'auto',
-                  maxHeight: '150px',
+                  height: '120px',
                   objectFit: 'contain',
                   display: 'block'
                 }}

@@ -267,20 +267,21 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
           }}>
             {shop.photo_url && (
               <div style={{
-                flex: '0 0 auto',
-                width: '35%',
+                flex: '0 0 120px',
+                width: '120px',
+                height: '120px',
                 borderRadius: '8px',
                 overflow: 'hidden',
                 border: '2px solid white',
-                boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)'
+                boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)',
+                background: 'rgba(255, 255, 255, 0.05)'
               }}>
                 <img 
                   src={`https://raw.githubusercontent.com/chronosphere777/chronosphere/main/frontend/images/${shop.photo_url}`}
                   alt={shop.name}
                   style={{
                     width: '100%',
-                    height: 'auto',
-                    maxHeight: '150px',
+                    height: '100%',
                     objectFit: 'contain',
                     display: 'block'
                   }}
