@@ -2211,8 +2211,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
             }}
             style={{
               position: 'absolute',
-              top: '-24px',
-              right: '-24px',
+              top: '-28px',
+              right: '-28px',
               background: 'transparent',
               border: '2px solid white',
               borderRadius: '50%',
