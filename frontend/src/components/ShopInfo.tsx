@@ -164,44 +164,45 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
               {product.description && (
                 <div className="product-description">{product.description}</div>
               )}
-              
-              {/* Кнопка действия для товара */}
-              {shop.username && (
-                <button
-                  onClick={() => {
-                    const cleanUsername = shop.username?.replace('@', '') || '';
-                    window.open(`https://t.me/${cleanUsername}`, '_blank');
-                  }}
-                  style={{
-                    width: '100%',
-                    marginTop: '12px',
-                    padding: '8px 12px',
-                    background: 'rgba(240, 248, 255, 0.15)',
-                    border: '1.5px solid rgba(240, 248, 255, 0.5)',
-                    borderRadius: '8px',
-                    color: '#f0f8ff',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    transition: 'all 0.2s ease',
-                    boxSizing: 'border-box'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = 'rgba(240, 248, 255, 0.25)';
-                    e.currentTarget.style.boxShadow = '0 0 12px rgba(240, 248, 255, 0.3)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = 'rgba(240, 248, 255, 0.15)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  <span>НАПИШИ НАМ</span>
-                </button>
-              )}
+              <div className="product-info__bottom">
+                {/* Кнопка действия для товара */}
+                {shop.username && (
+                  <button
+                    onClick={() => {
+                      const cleanUsername = shop.username?.replace('@', '') || '';
+                      window.open(`https://t.me/${cleanUsername}`, '_blank');
+                    }}
+                    style={{
+                      width: '100%',
+                      marginTop: '12px',
+                      padding: '8px 12px',
+                      background: 'rgba(240, 248, 255, 0.15)',
+                      border: '1.5px solid rgba(240, 248, 255, 0.5)',
+                      borderRadius: '8px',
+                      color: '#f0f8ff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s ease',
+                      boxSizing: 'border-box'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.background = 'rgba(240, 248, 255, 0.25)';
+                      e.currentTarget.style.boxShadow = '0 0 12px rgba(240, 248, 255, 0.3)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.background = 'rgba(240, 248, 255, 0.15)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <span>НАПИШИ НАМ</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         );
