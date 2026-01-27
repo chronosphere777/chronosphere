@@ -82,21 +82,24 @@ export function CityModal({ cities, onSelectCity, onClose }: CityModalProps) {
           <button
             onClick={onClose}
             style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.3)',
+              background: 'white',
+              border: '2px solid white',
               borderRadius: '50%',
-              width: '32px',
-              height: '32px',
-              color: '#fff',
-              fontSize: '18px',
+              width: '48px',
+              height: '48px',
+              color: 'red',
+              fontSize: '32px',
+              fontWeight: 'bold',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              transition: 'all 0.3s ease'
+              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+              lineHeight: '1'
             }}
           >
-            ✕
+            ×
           </button>
         </div>
 

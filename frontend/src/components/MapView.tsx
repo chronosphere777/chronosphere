@@ -2204,23 +2204,31 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
             }}
           >
           <button
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setPopupShop(null);
               setPopupPosition(null);
             }}
             style={{
               position: 'absolute',
-              top: '4px',
-              right: '4px',
-              background: 'transparent',
-              border: 'none',
-              color: '#f0f8ff',
-              fontSize: '14px',
+              top: '-16px',
+              right: '-16px',
+              background: 'white',
+              border: '2px solid white',
+              borderRadius: '50%',
+              color: 'red',
+              fontSize: '28px',
               cursor: 'pointer',
               padding: '0',
-              width: '16px',
-              height: '16px',
-              lineHeight: '16px'
+              width: '32px',
+              height: '32px',
+              lineHeight: '28px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+              fontWeight: 'bold',
+              zIndex: 2001
             }}
           >
             ×

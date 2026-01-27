@@ -324,14 +324,22 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 <button
                   onClick={onClose}
                   style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#f0f8ff',
-                    fontSize: '22px',
+                    background: 'white',
+                    border: '2px solid white',
+                    borderRadius: '50%',
+                    color: 'red',
+                    fontSize: '32px',
+                    fontWeight: 'bold',
                     cursor: 'pointer',
                     marginLeft: 'auto',
-                    padding: '0 8px',
-                    lineHeight: 1
+                    width: '44px',
+                    height: '44px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0',
+                    lineHeight: '1',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
                   }}
                   aria-label="Закрыть каталог"
                   title="Закрыть каталог"
@@ -572,15 +580,22 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
               position: 'absolute',
               top: '20px',
               right: '20px',
-              background: 'rgba(255, 255, 255, 0.2)',
-              border: '2px solid white',
-              color: 'white',
-              fontSize: '32px',
+              background: 'white',
+              border: '3px solid white',
+              borderRadius: '50%',
+              color: 'red',
+              fontSize: '48px',
+              fontWeight: 'bold',
               cursor: 'pointer',
-              padding: '8px 16px',
-              borderRadius: '8px',
+              width: '64px',
+              height: '64px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0',
               lineHeight: '1',
-              zIndex: 10001
+              zIndex: 10001,
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
             }}
           >
             ×

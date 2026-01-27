@@ -182,16 +182,24 @@ export function SearchBar({ onShopSelect, shops, onFlyToShop, onCloseCatalog, is
               setResults([]);
             }}
             style={{
-              padding: '12px 16px',
-              background: 'rgba(240, 248, 255, 0.1)',
-              border: '1px solid rgba(240, 248, 255, 0.2)',
-              borderRadius: '8px',
-              color: '#f0f8ff',
+              background: 'white',
+              border: '2px solid white',
+              borderRadius: '50%',
+              color: 'red',
               cursor: 'pointer',
-              fontSize: '16px'
+              fontSize: '32px',
+              fontWeight: 'bold',
+              width: '48px',
+              height: '48px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0',
+              lineHeight: '1',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
             }}
           >
-            ✕
+            ×
           </button>
         </div>
 
