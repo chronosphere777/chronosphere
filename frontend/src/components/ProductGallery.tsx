@@ -130,12 +130,14 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
         <img
           src={getProxiedImageUrl(photos[currentIndex]) || ''}
           alt={`Фото ${currentIndex + 1}`}
+          key={photos[currentIndex]}
           style={{
             maxWidth: '100%',
             maxHeight: '100%',
             objectFit: 'contain',
             userSelect: 'none'
           }}
+          onLoad={() => console.log('Loaded photo:', currentIndex, getProxiedImageUrl(photos[currentIndex]))}
         />
 
         {/* Стрелки */}
