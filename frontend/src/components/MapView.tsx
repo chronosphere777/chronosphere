@@ -2213,8 +2213,8 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               position: 'absolute',
               top: '-16px',
               right: '-16px',
-              background: 'white',
-              border: '2px solid white',
+              background: 'transparent',
+              border: '3px solid white',
               borderRadius: '50%',
               color: 'red',
               fontSize: '28px',
@@ -2227,7 +2227,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               alignItems: 'center',
               justifyContent: 'center',
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-              fontWeight: 'bold',
+              fontWeight: 'normal',
               zIndex: 2001
             }}
           >

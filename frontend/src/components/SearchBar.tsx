@@ -182,13 +182,13 @@ export function SearchBar({ onShopSelect, shops, onFlyToShop, onCloseCatalog, is
               setResults([]);
             }}
             style={{
-              background: 'white',
-              border: '2px solid white',
+              background: 'transparent',
+              border: '3px solid white',
               borderRadius: '50%',
               color: 'red',
               cursor: 'pointer',
               fontSize: '32px',
-              fontWeight: 'bold',
+              fontWeight: 'normal',
               width: '48px',
               height: '48px',
               display: 'flex',
