@@ -659,6 +659,11 @@ items {
     gap: 16px;
   }
 
+  .shop-info-body {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
   .catalog-item:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 20px rgba(240, 248, 255, 0.3);
@@ -680,8 +685,19 @@ items {
     gap: 20px;
   }
 
+  .shop-info-body {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
   .catalog-item__photo {
     height: 240px;
+  }
+
+  .product-image {
+    height: 180px;
   }
 }
 
@@ -1212,7 +1228,7 @@ items {
 
 .shop-info-body {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 8px;
   padding: 0 8px 80px 8px;
   touch-action: pan-y;
