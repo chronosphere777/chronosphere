@@ -1,3 +1,4 @@
+import { useState } from 'preact/hooks';
 import { useActivity, getCount } from '../hooks/useActivity';
 import { UserCounter } from './UserCounter';
 
@@ -13,11 +14,18 @@ interface CityModalProps {
 }
 
 export function CityModal({ cities, onSelectCity, onClose }: CityModalProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  
   // Получаем статистику активных пользователей
   const { stats } = useActivity({ enabled: true });
   
+  // Фильтруем города по поисковому запросу
+  const filteredCities = searchQuery
+    ? cities.filter(city => city.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    : cities;
+  
   // Группируем города по первой букве
-  const citiesByLetter = cities.reduce((acc, city) => {
+  const citiesByLetter = filteredCities.reduce((acc, city) => {
     const firstLetter = city.name[0].toUpperCase();
     if (!acc[firstLetter]) {
       acc[firstLetter] = [];
@@ -68,7 +76,8 @@ export function CityModal({ cities, onSelectCity, onClose }: CityModalProps) {
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'center',
+          marginBottom: '10px'
         }}>
           <h2 style={{
             color: '#fff',
@@ -87,8 +96,8 @@ export function CityModal({ cities, onSelectCity, onClose }: CityModalProps) {
               borderRadius: '50%',
               width: '48px',
               height: '48px',
-              color: 'red',
-              fontSize: '32px',
+              color: 'white',
+              fontSize: '16px',
               fontWeight: 'normal',
               cursor: 'pointer',
               display: 'flex',
@@ -102,6 +111,34 @@ export function CityModal({ cities, onSelectCity, onClose }: CityModalProps) {
             ×
           </button>
         </div>
+
+        {/* Поиск городов */}
+        <input
+          type="text"
+          placeholder="Поиск города..."
+          value={searchQuery}
+          onInput={(e) => setSearchQuery((e.target as HTMLInputElement).value)}
+          style={{
+            width: '100%',
+            padding: '12px 16px',
+            background: 'rgba(255, 255, 255, 0.15)',
+            border: '2px solid rgba(255, 255, 255, 0.5)',
+            borderRadius: '12px',
+            color: '#fff',
+            fontSize: '16px',
+            outline: 'none',
+            boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.1)',
+            transition: 'all 0.3s ease'
+          }}
+          onFocus={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.8)';
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+          }}
+        />
 
         {/* Список городов по алфавиту */}
         <div style={{
