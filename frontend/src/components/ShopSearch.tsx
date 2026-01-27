@@ -97,6 +97,7 @@ export function ShopSearch({ shop, onShopSelect, shops, onClose }: ShopSearchPro
     onClick={() => {
       setQuery('');
       setResults([]);
+      onClose();
     }}>
       {/* Заголовок поиска */}
       <div style={{
@@ -132,6 +133,7 @@ export function ShopSearch({ shop, onShopSelect, shops, onClose }: ShopSearchPro
             onClick={() => {
               setQuery('');
               setResults([]);
+              onClose();
             }}
             style={{
               padding: '12px 16px',
