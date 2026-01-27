@@ -2,6 +2,8 @@ import { useState, useEffect } from 'preact/hooks';
 import { api } from '../api/client';
 import type { Shop } from '../types';
 import { useActivity, getCount } from '../hooks/useActivity';
+import { ShopSearch } from './ShopSearch';
+import { useMapStore } from '../store/mapStore';
 
 // API base URL
 const API_BASE = 'https://chronosphere7777.pythonanywhere.com';
@@ -44,6 +46,9 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
   const [currentPath, setCurrentPath] = useState<string>('');
   const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  
+  const { shops } = useMapStore();
 
   // Отслеживание активности в магазине
   const { stats } = useActivity({
@@ -298,6 +303,25 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                   {shop.name}
                 </h3>
                 <button
+                  onClick={() => setIsSearchOpen(true)}
+                  style={{
+                    background: 'rgba(240, 248, 255, 0.1)',
+                    border: '1px solid rgba(240, 248, 255, 0.3)',
+                    color: '#f0f8ff',
+                    fontSize: '18px',
+                    cursor: 'pointer',
+                    padding: '4px 8px',
+                    borderRadius: '6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  aria-label="Поиск в магазине"
+                  title="Поиск в магазине"
+                >
+                  🔍
+                </button>
+                <button
                   onClick={onClose}
                   style={{
                     background: 'transparent',
@@ -506,6 +530,23 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
       >
         {breadcrumbs.length === 0 ? '← Выйти в город' : '← Назад'}
       </button>
+      
+      {/* Компонент поиска в магазине */}
+      {isSearchOpen && (
+        <ShopSearch
+          shop={shop}
+          onShopSelect={(selectedShop) => {
+            setIsSearchOpen(false);
+            onClose();
+            // Небольшая задержка для плавного перехода
+            setTimeout(() => {
+              window.dispatchEvent(new CustomEvent('shop-select', { detail: selectedShop }));
+            }, 100);
+          }}
+          shops={shops}
+          onClose={() => setIsSearchOpen(false)}
+        />
+      )}
       
       {/* Полноэкранный просмотр фото */}
       {fullscreenImage && (

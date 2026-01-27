@@ -87,10 +87,17 @@ export function App() {
       }
     };
     
+    // Обработчик события переключения магазина из поиска
+    const handleShopSelect = (event: CustomEvent) => {
+      setSelectedShop(event.detail);
+    };
+    
     showBackButton(handleBack);
+    window.addEventListener('shop-select', handleShopSelect as EventListener);
     
     return () => {
       hideBackButton(handleBack);
+      window.removeEventListener('shop-select', handleShopSelect as EventListener);
     };
   }, [selectedShop]);
 
@@ -125,6 +132,7 @@ export function App() {
             }
           }}
           onCloseCatalog={() => setSelectedShop(null)}
+          isShopInfoOpen={selectedShop !== null}
         />
       )}
     </div>

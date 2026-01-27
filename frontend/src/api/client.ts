@@ -218,6 +218,11 @@ export const api = {
     return response.json();
   },
 
+  searchProductsInShop: async (query: string, shopId: string, sort: 'relevance' | 'price_asc' | 'price_desc' = 'relevance') => {
+    const response = await fetch(`${API_BASE}/api/search-products?q=${encodeURIComponent(query)}&shop_id=${shopId}&sort=${sort}`);
+    return response.json();
+  },
+
   // Загрузка товаров из листа ОПТ (возвращаем products напрямую)
   getWholesaleShops: async () => {
     try {

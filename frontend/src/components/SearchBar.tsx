@@ -19,9 +19,10 @@ interface SearchBarProps {
   shops: Shop[];
   onFlyToShop?: (shop: Shop) => void;
   onCloseCatalog?: () => void;
+  isShopInfoOpen?: boolean;
 }
 
-export function SearchBar({ onShopSelect, shops, onFlyToShop, onCloseCatalog }: SearchBarProps) {
+export function SearchBar({ onShopSelect, shops, onFlyToShop, onCloseCatalog, isShopInfoOpen }: SearchBarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -86,6 +87,11 @@ export function SearchBar({ onShopSelect, shops, onFlyToShop, onCloseCatalog }: 
       }
     }
   };
+
+  // Скрываем кнопку если открыт каталог магазина
+  if (isShopInfoOpen) {
+    return null;
+  }
 
   if (!isOpen) {
     return (
