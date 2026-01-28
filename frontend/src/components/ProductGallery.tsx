@@ -166,7 +166,10 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            flexShrink: 0
+            flexShrink: 0,
+            borderRadius: '20px',
+            overflow: 'hidden',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)'
           }}
           onTouchStart={handleTouchStart as any}
           onTouchMove={handleTouchMove as any}
@@ -183,10 +186,6 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
               height: 'auto',
               objectFit: 'contain',
               userSelect: 'none',
-              borderRadius: '20px !important',
-              WebkitBorderRadius: '20px',
-              MozBorderRadius: '20px',
-              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
               display: 'block'
             }}
           />
