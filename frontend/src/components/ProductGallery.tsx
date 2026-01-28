@@ -120,7 +120,7 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
           justifyContent: 'center',
           position: 'relative',
           overflow: 'hidden',
-          paddingBottom: photos.length > 1 ? '5px' : '20px' // минимальный отступ для миниатюр
+          paddingBottom: '0' // нет отступа
         }}
         onClick={(e) => e.stopPropagation()}
         onTouchStart={handleTouchStart as any}
@@ -151,19 +151,26 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
       >
         {/* Миниатюры с индикатором над прогресс-баром */}
         {photos.length > 1 && (
-          <div style={{
-            display: 'flex',
-            gap: '10px',
-            justifyContent: photos.length <= 4 ? 'center' : 'flex-start', // центрируем если <= 4 фото
-            marginBottom: '15px',
-            overflowX: 'auto',
-            paddingBottom: '5px',
-            WebkitOverflowScrolling: 'touch', // плавная прокрутка на iOS
-            scrollBehavior: 'smooth', // плавная прокрутка на Android и других
-            scrollbarWidth: 'none', // скрываем scrollbar в Firefox
-            msOverflowStyle: 'none', // скрываем scrollbar в IE/Edge
-            touchAction: 'pan-x' // разрешаем только горизонтальный свайп
-          }}>
+          <div 
+            className="thumbnails-container"
+            style={{
+              display: 'flex',
+              gap: '10px',
+              justifyContent: photos.length <= 4 ? 'center' : 'flex-start',
+              marginBottom: '15px',
+              marginTop: '10px',
+              overflowX: 'scroll',
+              overflowY: 'hidden',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none'
+            }}
+          >
+            <style>{`
+              .thumbnails-container::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
             {photos.map((photo, index) => (
               <div
                 key={index}
