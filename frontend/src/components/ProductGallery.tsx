@@ -119,13 +119,14 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
           alignItems: 'center',
           justifyContent: 'center',
           gap: '15px',
+          paddingTop: '80px',
           paddingBottom: '0',
           overflow: 'hidden'
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Предыдущее фото слева (затемненное) */}
-        {currentIndex > 0 && (
+        {currentIndex > 0 ? (
           <div 
             onClick={(e) => {
               e.stopPropagation();
@@ -149,6 +150,8 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
               }}
             />
           </div>
+        ) : (
+          <div style={{ maxWidth: '20%', flexShrink: 0 }} />
         )}
 
         {/* Основное фото с закругленными краями */}
@@ -175,13 +178,14 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
               height: 'auto',
               objectFit: 'contain',
               userSelect: 'none',
-              borderRadius: '16px'
+              borderRadius: '16px',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)'
             }}
           />
         </div>
 
         {/* Следующее фото справа (затемненное) */}
-        {currentIndex < photos.length - 1 && (
+        {currentIndex < photos.length - 1 ? (
           <div 
             onClick={(e) => {
               e.stopPropagation();
@@ -205,6 +209,8 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
               }}
             />
           </div>
+        ) : (
+          <div style={{ maxWidth: '20%', flexShrink: 0 }} />
         )}
       </div>
 
