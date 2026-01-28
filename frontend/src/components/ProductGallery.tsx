@@ -130,17 +130,22 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
       >
         {/* Предыдущее фото слева (затемненное) */}
         {currentIndex > 0 && (
-          <div style={{
-            position: 'absolute',
-            left: '10px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            width: '70px',
-            height: '100px',
-            opacity: 0.5,
-            zIndex: 1,
-            pointerEvents: 'none'
-          }}>
+          <div 
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentIndex(currentIndex - 1);
+            }}
+            style={{
+              position: 'absolute',
+              left: '5px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '70px',
+              height: '100px',
+              opacity: 0.5,
+              zIndex: 1,
+              cursor: 'pointer'
+            }}>
             <img
               src={getProxiedImageUrl(photos[currentIndex - 1]) || ''}
               alt="Предыдущее"
@@ -174,17 +179,22 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
 
         {/* Следующее фото справа (затемненное) */}
         {currentIndex < photos.length - 1 && (
-          <div style={{
-            position: 'absolute',
-            right: '10px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            width: '70px',
-            height: '100px',
-            opacity: 0.5,
-            zIndex: 1,
-            pointerEvents: 'none'
-          }}>
+          <div 
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentIndex(currentIndex + 1);
+            }}
+            style={{
+              position: 'absolute',
+              right: '5px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '70px',
+              height: '100px',
+              opacity: 0.5,
+              zIndex: 1,
+              cursor: 'pointer'
+            }}>
             <img
               src={getProxiedImageUrl(photos[currentIndex + 1]) || ''}
               alt="Следующее"
