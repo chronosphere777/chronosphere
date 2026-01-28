@@ -159,6 +159,7 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
             overflowX: 'auto',
             paddingBottom: '5px',
             WebkitOverflowScrolling: 'touch', // плавная прокрутка на iOS
+            scrollBehavior: 'smooth', // плавная прокрутка на Android и других
             scrollbarWidth: 'none', // скрываем scrollbar в Firefox
             msOverflowStyle: 'none' // скрываем scrollbar в IE/Edge
           }}
