@@ -120,7 +120,7 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
           justifyContent: 'center',
           position: 'relative',
           overflow: 'hidden',
-          paddingBottom: photos.length > 1 ? '50px' : '20px' // отступ для миниатюр
+          paddingBottom: photos.length > 1 ? '25px' : '20px' // отступ для миниатюр
         }}
         onClick={(e) => e.stopPropagation()}
         onTouchStart={handleTouchStart as any}
