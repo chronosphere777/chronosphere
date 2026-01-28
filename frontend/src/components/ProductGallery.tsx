@@ -119,8 +119,10 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
           alignItems: 'center',
           justifyContent: 'center',
           gap: '15px',
-          paddingTop: '80px',
-          paddingBottom: '0',
+          paddingTop: '100px',
+          paddingBottom: '20px',
+          paddingLeft: '20px',
+          paddingRight: '20px',
           overflow: 'hidden'
         }}
         onClick={(e) => e.stopPropagation()}
@@ -133,7 +135,8 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
               setCurrentIndex(currentIndex - 1);
             }}
             style={{
-              maxWidth: '20%',
+              width: '20%',
+              maxWidth: '150px',
               maxHeight: '70%',
               opacity: 0.5,
               cursor: 'pointer',
@@ -151,17 +154,19 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
             />
           </div>
         ) : (
-          <div style={{ maxWidth: '20%', flexShrink: 0 }} />
+          <div style={{ width: '20%', maxWidth: '150px', flexShrink: 0, visibility: 'hidden' }} />
         )}
 
         {/* Основное фото с закругленными краями */}
         <div
           style={{
-            maxWidth: '60%',
+            width: '60%',
+            maxWidth: '800px',
             maxHeight: '100%',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            flexShrink: 0
           }}
           onTouchStart={handleTouchStart as any}
           onTouchMove={handleTouchMove as any}
@@ -178,8 +183,11 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
               height: 'auto',
               objectFit: 'contain',
               userSelect: 'none',
-              borderRadius: '16px',
-              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)'
+              borderRadius: '20px !important',
+              WebkitBorderRadius: '20px',
+              MozBorderRadius: '20px',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.5)',
+              display: 'block'
             }}
           />
         </div>
@@ -192,7 +200,8 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
               setCurrentIndex(currentIndex + 1);
             }}
             style={{
-              maxWidth: '20%',
+              width: '20%',
+              maxWidth: '150px',
               maxHeight: '70%',
               opacity: 0.5,
               cursor: 'pointer',
@@ -210,7 +219,7 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
             />
           </div>
         ) : (
-          <div style={{ maxWidth: '20%', flexShrink: 0 }} />
+          <div style={{ width: '20%', maxWidth: '150px', flexShrink: 0, visibility: 'hidden' }} />
         )}
       </div>
 
