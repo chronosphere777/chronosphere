@@ -154,26 +154,16 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
           <div style={{
             display: 'flex',
             gap: '10px',
-            justifyContent: 'flex-start',
+            justifyContent: photos.length <= 4 ? 'center' : 'flex-start', // центрируем если <= 4 фото
             marginBottom: '15px',
             overflowX: 'auto',
             paddingBottom: '5px',
             WebkitOverflowScrolling: 'touch', // плавная прокрутка на iOS
             scrollBehavior: 'smooth', // плавная прокрутка на Android и других
             scrollbarWidth: 'none', // скрываем scrollbar в Firefox
-            msOverflowStyle: 'none' // скрываем scrollbar в IE/Edge
-          }}
-          // Скрываем scrollbar в Chrome/Safari
-          onLoad={(e: any) => {
-            const style = document.createElement('style');
-            style.textContent = `
-              div::-webkit-scrollbar {
-                display: none;
-              }
-            `;
-            e.currentTarget.appendChild(style);
-          }}
-          >
+            msOverflowStyle: 'none', // скрываем scrollbar в IE/Edge
+            touchAction: 'pan-x' // разрешаем только горизонтальный свайп
+          }}>
             {photos.map((photo, index) => (
               <div
                 key={index}
