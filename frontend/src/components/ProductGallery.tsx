@@ -118,15 +118,11 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          position: 'relative',
-          overflow: 'hidden',
+          gap: '15px',
           paddingBottom: '0',
-          padding: '0 100px' // отступы для боковых превью
+          overflow: 'hidden'
         }}
         onClick={(e) => e.stopPropagation()}
-        onTouchStart={handleTouchStart as any}
-        onTouchMove={handleTouchMove as any}
-        onTouchEnd={handleTouchEnd}
       >
         {/* Предыдущее фото слева (затемненное) */}
         {currentIndex > 0 && (
@@ -136,15 +132,11 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
               setCurrentIndex(currentIndex - 1);
             }}
             style={{
-              position: 'absolute',
-              left: '5px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: '70px',
-              height: '100px',
+              maxWidth: '20%',
+              maxHeight: '70%',
               opacity: 0.5,
-              zIndex: 1,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              flexShrink: 0
             }}>
             <img
               src={getProxiedImageUrl(photos[currentIndex - 1]) || ''}
@@ -152,7 +144,7 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
               style={{
                 width: '100%',
                 height: '100%',
-                objectFit: 'cover',
+                objectFit: 'contain',
                 borderRadius: '8px'
               }}
             />
@@ -160,22 +152,33 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
         )}
 
         {/* Основное фото с закругленными краями */}
-        <img
-          src={getProxiedImageUrl(photos[currentIndex]) || ''}
-          alt={`Фото ${currentIndex + 1}`}
-          key={photos[currentIndex]}
+        <div
           style={{
-            maxWidth: 'calc(100% - 160px)',
+            maxWidth: '60%',
             maxHeight: '100%',
-            width: 'auto',
-            height: 'auto',
-            objectFit: 'contain',
-            userSelect: 'none',
-            borderRadius: '16px',
-            position: 'relative',
-            zIndex: 2
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}
-        />
+          onTouchStart={handleTouchStart as any}
+          onTouchMove={handleTouchMove as any}
+          onTouchEnd={handleTouchEnd}
+        >
+          <img
+            src={getProxiedImageUrl(photos[currentIndex]) || ''}
+            alt={`Фото ${currentIndex + 1}`}
+            key={photos[currentIndex]}
+            style={{
+              maxWidth: '100%',
+              maxHeight: '100%',
+              width: 'auto',
+              height: 'auto',
+              objectFit: 'contain',
+              userSelect: 'none',
+              borderRadius: '16px'
+            }}
+          />
+        </div>
 
         {/* Следующее фото справа (затемненное) */}
         {currentIndex < photos.length - 1 && (
@@ -185,15 +188,11 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
               setCurrentIndex(currentIndex + 1);
             }}
             style={{
-              position: 'absolute',
-              right: '5px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: '70px',
-              height: '100px',
+              maxWidth: '20%',
+              maxHeight: '70%',
               opacity: 0.5,
-              zIndex: 1,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              flexShrink: 0
             }}>
             <img
               src={getProxiedImageUrl(photos[currentIndex + 1]) || ''}
@@ -201,7 +200,7 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
               style={{
                 width: '100%',
                 height: '100%',
-                objectFit: 'cover',
+                objectFit: 'contain',
                 borderRadius: '8px'
               }}
             />
