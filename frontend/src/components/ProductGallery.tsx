@@ -50,6 +50,11 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
       handlePrevious();
     }
   };
+  
+  // Переход к конкретному фото по клику на миниатюру
+  const handleThumbnailClick = (index: number) => {
+    setCurrentIndex(index);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -108,7 +113,7 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
         ×
       </button>
 
-      {/* Фото */}
+      {/* Большое фото */}
       <div
         style={{
           flex: 1,
@@ -116,7 +121,8 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
           alignItems: 'center',
           justifyContent: 'center',
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          paddingBottom: photos.length > 1 ? '100px' : '20px' // отступ для миниатюр
         }}
         onClick={(e) => e.stopPropagation()}
         onTouchStart={handleTouchStart as any}
@@ -203,6 +209,61 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
         }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Миниатюры с индикатором над прогресс-баром */}
+        {photos.length > 1 && (
+          <div style={{
+            display: 'flex',
+            gap: '10px',
+            justifyContent: 'center',
+            marginBottom: '15px',
+            overflowX: 'auto',
+            paddingBottom: '5px'
+          }}>
+            {photos.map((photo, index) => (
+              <div
+                key={index}
+                onClick={() => handleThumbnailClick(index)}
+                style={{
+                  position: 'relative',
+                  width: '60px',
+                  height: '60px',
+                  flexShrink: 0,
+                  cursor: 'pointer',
+                  border: index === currentIndex ? '3px solid #ff8c00' : '2px solid rgba(255, 255, 255, 0.3)',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  transition: 'all 0.3s ease',
+                  opacity: index === currentIndex ? 1 : 0.6
+                }}
+              >
+                <img
+                  src={getProxiedImageUrl(photo) || ''}
+                  alt={`Миниатюра ${index + 1}`}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover'
+                  }}
+                />
+                {/* Индикатор текущего фото */}
+                {index === currentIndex && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '-8px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '0',
+                    height: '0',
+                    borderLeft: '8px solid transparent',
+                    borderRight: '8px solid transparent',
+                    borderTop: '8px solid #ff8c00'
+                  }} />
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        
         {/* Прогресс-бар */}
         {photos.length > 1 && (
           <div style={{

@@ -51,6 +51,9 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
+  // Состояние для хранения текущего индекса фото для каждого товара
+  const [productPhotoIndices, setProductPhotoIndices] = useState<{[key: number]: number}>({});
+  
   const { shops } = useMapStore();
 
   // Отслеживание активности в магазине
@@ -146,19 +149,97 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
       if (item.isLeaf && item.product) {
         // Рендерим товар
         const product = item.product;
+        const photos = product.photo_url 
+          ? [product.photo_url, ...(product.additional_photos || [])]
+          : [];
+        
+        // Получаем текущий индекс фото для этого товара
+        const currentPhotoIndex = productPhotoIndices[index] || 0;
+        const currentPhoto = photos[currentPhotoIndex];
+        
+        // Обработчики свайпа для карточки товара
+        const handleTouchStart = (e: TouchEvent) => {
+          const touch = e.touches[0];
+          setProductPhotoIndices(prev => ({ ...prev, [`start_${index}`]: touch.clientX }));
+        };
+        
+        const handleTouchEnd = (e: TouchEvent) => {
+          const touchEnd = e.changedTouches[0].clientX;
+          const touchStart = (productPhotoIndices as any)[`start_${index}`] || touchEnd;
+          const diff = touchStart - touchEnd;
+          
+          if (Math.abs(diff) > 50) { // минимальная дистанция свайпа
+            if (diff > 0) {
+              // Свайп влево - следующее фото
+              setProductPhotoIndices(prev => ({
+                ...prev,
+                [index]: Math.min((prev[index] || 0) + 1, photos.length - 1)
+              }));
+            } else {
+              // Свайп вправо - предыдущее фото
+              setProductPhotoIndices(prev => ({
+                ...prev,
+                [index]: Math.max((prev[index] || 0) - 1, 0)
+              }));
+            }
+          }
+        };
+        
         return (
           <div 
             key={index} 
             className="product-card"
-            onClick={() => setSelectedProduct(product)}
             style={{ cursor: 'pointer' }}
           >
-            {product.photo_url && (
-              <img 
-                src={getProxiedImageUrl(product.photo_url) || ''} 
-                alt="" 
-                className="product-image"
-              />
+            {currentPhoto && (
+              <div 
+                style={{ 
+                  position: 'relative',
+                  width: '100%',
+                  userSelect: 'none'
+                }}
+                onTouchStart={handleTouchStart as any}
+                onTouchEnd={handleTouchEnd as any}
+              >
+                <img 
+                  src={getProxiedImageUrl(currentPhoto) || ''} 
+                  alt="" 
+                  className="product-image"
+                  onClick={() => setSelectedProduct(product)}
+                  style={{ 
+                    pointerEvents: 'none',
+                    touchAction: 'pan-y' // разрешаем вертикальную прокрутку
+                  }}
+                />
+                {/* Индикаторы фото */}
+                {photos.length > 1 && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '8px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    display: 'flex',
+                    gap: '6px',
+                    pointerEvents: 'none'
+                  }}>
+                    {photos.map((_, photoIdx) => (
+                      <div 
+                        key={photoIdx}
+                        style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          background: photoIdx === currentPhotoIndex 
+                            ? '#ff8c00' 
+                            : 'rgba(255, 255, 255, 0.5)',
+                          border: '1px solid white',
+                          transition: 'all 0.3s ease'
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
             <div className="product-info">
               {product.size_color && (

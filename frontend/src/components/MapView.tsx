@@ -2203,37 +2203,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               }
             }}
           >
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setPopupShop(null);
-              setPopupPosition(null);
-            }}
-            style={{
-              position: 'absolute',
-              top: '-28px',
-              right: '-28px',
-              background: 'transparent',
-              border: '2px solid white',
-              borderRadius: '50%',
-              color: 'white',
-              fontSize: '21px',
-              cursor: 'pointer',
-              padding: '0',
-              width: '32px',
-              height: '32px',
-              lineHeight: '21px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-              fontWeight: 'normal',
-              zIndex: 2001
-            }}
-          >
-            ×
-          </button>
-          
           {popupShop.photo_url && (
             <div style={{
               width: '100%',
@@ -2265,16 +2234,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
             {popupShop.name}
           </h3>
           
-          {popupShop.city && (
-            <div style={{ 
-              color: '#aaa', 
-              marginBottom: '4px',
-              fontSize: '9px'
-            }}>
-              {popupShop.city}
-            </div>
-          )}
-          
           {popupShop.description && (
             <div style={{ 
               color: '#f0f8ff', 
@@ -2287,52 +2246,6 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
               {popupShop.description}
             </div>
           )}
-          
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              hapticFeedback('light');
-              
-              // Сохраняем магазин ДО любых изменений состояния
-              const shopToOpen = popupShop;
-              
-              // Закрываем popup
-              setPopupShop(null);
-              setPopupPosition(null);
-              
-              // Открываем каталог с сохраненным магазином
-              if (shopToOpen && onShopClick) {
-                onShopClick(shopToOpen);
-              }
-            }}
-            style={{
-              width: '100%',
-              padding: '6px',
-              background: 'rgba(240, 248, 255, 0.1)',
-              backdropFilter: 'blur(10px)',
-              border: '1.5px solid #ff8c00',
-              borderRadius: '4px',
-              color: '#f0f8ff',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              fontSize: '10px',
-              boxShadow: '0 2px 8px rgba(255, 255, 255, 0.2)',
-              transition: 'all 0.3s'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.background = 'rgba(240, 248, 255, 0.2)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 255, 255, 0.4)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.background = 'rgba(240, 248, 255, 0.1)';
-              e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 255, 255, 0.2)';
-            }}
-          >
-            Открыть
-          </button>
         </div>
         </>
       )}
