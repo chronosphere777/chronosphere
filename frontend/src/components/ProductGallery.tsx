@@ -120,7 +120,7 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
           justifyContent: 'center',
           position: 'relative',
           overflow: 'hidden',
-          paddingBottom: photos.length > 1 ? '25px' : '20px' // отступ для миниатюр
+          paddingBottom: photos.length > 1 ? '5px' : '20px' // минимальный отступ для миниатюр
         }}
         onClick={(e) => e.stopPropagation()}
         onTouchStart={handleTouchStart as any}
@@ -154,11 +154,25 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
           <div style={{
             display: 'flex',
             gap: '10px',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
             marginBottom: '15px',
             overflowX: 'auto',
-            paddingBottom: '5px'
-          }}>
+            paddingBottom: '5px',
+            WebkitOverflowScrolling: 'touch', // плавная прокрутка на iOS
+            scrollbarWidth: 'none', // скрываем scrollbar в Firefox
+            msOverflowStyle: 'none' // скрываем scrollbar в IE/Edge
+          }}
+          // Скрываем scrollbar в Chrome/Safari
+          onLoad={(e: any) => {
+            const style = document.createElement('style');
+            style.textContent = `
+              div::-webkit-scrollbar {
+                display: none;
+              }
+            `;
+            e.currentTarget.appendChild(style);
+          }}
+          >
             {photos.map((photo, index) => (
               <div
                 key={index}
