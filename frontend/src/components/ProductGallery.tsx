@@ -68,8 +68,6 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
 
   if (photos.length === 0) return null;
 
-  const progressPercentage = ((currentIndex + 1) / photos.length) * 100;
-
   return (
     <div
       style={{
@@ -122,7 +120,7 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
           justifyContent: 'center',
           position: 'relative',
           overflow: 'hidden',
-          paddingBottom: photos.length > 1 ? '100px' : '20px' // отступ для миниатюр
+          paddingBottom: photos.length > 1 ? '50px' : '20px' // отступ для миниатюр
         }}
         onClick={(e) => e.stopPropagation()}
         onTouchStart={handleTouchStart as any}
@@ -140,64 +138,6 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
             userSelect: 'none'
           }}
         />
-
-        {/* Стрелки */}
-        {photos.length > 1 && (
-          <>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handlePrevious();
-              }}
-              style={{
-                position: 'absolute',
-                left: '20px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'rgba(0, 0, 0, 0.5)',
-                border: '2px solid white',
-                borderRadius: '50%',
-                color: 'white',
-                fontSize: '24px',
-                cursor: 'pointer',
-                width: '50px',
-                height: '50px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 10002
-              }}
-            >
-              ‹
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleNext();
-              }}
-              style={{
-                position: 'absolute',
-                right: '20px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'rgba(0, 0, 0, 0.5)',
-                border: '2px solid white',
-                borderRadius: '50%',
-                color: 'white',
-                fontSize: '24px',
-                cursor: 'pointer',
-                width: '50px',
-                height: '50px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 10002
-              }}
-            >
-              ›
-            </button>
-          </>
-        )}
       </div>
 
       {/* Информация и прогресс-бар */}
@@ -261,26 +201,6 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
                 )}
               </div>
             ))}
-          </div>
-        )}
-        
-        {/* Прогресс-бар */}
-        {photos.length > 1 && (
-          <div style={{
-            width: '100%',
-            height: '4px',
-            background: 'rgba(255, 255, 255, 0.2)',
-            borderRadius: '2px',
-            marginBottom: '15px',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              width: `${progressPercentage}%`,
-              height: '100%',
-              background: '#ff8c00',
-              transition: 'width 0.3s ease',
-              borderRadius: '2px'
-            }} />
           </div>
         )}
 

@@ -207,6 +207,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
             key={index} 
             className="product-card"
             style={{ cursor: 'pointer' }}
+            onClick={handleImageClick as any}
           >
             {currentPhoto && (
               <div 
@@ -217,7 +218,6 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 }}
                 onTouchStart={handleTouchStart as any}
                 onTouchEnd={handleTouchEnd as any}
-                onClick={handleImageClick as any}
               >
                 <img 
                   src={getProxiedImageUrl(currentPhoto) || ''} 
