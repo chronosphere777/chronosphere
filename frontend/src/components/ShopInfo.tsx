@@ -169,6 +169,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
           const diff = touchStart - touchEnd;
           
           if (Math.abs(diff) > 50) { // минимальная дистанция свайпа
+            e.stopPropagation(); // Останавливаем всплытие при свайпе
             if (diff > 0) {
               // Свайп влево - следующее фото
               setProductPhotoIndices(prev => ({
@@ -183,6 +184,22 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
               }));
             }
           }
+        };
+        
+        // Обработчик клика - открываем галерею если это не свайп
+        const handleImageClick = (e: MouseEvent | TouchEvent) => {
+          const touchStart = (productPhotoIndices as any)[`start_${index}`];
+          if (touchStart !== undefined) {
+            // Это был touch - проверяем не был ли это свайп
+            const currentTouch = 'changedTouches' in e ? e.changedTouches[0].clientX : touchStart;
+            const diff = Math.abs(touchStart - currentTouch);
+            if (diff > 50) {
+              // Это был свайп, не открываем галерею
+              return;
+            }
+          }
+          // Это обычный клик или tap - открываем галерею
+          setSelectedProduct(product);
         };
         
         return (
@@ -200,14 +217,13 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 }}
                 onTouchStart={handleTouchStart as any}
                 onTouchEnd={handleTouchEnd as any}
+                onClick={handleImageClick as any}
               >
                 <img 
                   src={getProxiedImageUrl(currentPhoto) || ''} 
                   alt="" 
                   className="product-image"
-                  onClick={() => setSelectedProduct(product)}
                   style={{ 
-                    pointerEvents: 'none',
                     touchAction: 'pan-y' // разрешаем вертикальную прокрутку
                   }}
                 />
