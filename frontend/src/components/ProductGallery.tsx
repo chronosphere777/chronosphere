@@ -111,7 +111,7 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
         ×
       </button>
 
-      {/* Большое фото */}
+      {/* Большое фото с боковыми превью */}
       <div
         style={{
           flex: 1,
@@ -119,7 +119,7 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
           alignItems: 'center',
           justifyContent: 'center',
           position: 'relative',
-          overflow: 'hidden',
+          overflow: 'visible',
           paddingBottom: '0' // нет отступа
         }}
         onClick={(e) => e.stopPropagation()}
@@ -127,6 +127,33 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
         onTouchMove={handleTouchMove as any}
         onTouchEnd={handleTouchEnd}
       >
+        {/* Предыдущее фото слева (затемненное) */}
+        {currentIndex > 0 && (
+          <div style={{
+            position: 'absolute',
+            left: '10px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: '80px',
+            height: '120px',
+            opacity: 0.4,
+            zIndex: 1,
+            pointerEvents: 'none'
+          }}>
+            <img
+              src={getProxiedImageUrl(photos[currentIndex - 1]) || ''}
+              alt="Предыдущее"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '12px'
+              }}
+            />
+          </div>
+        )}
+
+        {/* Основное фото с закругленными краями */}
         <img
           src={getProxiedImageUrl(photos[currentIndex]) || ''}
           alt={`Фото ${currentIndex + 1}`}
@@ -135,9 +162,38 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
             maxWidth: '100%',
             maxHeight: '100%',
             objectFit: 'contain',
-            userSelect: 'none'
+            userSelect: 'none',
+            borderRadius: '16px',
+            position: 'relative',
+            zIndex: 2
           }}
         />
+
+        {/* Следующее фото справа (затемненное) */}
+        {currentIndex < photos.length - 1 && (
+          <div style={{
+            position: 'absolute',
+            right: '10px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: '80px',
+            height: '120px',
+            opacity: 0.4,
+            zIndex: 1,
+            pointerEvents: 'none'
+          }}>
+            <img
+              src={getProxiedImageUrl(photos[currentIndex + 1]) || ''}
+              alt="Следующее"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '12px'
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Информация и прогресс-бар */}
