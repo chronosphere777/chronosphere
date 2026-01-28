@@ -119,8 +119,9 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
           alignItems: 'center',
           justifyContent: 'center',
           position: 'relative',
-          overflow: 'visible',
-          paddingBottom: '0' // нет отступа
+          overflow: 'hidden',
+          paddingBottom: '0',
+          padding: '0 100px' // отступы для боковых превью
         }}
         onClick={(e) => e.stopPropagation()}
         onTouchStart={handleTouchStart as any}
@@ -134,9 +135,9 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
             left: '10px',
             top: '50%',
             transform: 'translateY(-50%)',
-            width: '80px',
-            height: '120px',
-            opacity: 0.4,
+            width: '70px',
+            height: '100px',
+            opacity: 0.5,
             zIndex: 1,
             pointerEvents: 'none'
           }}>
@@ -147,7 +148,7 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                borderRadius: '12px'
+                borderRadius: '8px'
               }}
             />
           </div>
@@ -159,8 +160,10 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
           alt={`Фото ${currentIndex + 1}`}
           key={photos[currentIndex]}
           style={{
-            maxWidth: '100%',
+            maxWidth: 'calc(100% - 160px)',
             maxHeight: '100%',
+            width: 'auto',
+            height: 'auto',
             objectFit: 'contain',
             userSelect: 'none',
             borderRadius: '16px',
@@ -176,9 +179,9 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
             right: '10px',
             top: '50%',
             transform: 'translateY(-50%)',
-            width: '80px',
-            height: '120px',
-            opacity: 0.4,
+            width: '70px',
+            height: '100px',
+            opacity: 0.5,
             zIndex: 1,
             pointerEvents: 'none'
           }}>
@@ -189,7 +192,7 @@ export function ProductGallery({ product, shopUsername, onClose, getProxiedImage
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                borderRadius: '12px'
+                borderRadius: '8px'
               }}
             />
           </div>
