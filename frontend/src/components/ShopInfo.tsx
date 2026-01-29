@@ -362,14 +362,14 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
           flexShrink: 0,
           background: 'transparent',
           paddingBottom: '5px',
-          paddingTop: '2px'
+          paddingTop: '1px'
         }}>
           <div style={{
             background: 'rgba(30, 30, 30, 0.1)',
             border: '2px solid white',
             borderRadius: '12px',
             padding: '12px',
-            margin: '2px',
+            margin: '1px',
             boxShadow: '0 0 20px rgba(240, 248, 255, 0.3)',
             display: 'flex',
             gap: '12px',

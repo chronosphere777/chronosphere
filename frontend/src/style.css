@@ -1195,7 +1195,7 @@ items {
 
 .breadcrumbs {
   color: #f0f8ff;
-  margin-bottom: 15px;
+  margin-bottom: 8px;
   padding: 0 8px;
   font-size: 14px;
   opacity: 0.7;
@@ -1227,8 +1227,8 @@ items {
 .shop-info-body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 8px;
-  padding: 0 8px 80px 8px;
+  gap: 6px;
+  padding: 0 1px 80px 1px;
   touch-action: pan-y;
   overflow-x: hidden;
   width: 100%;
