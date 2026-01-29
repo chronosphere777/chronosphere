@@ -2159,7 +2159,7 @@ export function MapView({ onShopClick, onResetMap, onFlyToShop, isShopInfoOpen =
             textShadow: '0 0 10px rgba(255, 255, 255, 0.8)'
           }}
         >
-          {selectedCity ? selectedCity.name : 'ВОЙТИ В ГОРОД'}
+          {selectedCity ? selectedCity.name : 'ВЫБРАТЬ ГОРОД'}
         </button>
       )}
       

@@ -368,11 +368,11 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
             background: 'rgba(30, 30, 30, 0.1)',
             border: '2px solid white',
             borderRadius: '12px',
-            padding: '16px',
-            margin: '8px 8px 8px 8px',
+            padding: '12px',
+            margin: '8px 8px 4px 8px',
             boxShadow: '0 0 20px rgba(240, 248, 255, 0.3)',
             display: 'flex',
-            gap: '16px',
+            gap: '12px',
             alignItems: 'flex-start'
           }}>
             {shop.photo_url && (
@@ -403,7 +403,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
               flex: '1',
               display: 'flex',
               flexDirection: 'column',
-              gap: '8px'
+              gap: '4px'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <h3 style={{ 
@@ -477,15 +477,6 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                 )}
               </div>
               
-              {shop.city && (
-                <div style={{ 
-                  color: '#aaa', 
-                  fontSize: '14px'
-                }}>
-                  {shop.city}
-                </div>
-              )}
-              
               {shop.description && (
                 <div style={{ 
                   color: '#f0f8ff', 
@@ -499,7 +490,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
               )}
               
               {/* Кнопки действий */}
-              <div style={{ display: 'flex', gap: '6px', marginTop: '8px', width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
+              <div style={{ display: 'flex', gap: '6px', marginTop: '4px', width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
                 {shop.username && (
                   <button
                     onClick={() => {
