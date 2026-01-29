@@ -289,8 +289,8 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                     }}
                     style={{
                       width: '100%',
-                      marginTop: '12px',
-                      padding: '8px 12px',
+                      marginTop: '4px',
+                      padding: '10px 12px',
                       background: 'rgba(240, 248, 255, 0.15)',
                       border: '1.5px solid #ff8c00',
                       borderRadius: '8px',
