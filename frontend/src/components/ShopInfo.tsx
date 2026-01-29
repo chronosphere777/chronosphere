@@ -539,17 +539,9 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                   </button>
                 )}
                 
-                {shop.gis_url && shop.gis_url.includes('2gis.ru') && (
+                {shop.city && (
                   <button
-                    onClick={() => {
-                      // Парсим координаты из 2GIS URL (формат: m=lng,lat или m=lng%2Clat)
-                      const match = shop.gis_url?.match(/m=([0-9.]+)(?:%2C|,)([0-9.]+)/);
-                      if (match) {
-                        const lng = match[1];
-                        const lat = match[2];
-                        window.open(`https://3.redirect.appmetrica.yandex.com/route?end-lat=${lat}&end-lon=${lng}&appmetrica_tracking_id=1178268795219780156`, '_blank');
-                      }
-                    }}
+                    onClick={() => setShowRouteModal(true)}
                     style={{
                       flex: '1 1 0',
                       minWidth: '0',
@@ -580,7 +572,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                       e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>маршрут</span>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>ПОЕХАЛИ</span>
                   </button>
                 )}
               </div>
