@@ -1272,7 +1272,7 @@ items {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 6px;
+  gap: 4px;
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
@@ -1285,6 +1285,23 @@ items {
   width: 100%;
   display: flex;
   align-items: flex-end;
+}
+
+.product-detail {
+  font-size: 11px;
+  color: #f0f8ff;
+  line-height: 1.2;
+}
+
+.product-price {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.product-description {
+  font-size: 11px;
+  color: rgba(240, 248, 255, 0.8);
+  line-height: 1.0;
 }
 
 /* Loading Screen */
