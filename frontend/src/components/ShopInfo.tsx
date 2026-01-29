@@ -490,7 +490,15 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
               )}
               
               {/* Кнопки действий */}
-              <div style={{ display: 'flex', gap: '6px', marginTop: '4px', width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
+              <div style={{ 
+                display: 'flex', 
+                gap: '6px', 
+                marginTop: '4px', 
+                width: '100%',
+                boxSizing: 'border-box',
+                flexWrap: 'nowrap',
+                overflow: 'hidden'
+              }}>
                 {shop.username && (
                   <button
                     onClick={() => {
@@ -498,24 +506,24 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                       window.open(`https://t.me/${cleanUsername}`, '_blank');
                     }}
                     style={{
-                      flex: 1,
-                      minWidth: 0,
-                      maxWidth: '50%',
-                      padding: '8px 12px',
+                      flex: '1 1 0',
+                      minWidth: '0',
+                      padding: '6px 8px',
                       background: 'rgba(240, 248, 255, 0.15)',
                       border: '1.5px solid #ff8c00',
                       borderRadius: '8px',
                       color: '#f0f8ff',
-                      fontSize: '12px',
+                      fontSize: '11px',
                       fontWeight: '600',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '5px',
+                      gap: '4px',
                       transition: 'all 0.2s ease',
                       boxSizing: 'border-box',
                       overflow: 'hidden',
+                      textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap'
                     }}
                     onMouseOver={(e) => {
@@ -527,7 +535,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                       e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
-                    <span>НАПИШИ НАМ</span>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>НАПИШИ НАМ</span>
                   </button>
                 )}
                 
@@ -543,24 +551,24 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                       }
                     }}
                     style={{
-                      flex: 1,
-                      minWidth: 0,
-                      maxWidth: '50%',
-                      padding: '8px 12px',
+                      flex: '1 1 0',
+                      minWidth: '0',
+                      padding: '6px 8px',
                       background: 'rgba(240, 248, 255, 0.15)',
                       border: '1.5px solid #ff8c00',
                       borderRadius: '8px',
                       color: '#f0f8ff',
-                      fontSize: '12px',
+                      fontSize: '11px',
                       fontWeight: '600',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '5px',
+                      gap: '4px',
                       transition: 'all 0.2s ease',
                       boxSizing: 'border-box',
                       overflow: 'hidden',
+                      textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap'
                     }}
                     onMouseOver={(e) => {
@@ -572,7 +580,7 @@ export function ShopInfo({ shop, onClose }: ShopInfoProps) {
                       e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
-                    <span>ПОЕХАЛИ</span>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>маршрут</span>
                   </button>
                 )}
               </div>
